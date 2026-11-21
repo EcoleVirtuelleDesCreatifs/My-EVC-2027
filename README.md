@@ -1,94 +1,129 @@
-# EVC — Site vitrine + plateforme MY EVC
+# EVC — Site vitrine et plateforme MY EVC (Laravel)
 
-Un seul dépôt pour l'École Virtuelle des Créatifs :
+Application complète de l'École Virtuelle des Créatifs :
 
-- **le site vitrine** (racine du dépôt) : présentation de l'école, formations, pédagogie, réalisations,
-  actualités, préinscription, pages légales ;
-- **la plateforme MY EVC** (dossier `myevc/`) : espace étudiant, espace formateur et administration.
+- **le site vitrine** : 30 pages, actualités gérées depuis l'administration, préinscription en ligne avec
+  pièces jointes, suivi de candidature, vérification des certificats, formulaires de contact et newsletter ;
+- **MY EVC**, la plateforme de l'école, avec trois espaces :
+  - **étudiant** : accueil avec l'action du moment, cours et pointage de présence, projets (démarrer, rendre,
+    échanger avec le formateur), bibliothèque numérique, paiements et reçus PDF, certificat ;
+  - **formateur** : séances et appel, corrections, bibliothèque de sa formation ;
+  - **administration** : tableau de bord, préinscriptions jusqu'à l'activation du compte, étudiants,
+    formations et sessions, séances, projets et disponibilité, finances et relances, bibliothèque, actualités,
+    messages du site, certificats, utilisateurs et rôles, journal d'audit, paramètres.
 
-Tout est statique (HTML, CSS, JavaScript) : les pages s'ouvrent directement dans un navigateur.
+Technologies : **Laravel 12**, **Livewire 3** (écrans dynamiques sans rechargement), Blade, Bootstrap 5,
+spatie/laravel-permission (rôles), DomPDF (reçus, certificats, attestations). Le design reprend à l'identique
+la maquette, conservée dans [`maquette/`](maquette/).
 
-## Ouvrir la maquette
+## Installer en local
 
-| Pour voir…                 | Ouvrir                         |
-|----------------------------|--------------------------------|
-| Le site vitrine (accueil)  | `index.html`                   |
-| La plateforme MY EVC       | `myevc/index.html`             |
-| MY EVC en un seul fichier  | `myevc/myevc-autonome.html` (hors ligne, à envoyer tel quel) |
+Prérequis : PHP 8.2 ou plus (extensions `pdo_sqlite` ou `pdo_mysql`, `mbstring`, `gd`, `zip`, `intl`), Composer.
 
-Pour tester les liens entre les deux comme en ligne, servez la racine du dépôt :
-
-```
-python3 -m http.server 8000
-# puis http://localhost:8000/
-```
-
-**Démo MY EVC** : sur la connexion, choisissez Étudiant, Formateur ou Administration, puis « Se connecter ».
-Le bouton « Mode démo » (en bas de la barre latérale) permet de changer d'espace ou de profil à tout moment.
-
-## Un seul parcours
-
-| Depuis | Action | Destination |
-|---|---|---|
-| Site | « Espace My EVC » (barre de navigation) | `myevc/index.html` (connexion) |
-| Site | « Préinscription » | `preinscription.html` (formulaire unique) |
-| Site | Après l'envoi : « Suivre ma candidature » | `myevc/index.html#candidature` |
-| MY EVC | « Faire ma préinscription » | `preinscription.html` du site |
-| MY EVC | « Retour au site de l'EVC » | `index.html` du site |
-
-Les liens de MY EVC vers le site passent par la constante `SITE_URL` de `assets/app/js/noyau/liens.js`.
-
-## Organisation
-
-```
-/                     Pages du site vitrine (index.html, formations, actualités, légal…)
-myevc/                Plateforme MY EVC
-assets/site/          CSS, JS et images du site vitrine
-assets/app/           CSS, JS, polices et logos de MY EVC
-assets/vendor/        Bootstrap, thème Bootswatch du site, Font Awesome
-gabarits/             Blocs communs du site (en-tête, pied de page, styles) et modèle de page
-docs/                 Structure, chartes, parcours, intégration
-outils/               Scripts : blocs communs du site, version autonome de MY EVC
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite        # ou configurez MySQL dans .env
+php artisan migrate --seed            # tables + rôles + contenus + jeu de démonstration
+php artisan storage:link
+php artisan serve                     # http://localhost:8000
 ```
 
-Détail fichier par fichier : [`docs/STRUCTURE.md`](docs/STRUCTURE.md).
+### Comptes de démonstration (mot de passe : `password`)
 
-## Documentation
-
-- [`docs/STRUCTURE.md`](docs/STRUCTURE.md) : arborescence et rôle de chaque fichier
-- [`docs/CHARTE.md`](docs/CHARTE.md) : chartes graphiques (site vitrine et MY EVC)
-- [`docs/PARCOURS.md`](docs/PARCOURS.md) : parcours visiteur → candidat → étudiant, et parcours admin des projets
-- [`docs/INTEGRATION.md`](docs/INTEGRATION.md) : correspondance pour le développement (modèle de données, API)
-- [`docs/PLAN-LARAVEL.md`](docs/PLAN-LARAVEL.md) : plan de la version Laravel (phase 1)
-
-## Modifier l'en-tête, le menu ou le pied de page du site
-
-Ils sont écrits **une seule fois** dans `gabarits/` puis recopiés dans chaque page :
-
-| Fichier | Contenu |
+| Espace | Identifiant |
 |---|---|
-| `gabarits/styles.html` | Feuilles de style et polices (dans `<head>`) |
-| `gabarits/entete.html` | Icônes, barre du haut, menu principal, menu mobile |
-| `gabarits/pied.html` | Pied de page, barre mobile, bouton WhatsApp, visionneuse, scripts |
+| Étudiante (DG + CM + GIA) | `EVC-26-0142` (ou `aya.kouassi@evc.test`) |
+| Formateur DG | `marc.yao@evc.test` |
+| Super Administrateur | `admin@evc.test` |
+| Responsable financier | `finance@evc.test` |
+| Responsable pédagogique | `pedagogie@evc.test` |
 
-1. Modifier le gabarit (jamais le bloc dans une page : il serait écrasé).
-2. Lancer `python3 outils/construire-site.py`.
+En local, les e-mails (confirmation de préinscription, activation de compte, reçus…) sont écrits dans
+`storage/logs/laravel.log`.
 
-Dans les pages, chaque bloc est encadré par `<!-- bloc:nom -->` … `<!-- /bloc:nom -->`.
-Pour créer une page, partir de `gabarits/modele-page.html` (mode d'emploi en tête du fichier).
-Sur GitHub, chaque envoi vérifie que toutes les pages sont à jour (`--verifier`).
+## Mettre en ligne
 
-## Mettre à jour la version autonome de MY EVC
+1. Serveur : PHP 8.2+, MySQL 8, HTTPS. La racine web doit pointer sur le dossier **`public/`**.
+2. Fichier `.env` :
+   ```
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://www.ecolevirtuelledescreatifs.com
+   DB_CONNECTION=mysql
+   DB_HOST=…  DB_DATABASE=…  DB_USERNAME=…  DB_PASSWORD=…
+   MAIL_MAILER=smtp
+   MAIL_HOST=…  MAIL_PORT=587  MAIL_USERNAME=…  MAIL_PASSWORD=…
+   MAIL_FROM_ADDRESS=info@ecolevirtuelledescreatifs.com
+   ```
+3. Installation :
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   php artisan key:generate
+   php artisan migrate --seed --force     # en production : rôles et contenus uniquement, pas de démonstration
+   php artisan evc:admin                  # crée le compte Super Administrateur
+   php artisan storage:link
+   php artisan config:cache && php artisan route:cache && php artisan view:cache
+   ```
+4. Tâche planifiée (relances de paiement et rappels de cours, chaque jour à 8 h 30) :
+   ```
+   * * * * * cd /chemin/vers/my-evc && php artisan schedule:run >> /dev/null 2>&1
+   ```
+5. Envoi de fichiers : dans `php.ini`, `upload_max_filesize = 50M` et `post_max_size = 60M`
+   (dépôts de projets et ressources de la bibliothèque jusqu'à 50 Mo).
+6. Les dossiers `storage/` et `bootstrap/cache/` doivent être accessibles en écriture.
 
-Après une modification de `assets/app` ou de `myevc/index.html` :
+Ensuite, dans l'administration : **Paramètres** (e-mail, numéros WhatsApp, directeur, RCCM),
+**Formations et sessions** (tarifs, dates), puis **Utilisateurs et rôles** (équipe et formateurs).
+
+## Organisation du code
 
 ```
-python3 outils/construire-autonome.py
+app/
+  Http/Controllers/       Site (pages, actualités, formulaires), connexion, fichiers protégés, PDF
+  Livewire/               Écrans MY EVC : Etudiant/, Formateur/, Admin/, Shared/ (+ Concerns/ partagés)
+  Models/                 Formation, Promotion, Student, Candidature, Seance, Assignment, Payment, Resource…
+  Services/               AdmissionService, PaymentService, ProjectService, PresenceService, AvailabilityService
+  Notifications/          Avis (cloche + e-mail), CandidatureRecue, CompteActive
+  Console/Commands/       evc:admin, evc:relances
+database/
+  migrations/  seeders/   (data/ : formations, actualités et bibliothèque issues de la maquette)
+resources/views/
+  layouts/                site, myevc, auth
+  site/                   pages du site, actualités, suivi, vérification
+  livewire/               écrans MY EVC
+  components/             composants d'interface (indicateur, panneau, livre, fenêtre…)
+  pdf/                    reçu, certificat, attestation
+public/assets/            CSS, polices, images et scripts de la maquette (site et MY EVC)
+tests/Feature/            tests des parcours (site, connexion et droits, admission, projets, paiements…)
+maquette/                 maquette statique d'origine (référence visuelle)
+docs/                     plan, chartes, parcours
 ```
 
-## À compléter avant la mise en ligne
+Règles métier principales :
 
-- Formulaires du site (préinscription, newsletter) et de MY EVC : à brancher sur le serveur
-  (la préinscription envoie aujourd'hui un récapitulatif sur WhatsApp, voir `docs/INTEGRATION.md`)
-- Connexion réelle de MY EVC (la connexion actuelle est une démonstration)
-- Vrais témoignages (avec accord) et textes définitifs des actualités
+- **Paiements** : chaque inscription crée un échéancier (acompte, puis solde N jours après le début).
+  Les versements sont imputés aux échéances les plus anciennes ; chaque versement produit un reçu PDF numéroté.
+- **Présence** : le pointage est ouvert de 30 minutes avant le début jusqu'à la fin de la séance ;
+  au-delà de 10 minutes, la présence est notée « en retard ».
+- **Certificat** : formation soldée, tous les projets validés, assiduité d'au moins 80 %, séances terminées ;
+  le jury délivre le certificat, vérifiable sur le site avec sa référence.
+- **Disponibilité** : un étudiant est « libre » quand il n'a plus de projet à faire ; l'administration
+  peut donner un projet à tous les libres en un clic.
+
+## Tests
+
+```bash
+composer test
+```
+
+Les tests couvrent les pages du site, la préinscription, la connexion et les droits de chaque rôle,
+l'activation d'un candidat, les paiements, le cycle complet d'un projet, le pointage, la bibliothèque et
+la certification. Ils sont lancés automatiquement sur GitHub à chaque envoi.
+
+## Prochaines étapes (phase 2)
+
+Web TV, Studio Creative, RECO 60, QCM et évaluations, messagerie, créneaux et rendez-vous, stages et alumni,
+support, paiement en ligne (CinetPay ou autre agrégateur), communiqués multicanal. Voir
+[`docs/PLAN-LARAVEL.md`](docs/PLAN-LARAVEL.md).

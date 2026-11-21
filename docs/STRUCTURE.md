@@ -1,3 +1,5 @@
+> Ce document décrit la **maquette statique**, désormais rangée dans `maquette/`. L'application Laravel est décrite dans le README.
+
 # Structure du projet
 
 ```

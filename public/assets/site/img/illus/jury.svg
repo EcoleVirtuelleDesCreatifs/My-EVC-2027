@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 370" role="img" aria-label="Illustration : une affiche sur un chevalet évaluée par des membres du jury qui donnent des étoiles"><style>
+.fl{animation:f 6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.fl2{animation:f 7s ease-in-out -2s infinite;transform-box:fill-box;transform-origin:center}
+.fl3{animation:f 8s ease-in-out -4s infinite;transform-box:fill-box;transform-origin:center}
+.tw{animation:tw 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.dr{stroke-dasharray:420;stroke-dashoffset:420;animation:dr 4s ease-in-out infinite alternate}
+@keyframes f{50%{transform:translateY(-9px)}}
+@keyframes tw{50%{transform:scale(.6);opacity:.5}}
+@keyframes dr{to{stroke-dashoffset:0}}
+text{font-family:Montserrat,Arial,sans-serif}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.dr{stroke-dashoffset:0}}
+</style>
+<defs><filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#0E1A3C" flood-opacity=".16"/></filter></defs><circle cx="240" cy="190" r="168" fill="#F7F4EE"/>
+<!-- chevalet -->
+<path d="M180 300 L236 98 M300 300 L244 98 M240 98 L240 320" stroke="#0E1A3C" stroke-width="7" stroke-linecap="round"/>
+<g filter="url(#sh)"><rect x="160" y="70" width="160" height="196" rx="8" fill="#FFFFFF"/></g>
+<rect x="174" y="84" width="132" height="168" rx="4" fill="#F39822"/><circle cx="214" cy="140" r="34" fill="#FDC967"/><circle cx="270" cy="200" r="40" fill="#3563AD" opacity=".9"/>
+<rect x="186" y="214" width="70" height="10" rx="3" fill="#0E1A3C"/><rect x="186" y="230" width="46" height="7" rx="3" fill="#FFFFFF"/>
+<!-- jurés -->
+<g class="fl" filter="url(#sh)"><rect x="26" y="236" width="128" height="74" rx="14" fill="#FFFFFF"/><circle cx="54" cy="262" r="14" fill="#3563AD"/><rect x="76" y="254" width="62" height="7" rx="3" fill="#EFE8DA"/><g fill="#FDC967"><circle cx="80" cy="284" r="4.5"/><circle cx="94" cy="284" r="4.5"/><circle cx="108" cy="284" r="4.5"/><circle cx="122" cy="284" r="4.5"/><circle cx="136" cy="284" r="4.5"/></g><rect x="40" y="294" width="98" height="6" rx="3" fill="#EFE8DA"/></g>
+<g class="fl2" filter="url(#sh)"><rect x="326" y="226" width="128" height="74" rx="14" fill="#FFFFFF"/><circle cx="354" cy="252" r="14" fill="#F39822"/><rect x="376" y="244" width="62" height="7" rx="3" fill="#EFE8DA"/><g fill="#FDC967"><circle cx="380" cy="274" r="4.5"/><circle cx="394" cy="274" r="4.5"/><circle cx="408" cy="274" r="4.5"/><circle cx="422" cy="274" r="4.5"/><circle cx="436" cy="274" r="4.5" opacity=".35"/></g><rect x="340" y="284" width="98" height="6" rx="3" fill="#EFE8DA"/></g>
+<!-- bulle -->
+<g class="fl3" filter="url(#sh)"><path d="M318 76 h126 a14 14 0 0 1 14 14 v34 a14 14 0 0 1 -14 14 h-96 l-18 16 v-16 h-12 a14 14 0 0 1 -14 -14 v-34 a14 14 0 0 1 14 -14z" fill="#0E1A3C"/><text x="384" y="112" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">Concept fort !</text></g>
+<g class="fl2" filter="url(#sh)"><rect x="34" y="96" width="112" height="40" rx="20" fill="#FFFFFF"/><text x="90" y="121" font-size="12.5" font-weight="800" fill="#3563AD" text-anchor="middle">26 pros · 7 pays</text></g>
+<path class="tw" d="M130 55 Q131.5 60.5 137 62 Q131.5 63.5 130 69 Q128.5 63.5 123 62 Q128.5 60.5 130 55Z" fill="#FDC967"/><path class="tw" d="M420 334 Q421.5 338.5 426 340 Q421.5 341.5 420 346 Q418.5 341.5 414 340 Q418.5 338.5 420 334Z" fill="#F39822"/></svg>

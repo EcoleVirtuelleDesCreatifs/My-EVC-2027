@@ -1,0 +1,1 @@
+<button type="button" class="bk-slot" wire:click="voir({{ $r->id }})" title="{{ $r->title }}" aria-label="{{ $r->kicker() }} : {{ $r->title }}"><x-book :r="$r" :got="in_array($r->id, $got)" /></button>

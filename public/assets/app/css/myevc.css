@@ -1,0 +1,28 @@
+/* MY EVC (version Laravel) : compléments propres aux composants serveur. */
+.evc-modal { z-index: 1060; overflow-y: auto; }
+.evc-backdrop { z-index: 1055; }
+.evc-modal .modal-dialog { z-index: 1061; }
+.wire-loading { opacity: .55; pointer-events: none; transition: opacity .15s; }
+[wire\:loading] { display: none; }
+.table-actions { white-space: nowrap; text-align: right; }
+.link-plain { all: unset; cursor: pointer; font-weight: 600; color: var(--fg); }
+.link-plain:hover { color: var(--accent); }
+.filters-row .form-select, .filters-row .form-control { width: auto; min-width: 170px; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 991px) { .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 575px) { .stat-grid { grid-template-columns: 1fr 1fr; gap: 10px; } .filters-row .form-select, .filters-row .form-control { flex: 1 1 100%; } }
+.steps-line { display: flex; gap: 6px; }
+.steps-line span { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
+.steps-line span.on { background: var(--ok); }
+.timeline-c { list-style: none; padding: 0; margin: 0; }
+.timeline-c li { position: relative; padding: 0 0 16px 26px; }
+.timeline-c li::before { content: ""; position: absolute; left: 7px; top: 18px; bottom: 0; width: 2px; background: var(--line); }
+.timeline-c li:last-child::before { display: none; }
+.timeline-c .tc-dot { position: absolute; left: 0; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--soft); border: 2px solid var(--line-2); }
+.timeline-c .k-validation .tc-dot { background: var(--ok); border-color: var(--ok); }
+.timeline-c .k-reprise .tc-dot { background: var(--bad); border-color: var(--bad); }
+.timeline-c .k-depot .tc-dot { background: var(--info); border-color: var(--info); }
+.file-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 8px; background: var(--soft); font-size: 13px; text-decoration: none; color: var(--fg); }
+.file-chip:hover { color: var(--accent); }
+.matrix th, .matrix td { text-align: center; vertical-align: middle; }
+.matrix th:first-child, .matrix td:first-child { text-align: left; }

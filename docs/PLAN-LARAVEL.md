@@ -1,5 +1,10 @@
 # Plan Laravel — Phase 1 (cœur)
 
+> **État : phase 1 livrée** sur la branche `laravel` (voir le README pour l'installation).
+> Écarts par rapport au plan initial, choisis pour limiter les dépendances et faciliter l'hébergement :
+> connexion écrite directement avec Laravel (sans Fortify), journal d'audit maison (sans activitylog),
+> tests PHPUnit (sans Pest), CSS et scripts de la maquette servis tels quels depuis `public/assets` (sans Vite ni npm).
+
 Ce document sert de cahier des charges technique pour transformer la maquette (site vitrine + MY EVC)
 en application Laravel fonctionnelle. Il est écrit pour être repris tel quel dans une nouvelle session de travail.
 

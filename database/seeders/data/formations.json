@@ -1,0 +1,197 @@
+[
+ {
+  "code": "DG",
+  "name": "Infographie & Design Graphique",
+  "pitch": "Maîtriser Photoshop, Illustrator et InDesign pour créer identités visuelles, logotypes, chartes graphiques, étiquettes et affiches professionnelles.",
+  "price": 185000,
+  "deposit": 95000,
+  "months": 4,
+  "pay_rule": "95 000 FCFA à l'inscription, 90 000 FCFA à solder après 2 mois (le 20 du mois)",
+  "modules": [
+   {
+    "t": "Photoshop",
+    "ch": [
+     "Interface et calques",
+     "Retouche photo",
+     "Montages créatifs",
+     "Export web et print"
+    ]
+   },
+   {
+    "t": "Illustrator",
+    "ch": [
+     "Outils vectoriels",
+     "Plume et tracés",
+     "Typographie vectorielle",
+     "Pictogrammes"
+    ]
+   },
+   {
+    "t": "InDesign",
+    "ch": [
+     "Gabarits et pages types",
+     "Styles de paragraphe",
+     "Mise en page magazine"
+    ]
+   },
+   {
+    "t": "Identité visuelle",
+    "ch": [
+     "Plateforme de marque",
+     "Charte graphique",
+     "Déclinaisons"
+    ]
+   },
+   {
+    "t": "Création de logos",
+    "ch": [
+     "Recherche et croquis",
+     "Vectorisation",
+     "Présentation client"
+    ]
+   },
+   {
+    "t": "Affiches et supports publicitaires",
+    "ch": [
+     "Composition",
+     "Hiérarchie visuelle",
+     "Formats affichage"
+    ]
+   },
+   {
+    "t": "Packaging",
+    "ch": [
+     "Gabarits de découpe",
+     "Maquette 3D"
+    ]
+   },
+   {
+    "t": "Catalogues et magazines",
+    "ch": [
+     "Chemin de fer",
+     "Grilles de mise en page"
+    ]
+   },
+   {
+    "t": "Mise en page professionnelle",
+    "ch": [
+     "Prépresse",
+     "BAT et impression"
+    ]
+   }
+  ]
+ },
+ {
+  "code": "CM",
+  "name": "Community & Social Media Management",
+  "pitch": "Devenir expert des réseaux sociaux : créer du contenu viral, gérer des communautés et développer la présence digitale des marques.",
+  "price": 165000,
+  "deposit": 85000,
+  "months": 2,
+  "pay_rule": "85 000 FCFA à l'inscription, 80 000 FCFA à solder après 1 mois (le 15 du mois)",
+  "modules": [
+   {
+    "t": "Stratégie digitale",
+    "ch": [
+     "Positionnement",
+     "Analyse de cible",
+     "Personas",
+     "Objectifs SMART",
+     "Choix des plateformes",
+     "Stratégie éditoriale"
+    ]
+   },
+   {
+    "t": "Production de contenus",
+    "ch": [
+     "Publications",
+     "Visuels",
+     "Vidéos courtes",
+     "Scripts",
+     "Calendrier éditorial",
+     "Campagnes publicitaires"
+    ]
+   },
+   {
+    "t": "Reporting",
+    "ch": [
+     "Indicateurs de performance",
+     "Suivi des objectifs",
+     "Tableaux de bord",
+     "Bilans de campagnes"
+    ]
+   },
+   {
+    "t": "RECO 60",
+    "ch": [
+     "Identité du projet",
+     "Configuration des canaux",
+     "Plan d'action et exécution"
+    ]
+   }
+  ]
+ },
+ {
+  "code": "GIA",
+  "name": "Bureautique et informatique",
+  "pitch": "Maîtriser l'outil informatique et bureautique (Word, Excel, PowerPoint, Canva, services Google) et booster son employabilité en entreprise.",
+  "price": 265000,
+  "deposit": 140000,
+  "months": 2,
+  "pay_rule": "140 000 FCFA à l'inscription, puis 125 000 FCFA",
+  "modules": [
+   {
+    "t": "Informatique générale",
+    "ch": [
+     "Environnement informatique",
+     "Gestion des fichiers",
+     "Gestion des dossiers",
+     "Utilisation des périphériques"
+    ]
+   },
+   {
+    "t": "Microsoft Office",
+    "ch": [
+     "Word",
+     "Excel",
+     "PowerPoint"
+    ]
+   },
+   {
+    "t": "Outils numériques",
+    "ch": [
+     "Canva",
+     "Gmail",
+     "Google Drive",
+     "Google Docs",
+     "Google Sheets",
+     "Google Slides",
+     "Google Forms",
+     "Google Calendar",
+     "Google Meet"
+    ]
+   },
+   {
+    "t": "Travaux pratiques",
+    "ch": [
+     "Documents professionnels",
+     "Tableaux de gestion",
+     "Présentations",
+     "Formulaires",
+     "Rapports",
+     "Exercices bureautiques"
+    ]
+   },
+   {
+    "t": "RECO 60",
+    "ch": [
+     "Création du projet professionnel",
+     "Dépôt des livrables",
+     "Suivi des activités",
+     "Évaluation",
+     "Rapport final"
+    ]
+   }
+  ]
+ }
+]

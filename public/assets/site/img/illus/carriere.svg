@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 370" role="img" aria-label="Illustration : une porte ouverte sur la lumière, une mallette et un badge professionnel"><style>
+.fl{animation:f 6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.fl2{animation:f 7s ease-in-out -2s infinite;transform-box:fill-box;transform-origin:center}
+.fl3{animation:f 8s ease-in-out -4s infinite;transform-box:fill-box;transform-origin:center}
+.tw{animation:tw 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.dr{stroke-dasharray:420;stroke-dashoffset:420;animation:dr 4s ease-in-out infinite alternate}
+@keyframes f{50%{transform:translateY(-9px)}}
+@keyframes tw{50%{transform:scale(.6);opacity:.5}}
+@keyframes dr{to{stroke-dashoffset:0}}
+text{font-family:Montserrat,Arial,sans-serif}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.dr{stroke-dashoffset:0}}
+</style>
+<defs><filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#0E1A3C" flood-opacity=".16"/></filter></defs><circle cx="240" cy="190" r="168" fill="#F7F4EE"/>
+<!-- courbe de progression -->
+<path class="dr" d="M60 300 C120 290 150 250 190 240 S260 180 300 150 S380 90 420 70" stroke="#DCE6F5" stroke-width="10" fill="none" stroke-linecap="round"/>
+<!-- porte -->
+<rect x="196" y="96" width="132" height="226" rx="6" fill="#0E1A3C"/><rect x="206" y="106" width="112" height="216" fill="#FDC967"/>
+<path d="M206 106 L262 120 L262 336 L206 322Z" fill="#3563AD"/><circle cx="252" cy="226" r="4" fill="#FDC967"/>
+<path d="M206 322 L318 322 L388 352 L150 352Z" fill="#FDC967" opacity=".45"/>
+<!-- mallette -->
+<g class="fl"><rect x="120" y="262" width="92" height="66" rx="10" fill="#F39822"/><path d="M148 262 v-12 a6 6 0 0 1 6 -6 h24 a6 6 0 0 1 6 6 v12" stroke="#0E1A3C" stroke-width="6" fill="none"/><rect x="120" y="286" width="92" height="6" fill="#0E1A3C" opacity=".2"/><rect x="158" y="282" width="16" height="14" rx="3" fill="#0E1A3C"/></g>
+<!-- badge -->
+<g class="fl2" filter="url(#sh)"><path d="M380 70 v40" stroke="#0E1A3C" stroke-width="2"/><rect x="336" y="108" width="112" height="134" rx="14" fill="#FFFFFF"/><rect x="336" y="108" width="112" height="30" rx="14" fill="#3563AD"/><rect x="336" y="124" width="112" height="14" fill="#3563AD"/>
+<circle cx="392" cy="168" r="20" fill="#EFE8DA"/><circle cx="392" cy="162" r="8" fill="#0E1A3C"/><path d="M378 184 a14 12 0 0 1 28 0z" fill="#0E1A3C"/>
+<text x="392" y="210" font-size="11" font-weight="800" fill="#0E1A3C" text-anchor="middle">Infographiste</text><rect x="364" y="220" width="56" height="6" rx="3" fill="#EFE8DA"/></g>
+<g class="fl3" filter="url(#sh)"><rect x="28" y="120" width="138" height="44" rx="14" fill="#FFFFFF"/><circle cx="50" cy="142" r="10" fill="#1D8A52"/><path d="M45 142 l3.5 3.5 l6.5 -7" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="68" y="147" font-size="12" font-weight="700" fill="#0E1A3C">Contrat signé</text></g>
+<path class="tw" d="M110 73 Q111.5 78.5 117 80 Q111.5 81.5 110 87 Q108.5 81.5 103 80 Q108.5 78.5 110 73Z" fill="#FDC967"/><path class="tw" d="M452 294 Q453.5 298.5 458 300 Q453.5 301.5 452 306 Q450.5 301.5 446 300 Q450.5 298.5 452 294Z" fill="#F39822"/></svg>

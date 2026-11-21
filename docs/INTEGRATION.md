@@ -1,3 +1,5 @@
+> Correspondance établie pendant la maquette. L'implémentation réelle (Laravel 12 + Livewire 3) se trouve dans `app/` ; voir le README.
+
 # Intégration (Laravel / Vue.js)
 
 ## Principes
