@@ -1,0 +1,70 @@
+/* ==========================================================================
+   MY EVC · Jetons de design
+   --------------------------------------------------------------------------
+   Source unique de vérité pour la plateforme MY EVC (assets/app/css/app.css).
+   Changer une couleur ici la change dans tous les espaces : étudiant,
+   formateur et administration.
+   Le site vitrine a sa propre charte : assets/site/css/site.css.
+   ========================================================================== */
+
+/* ---------- Polices (servies en local, aucun appel externe) ---------- */
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 400; font-display: swap; src: url(../fonts/inter-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/inter-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/inter-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 700 800; font-display: swap; src: url(../fonts/inter-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 500; font-display: swap; src: url(../fonts/space-grotesk-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/space-grotesk-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 700; font-display: swap; src: url(../fonts/space-grotesk-latin-700-normal.woff2) format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url(../fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 600; font-display: swap; src: url(../fonts/jetbrains-mono-latin-600-normal.woff2) format("woff2"); }
+
+:root {
+  /* ---------- Couleurs de marque ---------- */
+  --evc-indigo-950: #110F2E;   /* fonds les plus profonds (pied de page, hero) */
+  --evc-indigo-900: #1E1B4B;   /* Indigo : structure, titres, barre latérale */
+  --evc-indigo-700: #2C2866;
+  --evc-indigo-600: #3A3591;
+  --evc-indigo-500: #4A4690;
+  --evc-indigo-300: #9A97C9;
+  --evc-indigo-100: #E4E2F3;   /* Lavande */
+  --evc-indigo-50:  #F4F3F8;   /* Brume : fond des interfaces */
+
+  --evc-corail-700: #C2401F;   /* corail lisible sur fond clair (texte, liens) */
+  --evc-corail-600: #DC4A27;   /* survol du bouton principal */
+  --evc-corail-500: #EE5A36;   /* Corail : action principale, accents */
+  --evc-corail-300: #FF8A6B;   /* Corail clair : accent sur fond indigo */
+  --evc-corail-100: #FDE3DB;
+  --evc-corail-50:  #FFF3EF;
+
+  --evc-ardoise: #5E6470;      /* textes secondaires */
+  --evc-blanc:   #FFFFFF;
+  --evc-papier:  #FAFAFC;      /* fond éditorial */
+  --evc-trait:   #E4E2F3;
+
+  /* ---------- États ---------- */
+  --evc-succes: #1F8F5A;  --evc-succes-soft: #E3F4EB;
+  --evc-alerte: #B26A00;  --evc-alerte-soft: #FDF1DC;
+  --evc-erreur: #C9302C;  --evc-erreur-soft: #FCE9E8;
+  --evc-info:   #3A3591;  --evc-info-soft:   #E9E8F7;
+
+  /* ---------- Repères des formations ---------- */
+  --evc-dg:  #C2255C;   /* Infographie & Design Graphique */
+  --evc-cm:  #2F6BD8;   /* Community & Social Media Management */
+  --evc-gia: #1F8F5A;   /* Bureautique & informatique */
+
+  /* ---------- Typographie ---------- */
+  --evc-font-titre: "Space Grotesk", "Inter", "Segoe UI", Arial, sans-serif;
+  --evc-font-texte: "Inter", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  --evc-font-mono:  "JetBrains Mono", ui-monospace, Menlo, monospace;
+
+  /* ---------- Formes ---------- */
+  --evc-r-xs: 9px;
+  --evc-r-sm: 12px;     /* boutons, champs */
+  --evc-r:    18px;     /* cartes, panneaux */
+  --evc-r-lg: 28px;     /* grands visuels */
+  --evc-ease: cubic-bezier(.2, .8, .2, 1);
+
+  --evc-ombre-sm: 0 1px 2px rgba(30, 27, 75, .05);
+  --evc-ombre:    0 1px 2px rgba(30, 27, 75, .05), 0 8px 24px -10px rgba(30, 27, 75, .14);
+  --evc-ombre-lg: 0 2px 6px rgba(30, 27, 75, .06), 0 28px 56px -16px rgba(30, 27, 75, .28);
+}

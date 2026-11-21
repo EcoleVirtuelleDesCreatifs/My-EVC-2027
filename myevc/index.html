@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MY EVC</title>
+<meta name="theme-color" content="#1E1B4B">
+<link rel="icon" type="image/svg+xml" href="../assets/app/img/symbole-couleur.svg">
+<meta name="description" content="MY EVC — plateforme de l'École Virtuelle des Créatifs : espace étudiant, espace formateur et administration (maquette).">
+<!-- Bibliothèques servies en local (fonctionne hors ligne) -->
+<link rel="stylesheet" href="../assets/vendor/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="../assets/vendor/fontawesome/css/all.min.css">
+<!-- Jetons de la charte MY EVC, puis styles de la plateforme -->
+<link rel="stylesheet" href="../assets/app/css/tokens.css">
+<link rel="stylesheet" href="../assets/app/css/app.css">
+<link rel="stylesheet" href="../assets/app/css/complements.css">
+</head>
+<body>
+<div id="app"></div>
+<div class="modal fade" id="modal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-5 d-flex align-items-center gap-1"></h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button></div><div class="modal-body"></div><div class="modal-footer"></div></div></div></div>
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toasts" style="z-index:1100"></div>
+<script src="../assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<!-- L'ordre compte : chaque fichier « ui-* » complète ou remplace les écrans définis avant lui. Voir docs/STRUCTURE.md -->
+<script src="../assets/app/js/noyau/brand-assets.js"></script>
+<script src="../assets/app/js/noyau/brand.js"></script>
+<script src="../assets/app/js/noyau/data.js"></script>
+<script src="../assets/app/js/noyau/core.js"></script>
+<script src="../assets/app/js/etudiant/student.js"></script>
+<script src="../assets/app/js/formateur/trainer.js"></script>
+<script src="../assets/app/js/admin/admin.js"></script>
+<script src="../assets/app/js/admin/billing.js"></script>
+<script src="../assets/app/js/admin/admission.js"></script>
+<script src="../assets/app/js/admin/live.js"></script>
+<script src="../assets/app/js/noyau/ui-core.js"></script>
+<script src="../assets/app/js/etudiant/ui-student.js"></script>
+<script src="../assets/app/js/formateur/ui-trainer.js"></script>
+<script src="../assets/app/js/admin/ui-admin.js"></script>
+<script src="../assets/app/js/public/ui-public.js"></script>
+<script src="../assets/app/js/admin/ui-projects.js"></script>
+<script src="../assets/app/js/admin/ui-admission.js"></script>
+<script src="../assets/app/js/admin/ui-promo.js"></script>
+<script src="../assets/app/js/admin/ui-projets.js"></script>
+<script src="../assets/app/js/etudiant/ui-qcm.js"></script>
+<script src="../assets/app/js/admin/ui-prog.js"></script>
+<script src="../assets/app/js/admin/ui-webtv.js"></script>
+<script src="../assets/app/js/admin/ui-presence.js"></script>
+<script src="../assets/app/js/admin/ui-pro.js"></script>
+<script src="../assets/app/js/admin/disponibilite.js"></script>
+<script src="../assets/app/js/etudiant/epure.js"></script>
+<script src="../assets/app/js/noyau/liens.js"></script>
+<script>
+try { S.theme = localStorage.getItem('myevc-theme') || 'auto'; S.navCollapsed = localStorage.getItem('myevc-nav') === '1'; } catch(_) {}
+applyTheme(); route();
+</script>
+</body>
+</html>
