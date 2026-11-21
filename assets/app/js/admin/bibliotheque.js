@@ -24,7 +24,7 @@ function libAdmRows(){
   if (!L.length) return `<div class="panel">${empty('Aucune ressource ne correspond à ces filtres.', 'fa-book-bookmark')}</div>`;
   return `<div class="panel tbl"><table class="table align-middle"><thead><tr><th>Ressource</th><th>Catégorie</th><th>Formation</th><th>Licence</th><th class="text-end">Téléch.</th><th>Ajoutée</th><th>Statut</th><th></th></tr></thead><tbody>
     ${L.map(r => `<tr>
-      <td><div class="lib-adm-t">${libIcon(r, 'sm')}<div class="lr-m"><b title="${esc(r.t)}">${esc(r.t)}</b><small>${esc(r.fmt)}${r.size !== '—' ? ` · ${esc(r.size)}` : ''}${r.key ? ' · <i class="fa-solid fa-star" title="Indispensable"></i> Indispensable' : ''}</small></div></div></td>
+      <td><div class="lib-adm-t">${libBook(r, 'xs')}<div class="lr-m"><b title="${esc(r.t)}">${esc(r.t)}</b><small>${esc(r.fmt)}${r.size !== '—' ? ` · ${esc(r.size)}` : ''}${r.key ? ' · <i class="fa-solid fa-star" title="Indispensable"></i> Indispensable' : ''}</small></div></div></td>
       <td class="small">${esc(libCat(r).l)}</td>
       <td>${libFChip(r)}</td>
       <td class="small">${esc(r.lic)}</td>

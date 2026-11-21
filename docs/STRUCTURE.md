@@ -99,7 +99,7 @@ Les scripts sont chargés **dans cet ordre** par `myevc/index.html`. Chaque écr
 | 24 | `admin/ui-pro.js` | Vue d'ensemble, compte à rebours de fin de formation |
 | 25 | **`admin/disponibilite.js`** | **v11 — Disponibilité des étudiants** (reçu / en cours / libre) |
 | 26 | **`etudiant/epure.js`** | **v11 — Espace étudiant minimaliste** (menu à 5 entrées, accueil) |
-| 27 | **`etudiant/bibliotheque.js`** | **Bibliothèque de l'étudiant** : logiciels, e-books, polices, modèles… à télécharger |
+| 27 | **`etudiant/bibliotheque.js`** | **Bibliothèque numérique** : livres rangés par rayon sur des étagères (logiciels, e-books, polices, modèles…), fiche du livre, « Mon étagère » |
 | 28 | **`admin/bibliotheque.js`** | **Bibliothèque : gestion** par l'administration (`a-bibliotheque`) et les formateurs (`t-bibliotheque`) |
 | 29 | **`noyau/liens.js`** | **v11 — Liens entre le site et la plateforme** |
 

@@ -1,73 +1,182 @@
 /* ==========================================================================
-   MY EVC — Bibliothèque
-   1. Icônes de catégorie (communes aux espaces)
-   2. Espace étudiant : en-tête, catégories, indispensables, cartes, fiche
-   3. Administration et formateurs : tableau de gestion
-   Toutes les couleurs viennent des jetons (tokens.css → app.css).
+   MY EVC — Bibliothèque numérique
+   1. Bois et fond de bibliothèque (thème clair et sombre)
+   2. Le livre : couverture, tranche, pages, couvertures par rayon, tailles
+   3. Hall d'entrée, rayons, bibliothèque, étagères et planches
+   4. Fiche d'un livre
+   5. Gestion (administration, formateurs) et liste compacte
+   Les couleurs d'interface viennent des jetons (tokens.css → app.css).
    ========================================================================== */
 
-/* ---------- 1. Icônes de catégorie ---------- */
-.lib-ic { flex: none; width: 44px; height: 44px; border-radius: 12px; display: inline-grid; place-items: center; font-size: 18px; }
-.lib-ic.sm { width: 34px; height: 34px; border-radius: 10px; font-size: 14px; }
-.lib-ic.t-lav  { background: var(--brand-soft);  color: var(--brand); }
-.lib-ic.t-cor  { background: var(--accent-soft); color: var(--accent); }
-.lib-ic.t-ok   { background: var(--ok-soft);     color: var(--ok); }
-.lib-ic.t-warn { background: var(--warn-soft);   color: var(--warn); }
-.lib-ic.t-info { background: var(--info-soft);   color: var(--info); }
+/* ---------- 1. Bois et fond ---------- */
+:root {
+  --wood-1: #C38D58; --wood-2: #9A6638; --wood-3: #6E4322;
+  --case-1: #F3EADB; --case-2: #E5D6BE; --case-grain: rgba(110, 67, 34, .035);
+  --paper-1: #F4EDDF; --paper-2: #DCD0BA;
+}
+:root[data-theme="dark"] {
+  --wood-1: #7E5634; --wood-2: #5E3E24; --wood-3: #3E2815;
+  --case-1: #24203D; --case-2: #191630; --case-grain: rgba(255, 255, 255, .02);
+  --paper-1: #D9D0BF; --paper-2: #A99E8A;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --wood-1: #7E5634; --wood-2: #5E3E24; --wood-3: #3E2815;
+  --case-1: #24203D; --case-2: #191630; --case-grain: rgba(255, 255, 255, .02);
+  --paper-1: #D9D0BF; --paper-2: #A99E8A;
+} }
 
-/* Ligne compacte (fiche formation) */
-.lib-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
-.lib-row:last-child { border-bottom: 0; }
-.lib-row .lr-t { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lib-row .lr-s { font-size: 12px; color: var(--muted); }
-.lib-rows-flush .lib-row { padding-left: 0; padding-right: 0; }
+/* ---------- 2. Le livre ---------- */
+.book {
+  --w: 132px; --h: 190px;
+  position: relative; flex: none; display: flex; flex-direction: column;
+  width: var(--w); height: var(--h); padding: 14px 12px 10px 19px;
+  color: #fff; text-align: left; border-radius: 2px 6px 6px 2px; isolation: isolate;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.28) 0, rgba(0,0,0,.08) 5px, rgba(255,255,255,.16) 7px, rgba(255,255,255,0) 14px, rgba(255,255,255,.05) 60%, rgba(0,0,0,.08)),
+    var(--c);
+  box-shadow:
+    inset -1px 0 0 rgba(255,255,255,.18),
+    2px 1px 0 var(--paper-1), 3px 2px 0 var(--paper-2), 4px 2px 0 var(--paper-1), 5px 3px 0 var(--paper-2),
+    0 14px 18px -10px rgba(0,0,0,.55);
+}
+.book > span { position: relative; z-index: 1; }
+.bk-k { font: 700 8.5px/1.2 var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--a); }
+.bk-t { margin-top: 10px; font: 700 13.5px/1.22 var(--f-display); letter-spacing: -.01em; text-wrap: balance;
+  display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.bk-f { margin-top: auto; display: flex; justify-content: space-between; gap: 6px; font: 700 8.5px/1 var(--f-body); letter-spacing: .12em; text-transform: uppercase; opacity: .82; }
+.bk-band { position: absolute !important; left: 6px; right: 0; bottom: 26px; height: 3px; background: var(--a); opacity: .9; z-index: 0 !important; }
+.bk-new { position: absolute !important; right: 8px; bottom: 34px; transform: rotate(-8deg); background: #EE5A36; color: #fff;
+  font: 700 8.5px/1 var(--f-body); letter-spacing: .08em; text-transform: uppercase; padding: 4px 7px; border-radius: 999px; box-shadow: 0 3px 6px rgba(0,0,0,.3); z-index: 2 !important; }
+.bk-mark { position: absolute !important; top: -3px; right: 14px; width: 17px; height: 26px; background: #F2C76E; color: #4A3510;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%); display: flex; justify-content: center; padding-top: 5px; font-size: 8px; z-index: 2 !important; }
 
-/* ---------- 2. Espace étudiant ---------- */
-.lib-head { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
-.lib-tools { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-.lib-tools .search-field { min-width: 220px; }
+/* Couvertures par rayon (avec illustration : titre sur 3 lignes au plus) */
+.bk-logiciels .bk-t, .bk-tutos .bk-t, .bk-polices .bk-t { -webkit-line-clamp: 3; }
+.bk-ebooks::before { content: ""; position: absolute; inset: 8px 7px 8px 14px; border: 1px solid color-mix(in srgb, var(--a) 55%, transparent); border-radius: 2px; pointer-events: none; }
+.bk-logiciels .bk-art { margin-top: 12px; width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; background: rgba(255,255,255,.12); color: var(--a); font-size: 17px; }
+.bk-polices { color: var(--a); }
+.bk-polices .bk-k { opacity: .75; }
+.bk-polices .bk-aa { margin-top: 8px; font: 700 46px/1 Georgia, "Times New Roman", serif; letter-spacing: -.02em; }
+.bk-polices .bk-t { margin-top: 6px; }
+.bk-graphiques .bk-shapes { position: absolute !important; inset: 0 0 0 6px; overflow: hidden; z-index: 0 !important; pointer-events: none; }
+.bk-graphiques .bk-shapes i { position: absolute; display: block; background: var(--a); }
+.bk-graphiques .bk-shapes i:nth-child(1) { width: 90px; height: 90px; border-radius: 50%; right: -30px; top: -26px; opacity: .45; }
+.bk-graphiques .bk-shapes i:nth-child(2) { width: 46px; height: 46px; right: 18px; top: 52px; transform: rotate(18deg); opacity: .3; border-radius: 6px; }
+.bk-graphiques .bk-shapes i:nth-child(3) { width: 22px; height: 22px; border-radius: 50%; right: 70px; top: 18px; opacity: .55; }
+.bk-modeles::before { content: ""; position: absolute; inset: 0 0 0 6px; pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,.10) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.10) 1px, transparent 1px); background-size: 14px 14px; }
+.bk-supports .bk-band { top: 0; bottom: auto; height: 9px; }
+.bk-supports .bk-k { margin-top: 6px; }
+.bk-tutos .bk-play { margin-top: 12px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--a); color: #fff; font-size: 13px; padding-left: 2px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--a) 22%, transparent); }
 
-.lib-cats { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 20px; scrollbar-width: thin; }
-.lib-cat { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
-  border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-weight: 600; font-size: 13px; transition: border-color .2s, color .2s, background .2s; }
-.lib-cat:hover { color: var(--fg); border-color: var(--line-2); }
-.lib-cat:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 2px; }
-.lib-cat .cnt { font-variant-numeric: tabular-nums; opacity: .7; font-size: 12px; }
-.lib-cat.on { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
-.lib-cat.on .cnt { opacity: .85; }
+/* Tailles */
+.bk-lg { --w: 210px; --h: 300px; padding: 22px 18px 16px 28px; }
+.bk-lg .bk-k { font-size: 10px; }
+.bk-lg .bk-t { font-size: 21px; margin-top: 14px; -webkit-line-clamp: 6; }
+.bk-lg .bk-f { font-size: 10px; }
+.bk-lg .bk-band { bottom: 38px; height: 4px; }
+.bk-lg.bk-polices .bk-aa { font-size: 76px; }
+.bk-lg .bk-art { width: 56px; height: 56px; font-size: 24px; }
+.bk-lg .bk-new { bottom: 50px; font-size: 10px; }
+.bk-xs { --w: 30px; --h: 42px; padding: 0; display: grid; place-items: center; color: var(--a); font-size: 12px; border-radius: 2px 4px 4px 2px;
+  box-shadow: 1px 1px 0 var(--paper-1), 2px 1px 0 var(--paper-2), 0 4px 6px -3px rgba(0,0,0,.45); }
+.bk-xs::before { display: none; }
 
-.lib-key { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 18px 20px; margin-bottom: 22px; box-shadow: var(--shadow-sm); }
-.lk-h { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
-.lk-h h2 { font-size: 16px; margin: 0; }
-.lk-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
-.lk-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r-sm); background: var(--soft); min-width: 0; }
-.lk-item .lr-m { min-width: 0; }
-.lk-item .lr-t { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lk-item .lr-s { font-size: 12px; color: var(--muted); }
+/* ---------- 3. Hall d'entrée, rayons, bibliothèque ---------- */
+.lib-hall { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: end; margin-bottom: 22px; padding: 28px 30px 0;
+  border-radius: var(--r-lg); color: #fff; overflow: hidden;
+  background: radial-gradient(620px 320px at 88% 0%, rgba(238,90,54,.30), transparent 62%), linear-gradient(135deg, #1E1B4B, #2B2766 58%, #3A3591); }
+.lh-txt { padding-bottom: 28px; min-width: 0; }
+.lh-k { display: inline-flex; align-items: center; gap: 8px; font: 700 11px/1 var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: #FF8A6B; }
+.lib-hall h2 { color: #fff; font-size: clamp(22px, 2.6vw, 30px); margin: 10px 0 6px; }
+.lib-hall p { color: rgba(255,255,255,.72); margin: 0; font-size: 14px; }
+.lh-search { display: flex; gap: 10px; margin-top: 20px; max-width: 640px; flex-wrap: wrap; }
+.lh-search .search-field { min-width: 220px; }
+.lh-search .form-control, .lh-search .form-select { background-color: #fff; border-color: transparent; color: #14182B; height: 46px; }
+.lh-search .form-select { width: auto; flex: 0 0 auto; }
+.lh-stack { position: relative; display: flex; align-items: flex-end; gap: 4px; padding: 0 18px 14px; }
+.lh-stack::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 14px; border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, var(--wood-1), var(--wood-2) 60%, var(--wood-3)); }
+.lh-stack .book { --w: 104px !important; --h: 150px !important; padding: 11px 9px 8px 15px; }
+.lh-stack .book .bk-t { font-size: 11px; -webkit-line-clamp: 4; }
+.lh-stack .book:nth-child(2) { --h: 162px !important; }
+.lh-stack .book:nth-child(4) { transform: rotate(9deg); transform-origin: bottom left; margin-left: 6px; }
+.lh-stack .bk-new, .lh-stack .bk-mark { display: none; }
 
-.lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
-.lib-item { display: flex; flex-direction: column; gap: 10px; padding: 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface);
-  box-shadow: var(--shadow-sm); cursor: pointer; min-width: 0; transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
-.lib-item:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
-.lib-item:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 2px; }
-.li-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-.li-badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-.li-t { font: 600 15px/1.3 var(--f-body); margin: 0; color: var(--fg); }
-.li-d { font-size: 13px; color: var(--muted); margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.li-meta { display: flex; flex-wrap: wrap; gap: 6px; }
-.li-meta span { font-size: 11.5px; font-weight: 600; color: var(--muted); background: var(--soft); border-radius: 6px; padding: 2px 8px; }
-.li-foot { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 4px; }
+.lib-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 20px; align-items: start; }
+.lib-rayons { position: sticky; top: calc(var(--top-h, 72px) + 16px); display: flex; flex-direction: column; gap: 2px; padding: 8px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow-sm); }
+.ray { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--fg); }
+.ray i { width: 18px; text-align: center; color: var(--muted); }
+.ray b { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ray:hover { background: var(--soft); }
+.ray:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+.ray.on { background: var(--brand); color: var(--brand-ink); }
+.ray.on i, .ray.on b { color: inherit; }
+.ray:last-child { margin-top: 6px; }
 
-/* Fiche d'une ressource (modale) */
+.bookcase { position: relative; min-height: 320px; padding: 20px 20px 10px; border: 10px solid var(--wood-2); border-top-width: 14px; border-radius: 12px;
+  background: repeating-linear-gradient(90deg, var(--case-grain) 0 2px, transparent 2px 11px), linear-gradient(180deg, var(--case-1), var(--case-2));
+  box-shadow: inset 0 0 34px rgba(0,0,0,.16), inset 0 8px 12px -6px rgba(0,0,0,.35), var(--shadow); }
+
+.shelf { margin-bottom: 28px; }
+.shelf:last-child { margin-bottom: 14px; }
+.shelf-h, .case-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 0 4px; }
+.shelf-h h2, .case-h h2 { font-size: 16px; margin: 0; color: var(--fg); }
+.case-h { margin-bottom: 4px; }
+.case-h h2 { font-size: 19px; }
+.shelf-plate { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 3px; font: 700 10px/1 var(--f-body); letter-spacing: .12em; text-transform: uppercase;
+  color: #4A3510; background: linear-gradient(180deg, #F1D99B, #C9A45A); box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 1px 2px rgba(0,0,0,.25); }
+.shelf-n { font-size: 12.5px; color: var(--muted); }
+.shelf-all { all: unset; cursor: pointer; margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--fg); padding: 4px 8px; border-radius: 8px; }
+.shelf-all:hover { background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.shelf-all i { font-size: 10px; }
+
+.shelf-books { display: flex; align-items: flex-end; gap: 16px; overflow-x: auto; padding: 22px 12px 0; scroll-snap-type: x proximity; scrollbar-width: thin; }
+.shelf-plank { position: relative; height: 18px; margin: 0 -6px; border-radius: 3px;
+  background: linear-gradient(180deg, var(--wood-1), var(--wood-2) 62%, var(--wood-3));
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.18), 0 12px 14px -9px rgba(0,0,0,.5); }
+.shelf-plank::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: rgba(0,0,0,.18); border-radius: 0 0 3px 3px; }
+
+/* Bibliothèque pleine page : une planche toutes les 240 px */
+.shelf-grid { --row: 240px; display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); grid-auto-rows: var(--row); align-items: end; justify-items: center;
+  column-gap: 12px; row-gap: 0; padding: 0 6px;
+  background-image: linear-gradient(180deg, transparent calc(100% - 18px), var(--wood-1) calc(100% - 18px), var(--wood-2) calc(100% - 7px), var(--wood-3) calc(100% - 5px), rgba(0,0,0,.25) 100%);
+  background-size: 100% var(--row); }
+.shelf-grid .bk-slot { margin-bottom: 18px; }
+
+.bk-slot { all: unset; cursor: pointer; flex: none; display: block; transform-origin: bottom center; transition: transform .25s var(--ease); scroll-snap-align: start; }
+.bk-slot:hover, .bk-slot:focus-visible { transform: translateY(-12px) rotate(-1.2deg); }
+.bk-slot:focus-visible .book { outline: 3px solid #FF8A6B; outline-offset: 3px; }
+
+.case-empty { text-align: center; padding: 48px 20px 40px; color: var(--muted); }
+.case-empty i { font-size: 34px; margin-bottom: 12px; color: var(--wood-2); }
+.case-empty h3 { font-size: 17px; color: var(--fg); margin-bottom: 4px; }
+.case-empty p { margin-bottom: 14px; }
+
+/* ---------- 4. Fiche d'un livre ---------- */
+.bk-fiche { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 30px; align-items: start; }
+.bf-cover { padding: 6px 10px 20px 0; perspective: 1000px; }
+.bf-cover .book { transform: rotateY(-14deg); transform-origin: left center; box-shadow: inset -1px 0 0 rgba(255,255,255,.18), 3px 1px 0 var(--paper-1), 5px 2px 0 var(--paper-2), 7px 3px 0 var(--paper-1), 9px 4px 0 var(--paper-2), 0 24px 30px -14px rgba(0,0,0,.6); }
+.bf-info h3 { font-size: 22px; margin: 0 0 8px; }
+.bf-desc { color: var(--muted); }
+.bf-act { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 20px; }
 .lib-dl { border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; }
 .lib-dl-row { display: flex; justify-content: space-between; gap: 16px; padding: 9px 14px; font-size: 13.5px; border-bottom: 1px solid var(--line); }
 .lib-dl-row:last-child { border-bottom: 0; }
 .lib-dl-row span { color: var(--muted); }
 .lib-dl-row b { font-weight: 600; text-align: right; }
 
-/* ---------- 3. Gestion (administration, formateurs) ---------- */
+/* ---------- 5. Gestion et liste compacte ---------- */
+.lib-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.lib-row:last-child { border-bottom: 0; }
+.lib-row .lr-m { min-width: 0; }
+.lib-row .lr-t { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-row .lr-s { font-size: 12px; color: var(--muted); }
+.lib-rows-flush .lib-row { padding-left: 0; padding-right: 0; }
+
 .lib-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
-.lib-adm-t { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.lib-adm-t { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .lib-adm-t .lr-m { min-width: 0; }
 .lib-adm-t b { display: block; font-weight: 600; max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lib-adm-t small { color: var(--muted); }
@@ -76,9 +185,27 @@
 .form-check-card:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); }
 .form-check-card .form-check-input { margin-top: 0; }
 
-@media (max-width: 991px) { .lib-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* ---------- Écrans moyens et mobiles ---------- */
+@media (max-width: 1199px) { .lh-stack { display: none; } .lib-hall { grid-template-columns: 1fr; } }
+@media (max-width: 991px) {
+  .lib-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lib-layout { display: block; }
+  .lib-rayons { position: static; flex-direction: row; overflow-x: auto; margin-bottom: 14px; scrollbar-width: thin; }
+  .ray { flex: none; padding: 8px 12px; }
+  .ray:last-child { margin-top: 0; }
+}
 @media (max-width: 575px) {
-  .lib-grid { grid-template-columns: 1fr; }
-  .lib-tools .form-select { max-width: none !important; flex: 1 1 100%; }
+  .lib-hall { padding: 22px 18px 0; }
+  .lh-search .form-select { flex: 1 1 100%; }
+  .bookcase { padding: 14px 10px 6px; border-width: 7px; border-top-width: 10px; }
+  .book { --w: 108px !important; --h: 156px !important; padding: 11px 9px 8px 15px; }
+  .book .bk-t { font-size: 11.5px; }
+  .bk-polices .bk-aa { font-size: 36px; }
+  .bk-lg { --w: 170px !important; --h: 244px !important; }
+  .bk-xs { --w: 30px !important; --h: 42px !important; padding: 0; }
+  .shelf-books { gap: 12px; padding: 18px 8px 0; }
+  .shelf-grid { --row: 200px; grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); }
+  .bk-fiche { grid-template-columns: 1fr; gap: 18px; }
+  .bf-cover { display: flex; justify-content: center; padding-right: 0; }
   .lib-src { grid-template-columns: 1fr; }
 }
