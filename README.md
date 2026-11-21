@@ -58,7 +58,8 @@ Détail fichier par fichier : [`docs/STRUCTURE.md`](docs/STRUCTURE.md).
 - [`docs/STRUCTURE.md`](docs/STRUCTURE.md) : arborescence et rôle de chaque fichier
 - [`docs/CHARTE.md`](docs/CHARTE.md) : chartes graphiques (site vitrine et MY EVC)
 - [`docs/PARCOURS.md`](docs/PARCOURS.md) : parcours visiteur → candidat → étudiant, et parcours admin des projets
-- [`docs/INTEGRATION.md`](docs/INTEGRATION.md) : correspondance pour le développement (Laravel / Vue.js)
+- [`docs/INTEGRATION.md`](docs/INTEGRATION.md) : correspondance pour le développement (modèle de données, API)
+- [`docs/PLAN-LARAVEL.md`](docs/PLAN-LARAVEL.md) : plan de la version Laravel (phase 1)
 
 ## Modifier l'en-tête, le menu ou le pied de page du site
 
