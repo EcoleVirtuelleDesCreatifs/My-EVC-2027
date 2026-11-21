@@ -11,7 +11,7 @@ class Formation extends Model
 
     protected function casts(): array
     {
-        return ['modules' => 'array', 'active' => 'boolean'];
+        return ['modules' => 'array', 'active' => 'boolean', 'has_reco' => 'boolean'];
     }
 
     public function enrollments(): HasMany

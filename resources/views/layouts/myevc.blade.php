@@ -2,7 +2,9 @@
   $u = auth()->user();
   $groups = \App\Support\Menu::groups($u);
   $current = request()->route()?->getName();
-  $parents = ['etudiant.projet' => 'etudiant.projets', 'admin.candidature' => 'admin.candidatures', 'admin.etudiant' => 'admin.etudiants', 'formateur.appel' => 'formateur.seances'];
+  $parents = ['etudiant.projet' => 'etudiant.projets', 'admin.candidature' => 'admin.candidatures', 'admin.etudiant' => 'admin.etudiants', 'formateur.appel' => 'formateur.seances',
+    'etudiant.video' => 'etudiant.webtv', 'etudiant.quiz.passer' => 'etudiant.quiz', 'formateur.reco.fiche' => 'formateur.reco', 'admin.reco.fiche' => 'admin.reco',
+    'formateur.quiz.editeur' => 'formateur.quiz', 'admin.quiz.editeur' => 'admin.quiz'];
   $isOn = fn ($r) => $current === $r || ($parents[$current] ?? null) === $r;
   $unread = $u->unreadNotifications()->count();
   $spaceName = ['etudiant' => 'Espace étudiant', 'formateur' => 'Espace formateur', 'admin' => 'Administration'][$u->space()];

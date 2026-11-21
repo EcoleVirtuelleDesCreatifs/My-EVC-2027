@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\CandidatureFile;
+use App\Models\Message;
+use App\Models\RecoEntry;
+use App\Models\RecoProject;
+use App\Models\Video;
 use App\Models\Resource;
 use App\Models\SubmissionFile;
 use Illuminate\Http\Request;
@@ -46,5 +50,46 @@ class FileController extends Controller
         abort_unless(Storage::disk('local')->exists($file->path), 404);
 
         return Storage::disk('local')->download($file->path, $file->original_name);
+    }
+
+    /** Lecture d'une vidéo hébergée (avec reprise : requêtes « Range » gérées). */
+    public function video(Request $request, Video $video)
+    {
+        $u = $request->user();
+        $allowed = ($u->student && $video->published && $u->student->formations->contains('id', $video->formation_id))
+            || in_array($video->formation_id, $u->taughtFormationIds()) || $u->can('admin.webtv');
+        abort_unless($allowed && $video->path && Storage::disk('local')->exists($video->path), 403);
+
+        return response()->file(Storage::disk('local')->path($video->path), ['Content-Type' => 'video/mp4', 'Cache-Control' => 'private, max-age=3600']);
+    }
+
+    public function message(Request $request, Message $message)
+    {
+        abort_unless($message->conversation->participants()->where('users.id', $request->user()->id)->exists() && $message->file_path, 403);
+        abort_unless(Storage::disk('local')->exists($message->file_path), 404);
+
+        return Storage::disk('local')->download($message->file_path, $message->file_name);
+    }
+
+    public function recoEntry(Request $request, RecoEntry $entry)
+    {
+        $this->authorizeReco($request, $entry->project);
+        abort_unless($entry->file_path && Storage::disk('local')->exists($entry->file_path), 404);
+
+        return Storage::disk('local')->download($entry->file_path, $entry->file_name);
+    }
+
+    public function recoReport(Request $request, RecoProject $project)
+    {
+        $this->authorizeReco($request, $project);
+        abort_unless($project->report_path && Storage::disk('local')->exists($project->report_path), 404);
+
+        return Storage::disk('local')->download($project->report_path, $project->report_name);
+    }
+
+    private function authorizeReco(Request $request, RecoProject $p): void
+    {
+        $u = $request->user();
+        abort_unless($u->id === $p->student->user_id || in_array($p->formation_id, $u->taughtFormationIds()) || $u->can('admin.reco'), 403);
     }
 }

@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([RolesSeeder::class, ContentSeeder::class, LibrarySeeder::class]);
         if (! app()->isProduction()) {
-            $this->call(DemoSeeder::class);
+            $this->call([DemoSeeder::class, Phase2DemoSeeder::class]);
         }
     }
 }

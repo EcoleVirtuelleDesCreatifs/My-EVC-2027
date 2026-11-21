@@ -40,3 +40,19 @@
   });
   window.addEventListener('scroll', () => { const t = document.querySelector('.topbar'); if (t) t.classList.toggle('scrolled', window.scrollY > 4); }, {passive: true});
 })();
+
+/* Boutons d'action de la barre du haut : ils sont rendus hors du composant Livewire de la page,
+   on relaie donc le clic (wire:click="methode" ou "methode(args)") vers ce composant. */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.topbar [wire\\:click], .t-cta[wire\\:click]');
+  if (!btn || btn.closest('#view') || !window.Livewire) return;
+  const root = document.querySelector('#view [wire\\:id]');
+  if (!root) return;
+  e.preventDefault();
+  const m = btn.getAttribute('wire:click').trim().match(/^([\w$]+)\s*(?:\((.*)\))?$/s);
+  if (!m) return;
+  let args = [];
+  try { args = m[2] ? JSON.parse('[' + m[2].replace(/'/g, '"') + ']') : []; } catch (_) { args = []; }
+  const wire = Livewire.find(root.getAttribute('wire:id'));
+  if (m[1] === '$set') wire.$set(...args); else wire.$call(m[1], ...args);
+});

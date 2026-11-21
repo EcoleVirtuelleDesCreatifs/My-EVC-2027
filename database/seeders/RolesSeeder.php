@@ -14,19 +14,19 @@ class RolesSeeder extends Seeder
     public const MODULES = [
         'dashboard' => 'Tableau de bord', 'candidatures' => 'Préinscriptions', 'etudiants' => 'Étudiants',
         'formations' => 'Formations, sessions et séances', 'projets' => 'Projets', 'finances' => 'Finances',
-        'bibliotheque' => 'Bibliothèque', 'actualites' => 'Actualités', 'messages' => 'Messages du site',
+        'bibliotheque' => 'Bibliothèque', 'webtv' => 'Web TV', 'reco' => 'RECO 60', 'qcm' => 'Quiz (QCM)', 'actualites' => 'Actualités', 'messages' => 'Messages du site',
         'certificats' => 'Certificats', 'utilisateurs' => 'Utilisateurs et rôles', 'audit' => 'Journal d\'audit',
         'parametres' => 'Paramètres',
     ];
 
     public const ROLES = [
         'Super Administrateur' => '*',
-        'Direction Générale' => ['dashboard', 'candidatures', 'etudiants', 'formations', 'projets', 'finances', 'bibliotheque', 'actualites', 'messages', 'certificats', 'audit'],
-        'Responsable pédagogique' => ['dashboard', 'candidatures', 'etudiants', 'formations', 'projets', 'bibliotheque', 'certificats'],
+        'Direction Générale' => ['dashboard', 'candidatures', 'etudiants', 'formations', 'projets', 'finances', 'bibliotheque', 'webtv', 'reco', 'qcm', 'actualites', 'messages', 'certificats', 'audit'],
+        'Responsable pédagogique' => ['dashboard', 'candidatures', 'etudiants', 'formations', 'projets', 'bibliotheque', 'webtv', 'reco', 'qcm', 'certificats'],
         'Responsable administratif' => ['dashboard', 'candidatures', 'etudiants', 'formations', 'actualites', 'messages'],
         'Responsable financier' => ['dashboard', 'etudiants', 'finances'],
         'Responsable certification' => ['dashboard', 'etudiants', 'certificats'],
-        'Responsable communication' => ['dashboard', 'actualites', 'messages', 'bibliotheque'],
+        'Responsable communication' => ['dashboard', 'actualites', 'messages', 'bibliotheque', 'webtv'],
         'Support technique' => ['dashboard', 'etudiants', 'audit', 'parametres'],
     ];
 

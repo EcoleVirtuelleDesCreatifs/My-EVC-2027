@@ -20,6 +20,7 @@ class ContentSeeder extends Seeder
                 'name' => $f['name'], 'short_name' => $short[$f['code']], 'pitch' => $f['pitch'], 'price' => $f['price'],
                 'deposit' => $f['deposit'], 'months' => $f['months'], 'pay_rule' => $f['pay_rule'], 'modules' => $f['modules'],
                 'balance_after_days' => $balanceDays[$f['code']], 'color' => $colors[$f['code']], 'position' => $i,
+                'has_reco' => in_array($f['code'], ['CM', 'GIA'], true),
             ]);
         }
 

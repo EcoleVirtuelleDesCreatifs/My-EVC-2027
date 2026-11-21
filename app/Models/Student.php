@@ -71,6 +71,21 @@ class Student extends Model
         return $this->hasMany(Certificate::class);
     }
 
+    public function recoProjects(): HasMany
+    {
+        return $this->hasMany(RecoProject::class);
+    }
+
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class);
+    }
+
+    public function videoProgress(): HasMany
+    {
+        return $this->hasMany(VideoProgress::class);
+    }
+
     public function getNameAttribute(): string
     {
         return $this->user->name;
@@ -181,12 +196,21 @@ class Student extends Model
         $projectsOk = $projects->isNotEmpty() && $projects->every(fn ($a) => $a->status === 'valide');
         $seancesDone = $this->progress($f->id) >= 100;
 
-        return [
+        $checks = [
             'Formation soldée' => $paid,
             'Tous les projets validés' => $projectsOk,
             'Assiduité d\'au moins '.self::MIN_ATTENDANCE.' %' => $this->attendanceRate($f->id) >= self::MIN_ATTENDANCE,
             'Toutes les séances réalisées' => $seancesDone,
         ];
+        $required = Quiz::where('formation_id', $f->id)->where('published', true)->where('required', true)->with('attempts')->get();
+        if ($required->isNotEmpty()) {
+            $checks['Quiz obligatoires réussis'] = $required->every(fn (Quiz $q) => $q->attempts->where('student_id', $this->id)->whereNotNull('submitted_at')->max('percent') >= $q->pass_percent);
+        }
+        if ($f->has_reco) {
+            $checks['RECO 60 évalué'] = $this->recoProjects()->where('formation_id', $f->id)->where('status', 'evalue')->exists();
+        }
+
+        return $checks;
     }
 
     public function isEligible(Formation $f): bool

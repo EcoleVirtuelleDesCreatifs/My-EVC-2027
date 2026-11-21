@@ -180,11 +180,21 @@ GET  /myevc/recus/{payment}.pdf
 - Chaque page s'affiche sans erreur, sur ordinateur et sur mobile, thème clair et sombre (MY EVC).
 - Comptes de démonstration documentés (étudiant, formateur, admin).
 
-## 9. Phases suivantes (hors phase 1)
+## 9. Phase 2 (livrée)
 
-Web TV, Studio Creative, RECO 60, QCM et évaluations, messagerie, créneaux et rendez-vous, stages et alumni,
-support (tickets), activité en direct, communiqués multicanal (e-mail, WhatsApp), rapports avancés,
-**paiement en ligne** (CinetPay ou autre agrégateur).
+| Module | Étudiant | Formateur | Administration (permission) |
+|---|---|---|---|
+| Web TV | catalogue par module, lecteur avec reprise et progression, « vue » à 90 % | publier fichier MP4 / YouTube / Vimeo, replay d'une séance passée | idem, toutes formations (`admin.webtv`) |
+| RECO 60 | lancement, jour X/60, étapes, indicateurs, journal avec preuves, rapport final | suivi (inactifs 7 j, rapports à évaluer), commentaires, évaluation, réouverture | idem (`admin.reco`) |
+| Quiz (QCM) | liste, passage chronométré, reprise, correction détaillée | création, questions 2 à 6 réponses, ordre, publication, résultats, nouvel essai | idem (`admin.qcm`) |
+| Messagerie | formateurs de ses formations + équipe | ses étudiants, formateurs, équipe | tout le monde |
+
+Tables : `videos`, `video_progress`, `reco_projects`, `reco_entries`, `quizzes`, `quiz_questions`,
+`quiz_attempts`, `conversations`, `conversation_user` (dernier message lu), `messages` ; colonne
+`formations.has_reco`. Les conditions du certificat intègrent les quiz obligatoires et le RECO 60.
+
+Phases suivantes : Studio Creative, créneaux et rendez-vous, stages et alumni, support, paiement en ligne,
+communiqués multicanal.
 
 ## 10. Hébergement
 

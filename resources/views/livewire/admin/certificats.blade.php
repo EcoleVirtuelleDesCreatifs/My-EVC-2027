@@ -8,14 +8,14 @@
   </div>
   @if ($onglet === 'eligibles')
     <div class="panel tbl" wire:loading.class="wire-loading">
-      <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Étudiant</th><th>Formation</th>@foreach (['Soldé', 'Projets', 'Assiduité', 'Séances'] as $h)<th class="text-center">{{ $h }}</th>@endforeach<th></th></tr></thead><tbody>
+      <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Étudiant</th><th>Formation</th><th>Conditions</th><th></th></tr></thead><tbody>
         @forelse ($eligibles as $row)
           <tr><td><a class="link-plain" href="{{ route('admin.etudiant', $row['s']) }}" wire:navigate>{{ $row['s']->user->name }}</a><div class="small muted mono">{{ $row['s']->matricule }}</div></td><td><x-fchip :code="$row['f']->code" /></td>
-            @foreach ($row['checks'] as $label => $ok)<td class="text-center" title="{{ $label }}"><i class="fa-solid {{ $ok ? 'fa-circle-check text-success' : 'fa-circle-xmark muted' }}"></i></td>@endforeach
+            <td><div class="d-flex flex-wrap gap-1">@foreach ($row['checks'] as $label => $ok)<span class="pill {{ $ok ? 'p-ok' : 'p-mute' }} nodot" title="{{ $label }}"><i class="fa-solid {{ $ok ? 'fa-check' : 'fa-xmark' }} me-1"></i>{{ \Illuminate\Support\Str::before($label, ' d') }}</span>@endforeach</div></td>
             <td class="table-actions">@if ($row['ok'] === count($row['checks']))<button class="btn btn-primary btn-sm" wire:click="ouvrir({{ $row['s']->id }}, {{ $row['f']->id }})"><i class="fa-solid fa-award"></i>Délivrer</button>
               @else<button class="btn btn-ghost btn-sm" wire:click="ouvrir({{ $row['s']->id }}, {{ $row['f']->id }})" title="Délivrer malgré les conditions manquantes (décision du jury)">Décision du jury</button>@endif</td></tr>
         @empty
-          <tr><td colspan="7"><x-empty title="Aucun étudiant en attente" /></td></tr>
+          <tr><td colspan="4"><x-empty title="Aucun étudiant en attente" /></td></tr>
         @endforelse
       </tbody></table></div>
     </div>

@@ -22,3 +22,11 @@ if (! function_exists('jour')) {
         };
     }
 }
+
+if (! function_exists('gestion_route')) {
+    /** Route d'un écran de gestion partagé : « formateur.xxx » ou « admin.xxx » selon l'espace de l'utilisateur. */
+    function gestion_route(string $name, mixed $params = []): string
+    {
+        return route((auth()->user()?->space() === 'formateur' ? 'formateur.' : 'admin.').$name, $params);
+    }
+}

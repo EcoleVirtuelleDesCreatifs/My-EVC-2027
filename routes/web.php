@@ -9,6 +9,7 @@ use App\Http\Controllers\Site\PageController;
 use App\Livewire\Admin;
 use App\Livewire\Etudiant;
 use App\Livewire\Formateur;
+use App\Livewire\Gestion;
 use App\Livewire\Shared;
 use Illuminate\Support\Facades\Route;
 
@@ -51,6 +52,11 @@ Route::prefix('myevc')->group(function () {
         Route::get('/notifications', Shared\Notifications::class)->name('myevc.notifications');
         Route::get('/profil', Shared\Profil::class)->name('myevc.profil');
         Route::get('/fichiers/depot/{file}', [FileController::class, 'submission'])->name('fichier.depot');
+        Route::get('/messagerie', Shared\Messagerie::class)->name('myevc.messagerie');
+        Route::get('/messagerie/fichier/{message}', [FileController::class, 'message'])->name('fichier.message');
+        Route::get('/videos/{video}/fichier', [FileController::class, 'video'])->name('fichier.video');
+        Route::get('/reco/fichier/{entry}', [FileController::class, 'recoEntry'])->name('fichier.reco');
+        Route::get('/reco/rapport/{project}', [FileController::class, 'recoReport'])->name('fichier.reco.rapport');
 
         /* ---------- Espace étudiant ---------- */
         Route::prefix('etudiant')->name('etudiant.')->middleware('role:etudiant')->group(function () {
@@ -62,6 +68,11 @@ Route::prefix('myevc')->group(function () {
             Route::get('/bibliotheque/{resource}/telecharger', [FileController::class, 'resource'])->name('ressource');
             Route::get('/paiements', Etudiant\Paiements::class)->name('paiements');
             Route::get('/certificat', Etudiant\Certificat::class)->name('certificat');
+            Route::get('/videos', Etudiant\WebTv::class)->name('webtv');
+            Route::get('/videos/{video}', Etudiant\Video::class)->name('video');
+            Route::get('/reco-60', Etudiant\Reco::class)->name('reco');
+            Route::get('/quiz', Etudiant\Quiz::class)->name('quiz');
+            Route::get('/quiz/{quiz}', Etudiant\QuizPassage::class)->name('quiz.passer');
         });
 
         /* ---------- Espace formateur ---------- */
@@ -71,6 +82,11 @@ Route::prefix('myevc')->group(function () {
             Route::get('/seances/{seance}/appel', Formateur\Appel::class)->name('appel');
             Route::get('/corrections', Formateur\Corrections::class)->name('corrections');
             Route::get('/bibliotheque', Admin\Bibliotheque::class)->name('bibliotheque');
+            Route::get('/webtv', Gestion\WebTv::class)->name('webtv');
+            Route::get('/reco-60', Gestion\Reco::class)->name('reco');
+            Route::get('/reco-60/{project}', Gestion\RecoFiche::class)->name('reco.fiche');
+            Route::get('/quiz', Gestion\Quiz::class)->name('quiz');
+            Route::get('/quiz/{quiz}', Gestion\QuizEditeur::class)->name('quiz.editeur');
         });
 
         /* ---------- Administration ---------- */
@@ -93,6 +109,11 @@ Route::prefix('myevc')->group(function () {
             Route::get('/utilisateurs', Admin\Utilisateurs::class)->middleware('can:admin.utilisateurs')->name('utilisateurs');
             Route::get('/audit', Admin\Audit::class)->middleware('can:admin.audit')->name('audit');
             Route::get('/parametres', Admin\Parametres::class)->middleware('can:admin.parametres')->name('parametres');
+            Route::get('/webtv', Gestion\WebTv::class)->middleware('can:admin.webtv')->name('webtv');
+            Route::get('/reco-60', Gestion\Reco::class)->middleware('can:admin.reco')->name('reco');
+            Route::get('/reco-60/{project}', Gestion\RecoFiche::class)->middleware('can:admin.reco')->name('reco.fiche');
+            Route::get('/quiz', Gestion\Quiz::class)->middleware('can:admin.qcm')->name('quiz');
+            Route::get('/quiz/{quiz}', Gestion\QuizEditeur::class)->middleware('can:admin.qcm')->name('quiz.editeur');
         });
 
         /* ---------- Documents PDF ---------- */
