@@ -47,10 +47,21 @@ my-evc-2027/
 │       ├── bootswatch-cerulean/      Thème Bootstrap du site vitrine (Bootswatch Cerulean 5.3)
 │       └── fontawesome/              Font Awesome 6.5.2 (MY EVC)
 │
+├── gabarits/                         BLOCS COMMUNS DU SITE (source unique)
+│   ├── styles.html                   Feuilles de style et polices (<head>)
+│   ├── entete.html                   Icônes SVG, barre du haut, menu principal, menu mobile
+│   ├── pied.html                     Pied de page, barre mobile, WhatsApp, visionneuse, scripts
+│   └── modele-page.html              Point de départ d'une nouvelle page
+│
 ├── docs/                             Cette documentation
-└── outils/
-    └── construire-autonome.py        Génère myevc/myevc-autonome.html
+├── outils/
+│   ├── construire-site.py            Recopie les gabarits dans les pages (--verifier : contrôle seul)
+│   └── construire-autonome.py        Génère myevc/myevc-autonome.html
+└── .github/workflows/verifier.yml    Vérifie à chaque envoi que les pages sont à jour
 ```
+
+Dans chaque page du site, les blocs communs sont encadrés par `<!-- bloc:nom -->` et
+`<!-- /bloc:nom -->` : ils sont générés depuis `gabarits/`, ne pas les modifier dans la page.
 
 Le site charge Montserrat depuis Google Fonts ; MY EVC fonctionne entièrement hors ligne.
 

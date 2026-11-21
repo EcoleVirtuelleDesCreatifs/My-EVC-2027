@@ -1,0 +1,16 @@
+name: Vérifier le site
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  blocs-communs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: En-tête, pied de page et styles à jour dans toutes les pages
+        run: python3 outils/construire-site.py --verifier

@@ -6,7 +6,7 @@ Un seul dépôt pour l'École Virtuelle des Créatifs :
   actualités, préinscription, pages légales ;
 - **la plateforme MY EVC** (dossier `myevc/`) : espace étudiant, espace formateur et administration.
 
-Tout est statique (HTML, CSS, JavaScript), sans étape de compilation.
+Tout est statique (HTML, CSS, JavaScript) : les pages s'ouvrent directement dans un navigateur.
 
 ## Ouvrir la maquette
 
@@ -46,8 +46,9 @@ myevc/                Plateforme MY EVC
 assets/site/          CSS, JS et images du site vitrine
 assets/app/           CSS, JS, polices et logos de MY EVC
 assets/vendor/        Bootstrap, thème Bootswatch du site, Font Awesome
+gabarits/             Blocs communs du site (en-tête, pied de page, styles) et modèle de page
 docs/                 Structure, chartes, parcours, intégration
-outils/               Génération de la version autonome de MY EVC
+outils/               Scripts : blocs communs du site, version autonome de MY EVC
 ```
 
 Détail fichier par fichier : [`docs/STRUCTURE.md`](docs/STRUCTURE.md).
@@ -58,6 +59,23 @@ Détail fichier par fichier : [`docs/STRUCTURE.md`](docs/STRUCTURE.md).
 - [`docs/CHARTE.md`](docs/CHARTE.md) : chartes graphiques (site vitrine et MY EVC)
 - [`docs/PARCOURS.md`](docs/PARCOURS.md) : parcours visiteur → candidat → étudiant, et parcours admin des projets
 - [`docs/INTEGRATION.md`](docs/INTEGRATION.md) : correspondance pour le développement (Laravel / Vue.js)
+
+## Modifier l'en-tête, le menu ou le pied de page du site
+
+Ils sont écrits **une seule fois** dans `gabarits/` puis recopiés dans chaque page :
+
+| Fichier | Contenu |
+|---|---|
+| `gabarits/styles.html` | Feuilles de style et polices (dans `<head>`) |
+| `gabarits/entete.html` | Icônes, barre du haut, menu principal, menu mobile |
+| `gabarits/pied.html` | Pied de page, barre mobile, bouton WhatsApp, visionneuse, scripts |
+
+1. Modifier le gabarit (jamais le bloc dans une page : il serait écrasé).
+2. Lancer `python3 outils/construire-site.py`.
+
+Dans les pages, chaque bloc est encadré par `<!-- bloc:nom -->` … `<!-- /bloc:nom -->`.
+Pour créer une page, partir de `gabarits/modele-page.html` (mode d'emploi en tête du fichier).
+Sur GitHub, chaque envoi vérifie que toutes les pages sont à jour (`--verifier`).
 
 ## Mettre à jour la version autonome de MY EVC
 
