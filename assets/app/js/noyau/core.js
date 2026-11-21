@@ -43,7 +43,7 @@ const MFA_ROLES = ['Super Administrateur','Direction Générale','Responsable fi
 const S = {
   role:null, profile:'GIA+DG+CM', fsel:'ALL', adminRole:'Super Administrateur', theme:'auto', ui:{},
   students: buildStudents(), preins: clone(PREINS), perms: clone(PERM_DEFAULT), mfa:[...MFA_ROLES],
-  sessions: clone(SESSIONS), trainers: clone(TRAINERS), docs: clone(DOCS), tickets: clone(ADMIN_TICKETS), audit: clone(AUDIT), offers: clone(OFFERS),
+  sessions: clone(SESSIONS), trainers: clone(TRAINERS), docs: clone(DOCS), lib: clone(LIB), tickets: clone(ADMIN_TICKETS), audit: clone(AUDIT), offers: clone(OFFERS),
   comms:[{d:'21/10/2026 10:00',t:'Rappel échéance du 31 octobre',target:'Étudiants avec solde',ch:['WhatsApp','Email'],n:38,read:'71 %'},{d:'18/10/2026 09:00',t:'Studio Creative édition 7 : inscriptions ouvertes',target:'Étudiants DG',ch:['Notification','Email'],n:54,read:'83 %'},{d:'15/10/2026 16:00',t:'Fermeture exceptionnelle le 1er novembre',target:'Tous',ch:['Notification','SMS'],n:212,read:'92 %'}],
   anotifs:[{id:'an1',kind:'done',t:'Logo — Maquis "Chez Tantie Rose"',txt:'Kevin Ahoua a terminé et publié son projet « Logo — Maquis "Chez Tantie Rose" »',d:'Il y a 25 min',read:false},{id:'an2',kind:'start',t:'Affiche — Festival Abidjan Urban Arts',txt:'Ibrahim Sanogo a commencé son projet « Affiche — Festival Abidjan Urban Arts »',d:'Il y a 1 h',read:false},{id:'an3',kind:'done',t:'Tableau de gestion des stocks — Excel',txt:'Nadia Touré a terminé et publié son projet « Tableau de gestion des stocks — Excel »',d:'Hier',read:true}],
   formations: clone(F), st:null, videos: clone(VIDEOS), slots: clone(SLOTS), ardv: clone(RDV_REQ),

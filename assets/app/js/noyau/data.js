@@ -152,15 +152,6 @@ const SEED = {
     {q:"Dans InDesign, à quoi sert une page type (gabarit) ?",o:["Exporter en PDF","Appliquer des éléments communs à plusieurs pages","Changer la langue du document","Compresser les images"],a:1},
     {q:"Quel mode colorimétrique utiliser pour un document imprimé ?",o:['RVB','CMJN','Niveaux de gris uniquement','HSL'],a:1},
     {q:"Que sont les fonds perdus ?",o:["Une marge de sécurité intérieure","Une extension de l'image au-delà du format de coupe","Un type de papier","Un calque masqué"],a:1}],
-  library:[
-    {t:'Charte graphique — guide complet',type:'pdf',f:'DG',cat:'Supports PDF',size:'4,2 Mo'},{t:'Raccourcis Illustrator',type:'pdf',f:'DG',cat:'Supports PDF',size:'640 Ko'},
-    {t:'Gabarit magazine 8 pages',type:'zip',f:'DG',cat:'Modèles professionnels',size:'18 Mo'},{t:'Tutoriel — la plume en 10 minutes',type:'vid',f:'DG',cat:'Vidéos pédagogiques',size:'12 min'},
-    {t:'Plan de communication — modèle',type:'doc',f:'CM',cat:'Modèles professionnels',size:'220 Ko'},{t:'Calendrier éditorial',type:'xls',f:'CM',cat:'Tableaux Excel',size:'96 Ko'},
-    {t:'Reporting mensuel — trame',type:'ppt',f:'CM',cat:'Présentations PowerPoint',size:'2,1 Mo'},{t:'Meta Ads Manager pas à pas',type:'tuto',f:'CM',cat:'Tutoriels',size:'14 étapes'},
-    {t:'Exercices Excel — niveau 1 à 3',type:'xls',f:'GIA',cat:'Exercices',size:'410 Ko'},{t:'Word — documents professionnels',type:'pdf',f:'GIA',cat:'Supports PDF',size:'1,8 Mo'},
-    {t:'Google Workspace — prise en main',type:'vid',f:'GIA',cat:'Vidéos pédagogiques',size:'25 min'},{t:'Modèle de rapport de stage',type:'doc',f:'GIA',cat:'Modèles professionnels',size:'150 Ko'},
-    {t:"Guide de l'étudiant EVC 2026",type:'pdf',f:'ALL',cat:'Guides étudiants',size:'2,4 Mo'},{t:'Règlement intérieur',type:'pdf',f:'ALL',cat:'Règlement intérieur',size:'380 Ko'},
-    {t:'Modèle de rapport de fin de formation',type:'doc',f:'ALL',cat:'Modèles professionnels',size:'190 Ko'}],
   notifs:[{id:'n-c1',cat:'Communiqués',f:null,t:'Bienvenue à la session Octobre 2026',body:"Bonjour Aya, toute l'équipe de l'École Virtuelle des Créatifs vous souhaite la bienvenue. Pensez à installer vos logiciels et à choisir votre créneau dès cette semaine.",ch:['Espace étudiant','Email','WhatsApp'],comm:true,d:'06/10/2026',read:true},
     {id:'n1',cat:'Travaux',f:'DG',t:'Correction disponible : « Mise en page — magazine 8 pages » est à reprendre.',d:'Il y a 2 h',read:false},
     {id:'n2',cat:'Séances',f:'GIA',t:'Rappel : Google Forms — questionnaires aujourd\'hui à 17h00.',d:'Il y a 3 h',read:false},
@@ -247,6 +238,57 @@ const PREINS = [
   {id:'PRE-0309',name:'Fanta Koné',email:'fanta.kone@mail.com',phone:'+225 07 11 98 45 30',country:"Côte d'Ivoire",city:'Abobo',birth:'15/09/2002',f:['DG'],session:'Session Janvier 2027',d:'14/10/2026',src:'TikTok',docs:true,
     level:'BTS Infographie',situation:'Étudiante',equip:'Ordinateur portable + connexion internet',mode:'Présentiel (Abidjan)',
     motivation:"Compléter mon BTS par la pratique professionnelle, participer au Studio Creative et constituer un pressbook solide pour intégrer une agence.",exp:'Stage en imprimerie (3 mois)',link:'behance.net/fantak',stage:'actif',test:{score:18,d:'15/10/2026'},pay:{amount:150000,mode:'Espèces',ref:'REC-2026-1488',d:'16/10/2026'},mat:'EVC-26-0188'}];
+/* ---------- Bibliothèque : ressources à télécharger ----------
+   Partagée par tous les espaces : l'administration et les formateurs publient, les étudiants
+   voient les ressources de LEURS formations (f) et celles destinées à tous (f:'ALL').
+   cat : logiciels · ebooks · polices · graphiques · modeles · supports · tutos
+   url : lien vers le site officiel (logiciels, polices) ; sinon fichier hébergé par l'EVC.
+   d   : date d'ajout en jours par rapport à aujourd'hui (négatif = passé) ; dl : téléchargements. */
+const LIB = [
+  /* Design graphique */
+  {id:'lb-01',f:'DG',cat:'logiciels',t:'Adobe Creative Cloud (Photoshop, Illustrator, InDesign)',desc:"Installateur officiel des logiciels Adobe utilisés en cours. Licence étudiante à tarif réduit : demandez la procédure à la relation étudiants.",fmt:'Site officiel',size:'—',lic:'Licence payante',os:'Windows · macOS',url:'https://www.adobe.com/fr/creativecloud.html',key:true,d:-40,dl:212},
+  {id:'lb-02',f:'DG',cat:'logiciels',t:'GIMP',desc:"Alternative libre à Photoshop pour la retouche photo, si vous n'avez pas encore de licence Adobe.",fmt:'Site officiel',size:'≈ 300 Mo',lic:'Libre et gratuit',os:'Windows · macOS · Linux',url:'https://www.gimp.org/downloads/',d:-40,dl:64},
+  {id:'lb-03',f:'DG',cat:'logiciels',t:'Inkscape',desc:'Alternative libre à Illustrator pour le dessin vectoriel et les logos.',fmt:'Site officiel',size:'≈ 120 Mo',lic:'Libre et gratuit',os:'Windows · macOS · Linux',url:'https://inkscape.org/fr/release/',d:-40,dl:51},
+  {id:'lb-04',f:'DG',cat:'ebooks',t:"La carte de l'infographiste",desc:'Le livret de démarrage EVC : outils, formats, couleurs, typographie et raccourcis essentiels.',fmt:'PDF',size:'3,6 Mo',lic:'Réservé EVC',key:true,d:-38,dl:188},
+  {id:'lb-05',f:'DG',cat:'ebooks',t:'Les bases de la typographie',desc:'Familles, graisses, interlignage, hiérarchie : choisir et associer les polices dans une mise en page.',fmt:'PDF',size:'5,1 Mo',lic:'Réservé EVC',d:-20,dl:97},
+  {id:'lb-06',f:'DG',cat:'ebooks',t:'Préparer un fichier pour l’imprimeur',desc:'CMJN, fonds perdus, résolution, profils ICC : la check-list avant d’envoyer un BAT.',fmt:'PDF',size:'2,2 Mo',lic:'Réservé EVC',d:-6,dl:41},
+  {id:'lb-07',f:'DG',cat:'polices',t:'Pack de 30 polices libres pour le design',desc:'Sélection de polices Google Fonts utilisables gratuitement en commercial : Montserrat, Poppins, Playfair Display, Bebas Neue…',fmt:'ZIP · TTF',size:'24 Mo',lic:'Libre (OFL)',os:'Windows · macOS',d:-30,dl:143},
+  {id:'lb-08',f:'DG',cat:'graphiques',t:'Mockups : affiches, flyers et cartes de visite',desc:'15 maquettes Photoshop à objets dynamiques pour présenter vos créations à un client.',fmt:'ZIP · PSD',size:'420 Mo',lic:'Réservé EVC',d:-14,dl:76},
+  {id:'lb-09',f:'DG',cat:'graphiques',t:'Mockups packaging et T-shirts',desc:'Boîtes, sachets, bouteilles et textiles en haute définition.',fmt:'ZIP · PSD',size:'610 Mo',lic:'Réservé EVC',d:-3,dl:18},
+  {id:'lb-10',f:'DG',cat:'modeles',t:'Gabarit magazine 8 pages',desc:'Fichier InDesign avec grille, styles de paragraphe et pages types, utilisé en séance.',fmt:'ZIP · INDD',size:'18 Mo',lic:'Réservé EVC',d:-25,dl:88},
+  {id:'lb-11',f:'DG',cat:'supports',t:'Raccourcis Illustrator',desc:'Fiche à imprimer des raccourcis clavier indispensables.',fmt:'PDF',size:'640 Ko',lic:'Réservé EVC',d:-33,dl:120},
+  {id:'lb-12',f:'DG',cat:'tutos',t:'La plume en 10 minutes',desc:'Tutoriel vidéo pour maîtriser l’outil Plume dans Illustrator.',fmt:'Vidéo',size:'12 min',lic:'Réservé EVC',d:-28,dl:134},
+
+  /* Community management */
+  {id:'lb-20',f:'CM',cat:'logiciels',t:'Canva',desc:'Création rapide de visuels, stories et carrousels pour les réseaux sociaux.',fmt:'Site officiel',size:'—',lic:'Gratuit (version Pro payante)',os:'Web · Windows · macOS · mobile',url:'https://www.canva.com/fr_fr/telecharger/',key:true,d:-40,dl:176},
+  {id:'lb-21',f:'CM',cat:'logiciels',t:'CapCut',desc:'Montage de vidéos courtes (Reels, TikTok, Shorts) avec sous-titres automatiques.',fmt:'Site officiel',size:'≈ 500 Mo',lic:'Gratuit',os:'Windows · macOS · mobile',url:'https://www.capcut.com/fr-fr/',key:true,d:-40,dl:154},
+  {id:'lb-22',f:'CM',cat:'logiciels',t:'Meta Business Suite',desc:'Gérer et programmer les publications Facebook et Instagram, lire les statistiques.',fmt:'Site officiel',size:'—',lic:'Gratuit',os:'Web · mobile',url:'https://business.facebook.com/',d:-40,dl:98},
+  {id:'lb-23',f:'CM',cat:'ebooks',t:'Construire sa stratégie social media',desc:'De l’analyse de la cible au calendrier éditorial : la méthode enseignée à l’EVC, avec exemples ivoiriens.',fmt:'PDF',size:'6,4 Mo',lic:'Réservé EVC',key:true,d:-35,dl:131},
+  {id:'lb-24',f:'CM',cat:'ebooks',t:'100 idées de publications',desc:'Idées de contenus classées par objectif : notoriété, engagement, vente.',fmt:'PDF',size:'1,9 Mo',lic:'Réservé EVC',d:-5,dl:47},
+  {id:'lb-25',f:'CM',cat:'modeles',t:'Calendrier éditorial',desc:'Tableau prêt à remplir : dates, réseaux, formats, statut et indicateurs.',fmt:'XLSX',size:'96 Ko',lic:'Réservé EVC',d:-30,dl:162},
+  {id:'lb-26',f:'CM',cat:'modeles',t:'Plan de communication',desc:'Trame Word pour présenter une stratégie à un client.',fmt:'DOCX',size:'220 Ko',lic:'Réservé EVC',d:-30,dl:84},
+  {id:'lb-27',f:'CM',cat:'modeles',t:'Reporting mensuel',desc:'Présentation PowerPoint pour restituer les résultats d’une campagne.',fmt:'PPTX',size:'2,1 Mo',lic:'Réservé EVC',d:-18,dl:59},
+  {id:'lb-28',f:'CM',cat:'graphiques',t:'Templates de stories et carrousels',desc:'60 modèles Canva et Photoshop aux formats 1080 × 1920 et 1080 × 1350.',fmt:'ZIP · PSD + liens Canva',size:'180 Mo',lic:'Réservé EVC',d:-10,dl:72},
+  {id:'lb-29',f:'CM',cat:'tutos',t:'Meta Ads Manager pas à pas',desc:'Créer, cibler et suivre une campagne publicitaire en 14 étapes.',fmt:'Vidéo',size:'22 min',lic:'Réservé EVC',d:-22,dl:90},
+
+  /* Bureautique et informatique */
+  {id:'lb-40',f:'GIA',cat:'logiciels',t:'Microsoft 365 (Word, Excel, PowerPoint)',desc:'Installateur officiel de la suite Office utilisée en cours.',fmt:'Site officiel',size:'—',lic:'Licence payante',os:'Windows · macOS',url:'https://www.microsoft.com/fr-fr/microsoft-365',key:true,d:-40,dl:141},
+  {id:'lb-41',f:'GIA',cat:'logiciels',t:'LibreOffice',desc:'Suite bureautique libre et compatible avec les fichiers Word, Excel et PowerPoint.',fmt:'Site officiel',size:'≈ 350 Mo',lic:'Libre et gratuit',os:'Windows · macOS · Linux',url:'https://fr.libreoffice.org/download/telecharger-libreoffice/',d:-40,dl:66},
+  {id:'lb-42',f:'GIA',cat:'logiciels',t:'Google Chrome',desc:'Navigateur recommandé pour Gmail, Drive, Docs, Sheets et Meet.',fmt:'Site officiel',size:'≈ 100 Mo',lic:'Gratuit',os:'Windows · macOS · mobile',url:'https://www.google.com/intl/fr/chrome/',key:true,d:-40,dl:118},
+  {id:'lb-43',f:'GIA',cat:'ebooks',t:'Excel : les 50 formules essentielles',desc:'SOMME.SI, RECHERCHEV, SI imbriqués, tableaux croisés dynamiques… avec exemples.',fmt:'PDF',size:'4,3 Mo',lic:'Réservé EVC',key:true,d:-26,dl:157},
+  {id:'lb-44',f:'GIA',cat:'ebooks',t:'Word : rédiger des documents professionnels',desc:'Styles, sommaires automatiques, publipostage et mise en page.',fmt:'PDF',size:'1,8 Mo',lic:'Réservé EVC',d:-26,dl:93},
+  {id:'lb-45',f:'GIA',cat:'modeles',t:'Pack CV et lettres de motivation',desc:'8 modèles Word sobres et modernes, prêts à personnaliser.',fmt:'ZIP · DOCX',size:'3,4 Mo',lic:'Réservé EVC',d:-4,dl:39},
+  {id:'lb-46',f:'GIA',cat:'modeles',t:'Factures, devis et bons de commande',desc:'Modèles Excel avec calculs automatiques (TVA, totaux, remises).',fmt:'XLSX',size:'310 Ko',lic:'Réservé EVC',d:-15,dl:61},
+  {id:'lb-47',f:'GIA',cat:'supports',t:'Exercices Excel — niveau 1 à 3',desc:'Énoncés et corrigés des exercices faits en séance.',fmt:'XLSX',size:'410 Ko',lic:'Réservé EVC',d:-21,dl:102},
+  {id:'lb-48',f:'GIA',cat:'tutos',t:'Google Workspace — prise en main',desc:'Gmail, Drive, Docs, Sheets et Meet en 25 minutes.',fmt:'Vidéo',size:'25 min',lic:'Réservé EVC',d:-32,dl:87},
+
+  /* Toutes les formations */
+  {id:'lb-60',f:'ALL',cat:'supports',t:"Guide de l'étudiant EVC 2026",desc:'Fonctionnement de l’école, MY EVC, assiduité, projets et certification.',fmt:'PDF',size:'2,4 Mo',lic:'Réservé EVC',key:true,d:-40,dl:305},
+  {id:'lb-61',f:'ALL',cat:'supports',t:'Règlement intérieur',desc:'Règles de vie, assiduité et conditions de certification.',fmt:'PDF',size:'380 Ko',lic:'Réservé EVC',d:-40,dl:190},
+  {id:'lb-62',f:'ALL',cat:'modeles',t:'Modèle de rapport de fin de formation',desc:'Trame officielle du rapport à rendre avant la certification.',fmt:'DOCX',size:'190 Ko',lic:'Réservé EVC',d:-30,dl:121},
+  {id:'lb-63',f:'ALL',cat:'polices',t:'Montserrat et Inter',desc:'Deux familles polyvalentes pour vos rapports, CV et présentations.',fmt:'Site officiel',size:'—',lic:'Libre (OFL)',os:'Windows · macOS',url:'https://fonts.google.com/specimen/Montserrat',d:-12,dl:58},
+  {id:'lb-64',f:'ALL',cat:'ebooks',t:'Trouver ses premiers clients en freelance',desc:'Se présenter, fixer ses prix, rédiger un devis et fidéliser.',fmt:'PDF',size:'3,0 Mo',lic:'Réservé EVC',d:-2,dl:22}];
+
 const ADMIN_ROLES = ['Super Administrateur','Direction Générale','Responsable pédagogique','Responsable administratif','Responsable financier','Formateur principal','Formateur adjoint','Responsable certification','Responsable communication','Support technique'];
 const DOCS = [
   {t:"Guide de l'étudiant EVC 2026",cat:'Guides',f:'Toutes',v:'3.1',d:'02/10/2026',acc:'Étudiants, formateurs'},{t:'Règlement intérieur',cat:'Règlements',f:'Toutes',v:'2.0',d:'01/09/2026',acc:'Tous'},

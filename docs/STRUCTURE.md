@@ -39,6 +39,7 @@ my-evc-2027/
 │   │   ├── css/tokens.css            Jetons de design de MY EVC (source unique des couleurs, polices, rayons)
 │   │   ├── css/app.css               Charte UI de la plateforme (coque, panneaux, tableaux, formulaires…)
 │   │   ├── css/complements.css       v11 : accueil étudiant épuré, disponibilité, liens avec le site
+│   │   ├── css/bibliotheque.css      Bibliothèque (étudiant, administration, formateur)
 │   │   ├── fonts/                    Inter, Space Grotesk, JetBrains Mono (woff2, servies en local)
 │   │   ├── img/                      Logos MY EVC (SVG : horizontal, logotype, symbole)
 │   │   └── js/                       Voir le détail ci-dessous
@@ -98,18 +99,20 @@ Les scripts sont chargés **dans cet ordre** par `myevc/index.html`. Chaque écr
 | 24 | `admin/ui-pro.js` | Vue d'ensemble, compte à rebours de fin de formation |
 | 25 | **`admin/disponibilite.js`** | **v11 — Disponibilité des étudiants** (reçu / en cours / libre) |
 | 26 | **`etudiant/epure.js`** | **v11 — Espace étudiant minimaliste** (menu à 5 entrées, accueil) |
-| 27 | **`noyau/liens.js`** | **v11 — Liens entre le site et la plateforme** |
+| 27 | **`etudiant/bibliotheque.js`** | **Bibliothèque de l'étudiant** : logiciels, e-books, polices, modèles… à télécharger |
+| 28 | **`admin/bibliotheque.js`** | **Bibliothèque : gestion** par l'administration (`a-bibliotheque`) et les formateurs (`t-bibliotheque`) |
+| 29 | **`noyau/liens.js`** | **v11 — Liens entre le site et la plateforme** |
 
 ## Écrans principaux (identifiants de route)
 
-**Étudiant** — menu : `e-dashboard` Accueil · `e-seances` Mes cours · `e-todo` Mes projets · `e-paiements` Paiements ·
+**Étudiant** — menu : `e-dashboard` Accueil · `e-seances` Mes cours · `e-todo` Mes projets · `e-bibliotheque` Bibliothèque · `e-paiements` Paiements ·
 `e-certification` Certificat. Rangés dans « Plus » : `e-formations`, `e-webtv`, `e-evaluations`, `e-messagerie`,
 `e-creneaux`, `e-insertion`, `e-assistance`. Profil : carte utilisateur en bas du menu. Notifications : cloche.
 
-**Formateur** — `t-dashboard`, `t-seances`, `t-corrections`, `t-notes`, puis `t-planning`, `t-etudiants`, `t-messagerie`…
+**Formateur** — `t-dashboard`, `t-seances`, `t-corrections`, `t-notes`, puis `t-planning`, `t-etudiants`, `t-messagerie`, `t-bibliotheque`…
 
 **Administration** — `a-dashboard`, `a-supervision`, `a-etudiants` (+ `a-fiche`), `a-projets`, **`a-disponibilite`**,
-`a-preinscriptions`, `a-formations`, `a-seances`, `a-finances`, `a-certifications`, `a-rapports`, `a-roles`,
+`a-preinscriptions`, `a-formations`, `a-seances`, `a-bibliotheque`, `a-finances`, `a-certifications`, `a-rapports`, `a-roles`,
 puis les groupes Suivi, Programmes, Gestion, Système.
 
 **Public (MY EVC)** — `login`, `candidature`, `test-eligibilite`, `activation`, `verifier`.

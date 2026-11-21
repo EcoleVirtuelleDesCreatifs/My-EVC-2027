@@ -26,6 +26,24 @@ depots(attribution_id, fichier | lien | video, message, cree_le)
 Un projet visant « toute une formation » ou « une session » crée une ligne `attributions` par étudiant concerné :
 l'état de chaque étudiant se lit alors dans une seule table.
 
+## Bibliothèque
+
+```
+ressources(id, formation_code NULL = toutes, categorie[logiciels|ebooks|polices|graphiques|modeles|supports|tutos],
+           titre, description, format, taille, licence, compatible, url NULL, fichier NULL,
+           indispensable, publie, cree_le, cree_par)
+telechargements(ressource_id, etudiant_id, le)               -- « Mes téléchargements » et compteurs
+```
+
+Un étudiant voit les ressources publiées de ses formations (`inscriptions`) et celles où `formation_code` est NULL.
+Les logiciels et polices du commerce pointent vers le site officiel (`url`) : l'EVC n'héberge que ses propres fichiers.
+
+| Méthode | Route | Usage |
+|---|---|---|
+| GET | `/api/etudiant/ressources?categorie=&q=` | Bibliothèque de l'étudiant |
+| GET | `/api/etudiant/ressources/{id}/telecharger` | Lien signé de téléchargement (et ligne dans `telechargements`) |
+| GET/POST/PATCH/DELETE | `/api/admin/ressources` | Gestion (administration ; formateur limité à sa formation) |
+
 ## Disponibilité : la requête
 
 ```sql

@@ -2058,6 +2058,93 @@ tr.att-new td{animation:attNew 1.6s ease}
 .l2-art > .l2-back { position: absolute; top: 72px; right: 48px; margin: 0; }
 
 </style>
+<style>/* assets/app/css/bibliotheque.css */
+/* ==========================================================================
+   MY EVC — Bibliothèque
+   1. Icônes de catégorie (communes aux espaces)
+   2. Espace étudiant : en-tête, catégories, indispensables, cartes, fiche
+   3. Administration et formateurs : tableau de gestion
+   Toutes les couleurs viennent des jetons (tokens.css → app.css).
+   ========================================================================== */
+
+/* ---------- 1. Icônes de catégorie ---------- */
+.lib-ic { flex: none; width: 44px; height: 44px; border-radius: 12px; display: inline-grid; place-items: center; font-size: 18px; }
+.lib-ic.sm { width: 34px; height: 34px; border-radius: 10px; font-size: 14px; }
+.lib-ic.t-lav  { background: var(--brand-soft);  color: var(--brand); }
+.lib-ic.t-cor  { background: var(--accent-soft); color: var(--accent); }
+.lib-ic.t-ok   { background: var(--ok-soft);     color: var(--ok); }
+.lib-ic.t-warn { background: var(--warn-soft);   color: var(--warn); }
+.lib-ic.t-info { background: var(--info-soft);   color: var(--info); }
+
+/* Ligne compacte (fiche formation) */
+.lib-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.lib-row:last-child { border-bottom: 0; }
+.lib-row .lr-t { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-row .lr-s { font-size: 12px; color: var(--muted); }
+.lib-rows-flush .lib-row { padding-left: 0; padding-right: 0; }
+
+/* ---------- 2. Espace étudiant ---------- */
+.lib-head { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
+.lib-tools { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.lib-tools .search-field { min-width: 220px; }
+
+.lib-cats { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 20px; scrollbar-width: thin; }
+.lib-cat { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-weight: 600; font-size: 13px; transition: border-color .2s, color .2s, background .2s; }
+.lib-cat:hover { color: var(--fg); border-color: var(--line-2); }
+.lib-cat:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 2px; }
+.lib-cat .cnt { font-variant-numeric: tabular-nums; opacity: .7; font-size: 12px; }
+.lib-cat.on { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
+.lib-cat.on .cnt { opacity: .85; }
+
+.lib-key { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 18px 20px; margin-bottom: 22px; box-shadow: var(--shadow-sm); }
+.lk-h { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.lk-h h2 { font-size: 16px; margin: 0; }
+.lk-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.lk-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r-sm); background: var(--soft); min-width: 0; }
+.lk-item .lr-m { min-width: 0; }
+.lk-item .lr-t { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lk-item .lr-s { font-size: 12px; color: var(--muted); }
+
+.lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+.lib-item { display: flex; flex-direction: column; gap: 10px; padding: 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface);
+  box-shadow: var(--shadow-sm); cursor: pointer; min-width: 0; transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
+.lib-item:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.lib-item:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 40%, transparent); outline-offset: 2px; }
+.li-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.li-badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.li-t { font: 600 15px/1.3 var(--f-body); margin: 0; color: var(--fg); }
+.li-d { font-size: 13px; color: var(--muted); margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.li-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.li-meta span { font-size: 11.5px; font-weight: 600; color: var(--muted); background: var(--soft); border-radius: 6px; padding: 2px 8px; }
+.li-foot { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 4px; }
+
+/* Fiche d'une ressource (modale) */
+.lib-dl { border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; }
+.lib-dl-row { display: flex; justify-content: space-between; gap: 16px; padding: 9px 14px; font-size: 13.5px; border-bottom: 1px solid var(--line); }
+.lib-dl-row:last-child { border-bottom: 0; }
+.lib-dl-row span { color: var(--muted); }
+.lib-dl-row b { font-weight: 600; text-align: right; }
+
+/* ---------- 3. Gestion (administration, formateurs) ---------- */
+.lib-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+.lib-adm-t { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.lib-adm-t .lr-m { min-width: 0; }
+.lib-adm-t b { display: block; font-weight: 600; max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-adm-t small { color: var(--muted); }
+.lib-src { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.form-check-card { display: flex; align-items: center; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-sm); cursor: pointer; font-size: 14px; font-weight: 500; }
+.form-check-card:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); }
+.form-check-card .form-check-input { margin-top: 0; }
+
+@media (max-width: 991px) { .lib-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 575px) {
+  .lib-grid { grid-template-columns: 1fr; }
+  .lib-tools .form-select { max-width: none !important; flex: 1 1 100%; }
+  .lib-src { grid-template-columns: 1fr; }
+}
+
+</style>
 </head>
 <body>
 <div id="app"></div>
@@ -2387,15 +2474,6 @@ const SEED = {
     {q:"Dans InDesign, à quoi sert une page type (gabarit) ?",o:["Exporter en PDF","Appliquer des éléments communs à plusieurs pages","Changer la langue du document","Compresser les images"],a:1},
     {q:"Quel mode colorimétrique utiliser pour un document imprimé ?",o:['RVB','CMJN','Niveaux de gris uniquement','HSL'],a:1},
     {q:"Que sont les fonds perdus ?",o:["Une marge de sécurité intérieure","Une extension de l'image au-delà du format de coupe","Un type de papier","Un calque masqué"],a:1}],
-  library:[
-    {t:'Charte graphique — guide complet',type:'pdf',f:'DG',cat:'Supports PDF',size:'4,2 Mo'},{t:'Raccourcis Illustrator',type:'pdf',f:'DG',cat:'Supports PDF',size:'640 Ko'},
-    {t:'Gabarit magazine 8 pages',type:'zip',f:'DG',cat:'Modèles professionnels',size:'18 Mo'},{t:'Tutoriel — la plume en 10 minutes',type:'vid',f:'DG',cat:'Vidéos pédagogiques',size:'12 min'},
-    {t:'Plan de communication — modèle',type:'doc',f:'CM',cat:'Modèles professionnels',size:'220 Ko'},{t:'Calendrier éditorial',type:'xls',f:'CM',cat:'Tableaux Excel',size:'96 Ko'},
-    {t:'Reporting mensuel — trame',type:'ppt',f:'CM',cat:'Présentations PowerPoint',size:'2,1 Mo'},{t:'Meta Ads Manager pas à pas',type:'tuto',f:'CM',cat:'Tutoriels',size:'14 étapes'},
-    {t:'Exercices Excel — niveau 1 à 3',type:'xls',f:'GIA',cat:'Exercices',size:'410 Ko'},{t:'Word — documents professionnels',type:'pdf',f:'GIA',cat:'Supports PDF',size:'1,8 Mo'},
-    {t:'Google Workspace — prise en main',type:'vid',f:'GIA',cat:'Vidéos pédagogiques',size:'25 min'},{t:'Modèle de rapport de stage',type:'doc',f:'GIA',cat:'Modèles professionnels',size:'150 Ko'},
-    {t:"Guide de l'étudiant EVC 2026",type:'pdf',f:'ALL',cat:'Guides étudiants',size:'2,4 Mo'},{t:'Règlement intérieur',type:'pdf',f:'ALL',cat:'Règlement intérieur',size:'380 Ko'},
-    {t:'Modèle de rapport de fin de formation',type:'doc',f:'ALL',cat:'Modèles professionnels',size:'190 Ko'}],
   notifs:[{id:'n-c1',cat:'Communiqués',f:null,t:'Bienvenue à la session Octobre 2026',body:"Bonjour Aya, toute l'équipe de l'École Virtuelle des Créatifs vous souhaite la bienvenue. Pensez à installer vos logiciels et à choisir votre créneau dès cette semaine.",ch:['Espace étudiant','Email','WhatsApp'],comm:true,d:'06/10/2026',read:true},
     {id:'n1',cat:'Travaux',f:'DG',t:'Correction disponible : « Mise en page — magazine 8 pages » est à reprendre.',d:'Il y a 2 h',read:false},
     {id:'n2',cat:'Séances',f:'GIA',t:'Rappel : Google Forms — questionnaires aujourd\'hui à 17h00.',d:'Il y a 3 h',read:false},
@@ -2482,6 +2560,57 @@ const PREINS = [
   {id:'PRE-0309',name:'Fanta Koné',email:'fanta.kone@mail.com',phone:'+225 07 11 98 45 30',country:"Côte d'Ivoire",city:'Abobo',birth:'15/09/2002',f:['DG'],session:'Session Janvier 2027',d:'14/10/2026',src:'TikTok',docs:true,
     level:'BTS Infographie',situation:'Étudiante',equip:'Ordinateur portable + connexion internet',mode:'Présentiel (Abidjan)',
     motivation:"Compléter mon BTS par la pratique professionnelle, participer au Studio Creative et constituer un pressbook solide pour intégrer une agence.",exp:'Stage en imprimerie (3 mois)',link:'behance.net/fantak',stage:'actif',test:{score:18,d:'15/10/2026'},pay:{amount:150000,mode:'Espèces',ref:'REC-2026-1488',d:'16/10/2026'},mat:'EVC-26-0188'}];
+/* ---------- Bibliothèque : ressources à télécharger ----------
+   Partagée par tous les espaces : l'administration et les formateurs publient, les étudiants
+   voient les ressources de LEURS formations (f) et celles destinées à tous (f:'ALL').
+   cat : logiciels · ebooks · polices · graphiques · modeles · supports · tutos
+   url : lien vers le site officiel (logiciels, polices) ; sinon fichier hébergé par l'EVC.
+   d   : date d'ajout en jours par rapport à aujourd'hui (négatif = passé) ; dl : téléchargements. */
+const LIB = [
+  /* Design graphique */
+  {id:'lb-01',f:'DG',cat:'logiciels',t:'Adobe Creative Cloud (Photoshop, Illustrator, InDesign)',desc:"Installateur officiel des logiciels Adobe utilisés en cours. Licence étudiante à tarif réduit : demandez la procédure à la relation étudiants.",fmt:'Site officiel',size:'—',lic:'Licence payante',os:'Windows · macOS',url:'https://www.adobe.com/fr/creativecloud.html',key:true,d:-40,dl:212},
+  {id:'lb-02',f:'DG',cat:'logiciels',t:'GIMP',desc:"Alternative libre à Photoshop pour la retouche photo, si vous n'avez pas encore de licence Adobe.",fmt:'Site officiel',size:'≈ 300 Mo',lic:'Libre et gratuit',os:'Windows · macOS · Linux',url:'https://www.gimp.org/downloads/',d:-40,dl:64},
+  {id:'lb-03',f:'DG',cat:'logiciels',t:'Inkscape',desc:'Alternative libre à Illustrator pour le dessin vectoriel et les logos.',fmt:'Site officiel',size:'≈ 120 Mo',lic:'Libre et gratuit',os:'Windows · macOS · Linux',url:'https://inkscape.org/fr/release/',d:-40,dl:51},
+  {id:'lb-04',f:'DG',cat:'ebooks',t:"La carte de l'infographiste",desc:'Le livret de démarrage EVC : outils, formats, couleurs, typographie et raccourcis essentiels.',fmt:'PDF',size:'3,6 Mo',lic:'Réservé EVC',key:true,d:-38,dl:188},
+  {id:'lb-05',f:'DG',cat:'ebooks',t:'Les bases de la typographie',desc:'Familles, graisses, interlignage, hiérarchie : choisir et associer les polices dans une mise en page.',fmt:'PDF',size:'5,1 Mo',lic:'Réservé EVC',d:-20,dl:97},
+  {id:'lb-06',f:'DG',cat:'ebooks',t:'Préparer un fichier pour l’imprimeur',desc:'CMJN, fonds perdus, résolution, profils ICC : la check-list avant d’envoyer un BAT.',fmt:'PDF',size:'2,2 Mo',lic:'Réservé EVC',d:-6,dl:41},
+  {id:'lb-07',f:'DG',cat:'polices',t:'Pack de 30 polices libres pour le design',desc:'Sélection de polices Google Fonts utilisables gratuitement en commercial : Montserrat, Poppins, Playfair Display, Bebas Neue…',fmt:'ZIP · TTF',size:'24 Mo',lic:'Libre (OFL)',os:'Windows · macOS',d:-30,dl:143},
+  {id:'lb-08',f:'DG',cat:'graphiques',t:'Mockups : affiches, flyers et cartes de visite',desc:'15 maquettes Photoshop à objets dynamiques pour présenter vos créations à un client.',fmt:'ZIP · PSD',size:'420 Mo',lic:'Réservé EVC',d:-14,dl:76},
+  {id:'lb-09',f:'DG',cat:'graphiques',t:'Mockups packaging et T-shirts',desc:'Boîtes, sachets, bouteilles et textiles en haute définition.',fmt:'ZIP · PSD',size:'610 Mo',lic:'Réservé EVC',d:-3,dl:18},
+  {id:'lb-10',f:'DG',cat:'modeles',t:'Gabarit magazine 8 pages',desc:'Fichier InDesign avec grille, styles de paragraphe et pages types, utilisé en séance.',fmt:'ZIP · INDD',size:'18 Mo',lic:'Réservé EVC',d:-25,dl:88},
+  {id:'lb-11',f:'DG',cat:'supports',t:'Raccourcis Illustrator',desc:'Fiche à imprimer des raccourcis clavier indispensables.',fmt:'PDF',size:'640 Ko',lic:'Réservé EVC',d:-33,dl:120},
+  {id:'lb-12',f:'DG',cat:'tutos',t:'La plume en 10 minutes',desc:'Tutoriel vidéo pour maîtriser l’outil Plume dans Illustrator.',fmt:'Vidéo',size:'12 min',lic:'Réservé EVC',d:-28,dl:134},
+
+  /* Community management */
+  {id:'lb-20',f:'CM',cat:'logiciels',t:'Canva',desc:'Création rapide de visuels, stories et carrousels pour les réseaux sociaux.',fmt:'Site officiel',size:'—',lic:'Gratuit (version Pro payante)',os:'Web · Windows · macOS · mobile',url:'https://www.canva.com/fr_fr/telecharger/',key:true,d:-40,dl:176},
+  {id:'lb-21',f:'CM',cat:'logiciels',t:'CapCut',desc:'Montage de vidéos courtes (Reels, TikTok, Shorts) avec sous-titres automatiques.',fmt:'Site officiel',size:'≈ 500 Mo',lic:'Gratuit',os:'Windows · macOS · mobile',url:'https://www.capcut.com/fr-fr/',key:true,d:-40,dl:154},
+  {id:'lb-22',f:'CM',cat:'logiciels',t:'Meta Business Suite',desc:'Gérer et programmer les publications Facebook et Instagram, lire les statistiques.',fmt:'Site officiel',size:'—',lic:'Gratuit',os:'Web · mobile',url:'https://business.facebook.com/',d:-40,dl:98},
+  {id:'lb-23',f:'CM',cat:'ebooks',t:'Construire sa stratégie social media',desc:'De l’analyse de la cible au calendrier éditorial : la méthode enseignée à l’EVC, avec exemples ivoiriens.',fmt:'PDF',size:'6,4 Mo',lic:'Réservé EVC',key:true,d:-35,dl:131},
+  {id:'lb-24',f:'CM',cat:'ebooks',t:'100 idées de publications',desc:'Idées de contenus classées par objectif : notoriété, engagement, vente.',fmt:'PDF',size:'1,9 Mo',lic:'Réservé EVC',d:-5,dl:47},
+  {id:'lb-25',f:'CM',cat:'modeles',t:'Calendrier éditorial',desc:'Tableau prêt à remplir : dates, réseaux, formats, statut et indicateurs.',fmt:'XLSX',size:'96 Ko',lic:'Réservé EVC',d:-30,dl:162},
+  {id:'lb-26',f:'CM',cat:'modeles',t:'Plan de communication',desc:'Trame Word pour présenter une stratégie à un client.',fmt:'DOCX',size:'220 Ko',lic:'Réservé EVC',d:-30,dl:84},
+  {id:'lb-27',f:'CM',cat:'modeles',t:'Reporting mensuel',desc:'Présentation PowerPoint pour restituer les résultats d’une campagne.',fmt:'PPTX',size:'2,1 Mo',lic:'Réservé EVC',d:-18,dl:59},
+  {id:'lb-28',f:'CM',cat:'graphiques',t:'Templates de stories et carrousels',desc:'60 modèles Canva et Photoshop aux formats 1080 × 1920 et 1080 × 1350.',fmt:'ZIP · PSD + liens Canva',size:'180 Mo',lic:'Réservé EVC',d:-10,dl:72},
+  {id:'lb-29',f:'CM',cat:'tutos',t:'Meta Ads Manager pas à pas',desc:'Créer, cibler et suivre une campagne publicitaire en 14 étapes.',fmt:'Vidéo',size:'22 min',lic:'Réservé EVC',d:-22,dl:90},
+
+  /* Bureautique et informatique */
+  {id:'lb-40',f:'GIA',cat:'logiciels',t:'Microsoft 365 (Word, Excel, PowerPoint)',desc:'Installateur officiel de la suite Office utilisée en cours.',fmt:'Site officiel',size:'—',lic:'Licence payante',os:'Windows · macOS',url:'https://www.microsoft.com/fr-fr/microsoft-365',key:true,d:-40,dl:141},
+  {id:'lb-41',f:'GIA',cat:'logiciels',t:'LibreOffice',desc:'Suite bureautique libre et compatible avec les fichiers Word, Excel et PowerPoint.',fmt:'Site officiel',size:'≈ 350 Mo',lic:'Libre et gratuit',os:'Windows · macOS · Linux',url:'https://fr.libreoffice.org/download/telecharger-libreoffice/',d:-40,dl:66},
+  {id:'lb-42',f:'GIA',cat:'logiciels',t:'Google Chrome',desc:'Navigateur recommandé pour Gmail, Drive, Docs, Sheets et Meet.',fmt:'Site officiel',size:'≈ 100 Mo',lic:'Gratuit',os:'Windows · macOS · mobile',url:'https://www.google.com/intl/fr/chrome/',key:true,d:-40,dl:118},
+  {id:'lb-43',f:'GIA',cat:'ebooks',t:'Excel : les 50 formules essentielles',desc:'SOMME.SI, RECHERCHEV, SI imbriqués, tableaux croisés dynamiques… avec exemples.',fmt:'PDF',size:'4,3 Mo',lic:'Réservé EVC',key:true,d:-26,dl:157},
+  {id:'lb-44',f:'GIA',cat:'ebooks',t:'Word : rédiger des documents professionnels',desc:'Styles, sommaires automatiques, publipostage et mise en page.',fmt:'PDF',size:'1,8 Mo',lic:'Réservé EVC',d:-26,dl:93},
+  {id:'lb-45',f:'GIA',cat:'modeles',t:'Pack CV et lettres de motivation',desc:'8 modèles Word sobres et modernes, prêts à personnaliser.',fmt:'ZIP · DOCX',size:'3,4 Mo',lic:'Réservé EVC',d:-4,dl:39},
+  {id:'lb-46',f:'GIA',cat:'modeles',t:'Factures, devis et bons de commande',desc:'Modèles Excel avec calculs automatiques (TVA, totaux, remises).',fmt:'XLSX',size:'310 Ko',lic:'Réservé EVC',d:-15,dl:61},
+  {id:'lb-47',f:'GIA',cat:'supports',t:'Exercices Excel — niveau 1 à 3',desc:'Énoncés et corrigés des exercices faits en séance.',fmt:'XLSX',size:'410 Ko',lic:'Réservé EVC',d:-21,dl:102},
+  {id:'lb-48',f:'GIA',cat:'tutos',t:'Google Workspace — prise en main',desc:'Gmail, Drive, Docs, Sheets et Meet en 25 minutes.',fmt:'Vidéo',size:'25 min',lic:'Réservé EVC',d:-32,dl:87},
+
+  /* Toutes les formations */
+  {id:'lb-60',f:'ALL',cat:'supports',t:"Guide de l'étudiant EVC 2026",desc:'Fonctionnement de l’école, MY EVC, assiduité, projets et certification.',fmt:'PDF',size:'2,4 Mo',lic:'Réservé EVC',key:true,d:-40,dl:305},
+  {id:'lb-61',f:'ALL',cat:'supports',t:'Règlement intérieur',desc:'Règles de vie, assiduité et conditions de certification.',fmt:'PDF',size:'380 Ko',lic:'Réservé EVC',d:-40,dl:190},
+  {id:'lb-62',f:'ALL',cat:'modeles',t:'Modèle de rapport de fin de formation',desc:'Trame officielle du rapport à rendre avant la certification.',fmt:'DOCX',size:'190 Ko',lic:'Réservé EVC',d:-30,dl:121},
+  {id:'lb-63',f:'ALL',cat:'polices',t:'Montserrat et Inter',desc:'Deux familles polyvalentes pour vos rapports, CV et présentations.',fmt:'Site officiel',size:'—',lic:'Libre (OFL)',os:'Windows · macOS',url:'https://fonts.google.com/specimen/Montserrat',d:-12,dl:58},
+  {id:'lb-64',f:'ALL',cat:'ebooks',t:'Trouver ses premiers clients en freelance',desc:'Se présenter, fixer ses prix, rédiger un devis et fidéliser.',fmt:'PDF',size:'3,0 Mo',lic:'Réservé EVC',d:-2,dl:22}];
+
 const ADMIN_ROLES = ['Super Administrateur','Direction Générale','Responsable pédagogique','Responsable administratif','Responsable financier','Formateur principal','Formateur adjoint','Responsable certification','Responsable communication','Support technique'];
 const DOCS = [
   {t:"Guide de l'étudiant EVC 2026",cat:'Guides',f:'Toutes',v:'3.1',d:'02/10/2026',acc:'Étudiants, formateurs'},{t:'Règlement intérieur',cat:'Règlements',f:'Toutes',v:'2.0',d:'01/09/2026',acc:'Tous'},
@@ -2554,7 +2683,7 @@ const MFA_ROLES = ['Super Administrateur','Direction Générale','Responsable fi
 const S = {
   role:null, profile:'GIA+DG+CM', fsel:'ALL', adminRole:'Super Administrateur', theme:'auto', ui:{},
   students: buildStudents(), preins: clone(PREINS), perms: clone(PERM_DEFAULT), mfa:[...MFA_ROLES],
-  sessions: clone(SESSIONS), trainers: clone(TRAINERS), docs: clone(DOCS), tickets: clone(ADMIN_TICKETS), audit: clone(AUDIT), offers: clone(OFFERS),
+  sessions: clone(SESSIONS), trainers: clone(TRAINERS), docs: clone(DOCS), lib: clone(LIB), tickets: clone(ADMIN_TICKETS), audit: clone(AUDIT), offers: clone(OFFERS),
   comms:[{d:'21/10/2026 10:00',t:'Rappel échéance du 31 octobre',target:'Étudiants avec solde',ch:['WhatsApp','Email'],n:38,read:'71 %'},{d:'18/10/2026 09:00',t:'Studio Creative édition 7 : inscriptions ouvertes',target:'Étudiants DG',ch:['Notification','Email'],n:54,read:'83 %'},{d:'15/10/2026 16:00',t:'Fermeture exceptionnelle le 1er novembre',target:'Tous',ch:['Notification','SMS'],n:212,read:'92 %'}],
   anotifs:[{id:'an1',kind:'done',t:'Logo — Maquis "Chez Tantie Rose"',txt:'Kevin Ahoua a terminé et publié son projet « Logo — Maquis "Chez Tantie Rose" »',d:'Il y a 25 min',read:false},{id:'an2',kind:'start',t:'Affiche — Festival Abidjan Urban Arts',txt:'Ibrahim Sanogo a commencé son projet « Affiche — Festival Abidjan Urban Arts »',d:'Il y a 1 h',read:false},{id:'an3',kind:'done',t:'Tableau de gestion des stocks — Excel',txt:'Nadia Touré a terminé et publié son projet « Tableau de gestion des stocks — Excel »',d:'Hier',read:true}],
   formations: clone(F), st:null, videos: clone(VIDEOS), slots: clone(SLOTS), ardv: clone(RDV_REQ),
@@ -3052,7 +3181,7 @@ ACT.pwd = f => { if ($('#pw-new').value !== $('#pw-cf').value) { $('#pw-cf').set
 view('e-formations','etu','Mes formations','fa-layer-group', () => {
   const fs = vf(); if (!fs.includes(S.ui.ftab)) S.ui.ftab = fs[0]; const f = S.ui.ftab, Fx = S.formations[f];
   const nextS = S.st.seances.filter(x=>x.f===f && x.d>=0).sort((a,b)=>a.d-b.d).slice(0,3);
-  const lib = S.st.library.filter(l=>l.f===f).slice(0,4); const todos = S.st.todos.filter(t=>t.f===f); const evs = S.st.evals.filter(e=>e.f===f);
+  const lib = libFor([f]).filter(r=>r.f===f).slice(0,4); const todos = S.st.todos.filter(t=>t.f===f); const evs = S.st.evals.filter(e=>e.f===f);
   return `${fs.length>1?`<ul class="nav nav-tabs mb-3">${fs.map(x=>`<li class="nav-item"><button class="nav-link ${x===f?'active':''}" data-act="ftab" data-f="${x}">${fchip(x)} <span class="ms-1">${fname(x)}</span></button></li>`).join('')}</ul>`:''}
   <div class="row g-3 c-${f}">
     <div class="col-xl-8 d-flex flex-column gap-3">
@@ -3064,7 +3193,7 @@ view('e-formations','etu','Mes formations','fa-layer-group', () => {
     </div>
     <div class="col-xl-4 d-flex flex-column gap-3">
       <section class="fcard c-${f}"><span class="small-caps">Progression individuelle</span><div class="d-flex align-items-end gap-2"><span class="big-pct">${prog(f)}%</span><span class="muted small mb-1">du programme</span></div>${bar(prog(f),f)}<div class="stat-line"><span>Présence</span><b>${Fx.presence} %</b></div><div class="stat-line"><span>Travaux validés</span><b>${todos.filter(t=>t.status==='valide').length} / ${todos.length}</b></div><div class="stat-line"><span>Moyenne</span><b>${avgF(f)??'—'} / 20</b></div></section>
-      ${panel('Supports de cours', lib.map(l=>`<div class="row-item"><span class="lib-card p-0 border-0"><span class="ft t-${l.type}" style="width:30px;height:34px;font-size:.8rem"><i class="fa-solid ${typeIcon(l.type)}"></i></span></span><div class="ri-main"><div class="ri-t small">${esc(l.t)}</div><div class="ri-s">${l.size}</div></div><button class="btn btn-ghost btn-sm" data-act="fake-dl" data-n="${esc(l.t)}"><i class="fa-solid fa-download"></i></button></div>`).join(''), {p0:true, tools:`<a class="btn btn-ghost btn-sm" href="#e-bibliotheque">Bibliothèque</a>`})}
+      ${panel('Bibliothèque', lib.map(libRow).join(''), {p0:true, tools:`<a class="btn btn-ghost btn-sm" href="#e-bibliotheque">Tout voir</a>`})}
       ${panel('Travaux et projets', `<div class="d-flex flex-column gap-2">${Object.keys(STATUS).map(k=>{ const n=todos.filter(t=>t.status===k).length; return n?`<div class="stat-line"><span>${statusPill(k)}</span><b>${n}</b></div>`:''; }).join('')}<div class="d-flex gap-2 mt-2 flex-wrap"><a class="btn btn-ghost btn-sm" href="#e-todo">My To-Do</a><a class="btn btn-ghost btn-sm" href="#e-projets">Projets</a></div></div>`)}
       ${panel('Évaluations et résultats', evs.map(e=>`<div class="stat-line py-1"><span>${esc(e.t)}</span>${e.note!=null?uAppPill(e.note):'<b>—</b>'}</div>`).join(''))}
       ${panel('Conditions de certification', certCriteria(f).map(c=>`<div class="d-flex gap-2 align-items-center py-1 small"><span class="ci ${c.s} crit p-0 border-0" style="width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:.6rem"><i class="fa-solid ${c.s==='ok'?'fa-check':c.s==='ko'?'fa-xmark':'fa-hourglass-half'}"></i></span>${c.t}</div>`).join(''), {tools:`<a class="btn btn-ghost btn-sm" href="#e-certification">Dossier</a>`})}
@@ -3154,19 +3283,6 @@ ACT['todo-submit'] = f => { const t = S.st.todos.find(x=>x.id===f.dataset.id), f
   adminNotify('done', t.t, `${me} a terminé et publié son projet « ${t.t} »`);
   S.st.notifs.unshift({id:'n'+Date.now(),cat:'Travaux',f:t.f,t:`« ${t.t} » est publié. L'administration va le valider.`,d:"À l'instant",read:false});
   audit('Projet publié', `${t.t} — ${me}`); closeModal(); rerender(); toast("Projet publié. L'administration est notifiée et va le valider."); };
-
-/* ----- Bibliothèque ----- */
-view('e-bibliotheque','etu','Bibliothèque','fa-book-open', () => {
-  const locked = S.st.library.filter(l=>l.f!=='ALL' && !fl().includes(l.f)).length, cats = [...new Set(S.st.library.map(l=>l.cat))];
-  return `<div class="toolbar"><div class="grow"><div class="input-group"><span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span><input class="form-control" placeholder="Rechercher un document, un tutoriel…" data-inp="lib-q" aria-label="Rechercher"></div></div><select class="form-select" style="max-width:240px" data-chg="lib-c" aria-label="Catégorie"><option value="">Toutes les catégories</option>${cats.map(c=>`<option>${c}</option>`).join('')}</select></div>
-  ${locked?`<div class="alert-strip as-info mb-3"><i class="fa-solid fa-lock"></i>${locked} documents sont réservés à d'autres formations. L'accès suit automatiquement vos inscriptions.</div>`:''}<div id="r-lib">${libRegion()}</div>`;
-});
-function libRegion(){ const q=(S.ui.libQ||'').toLowerCase(), c=S.ui.libC||'';
-  const items = S.st.library.filter(l=>(l.f==='ALL'||vf().includes(l.f)) && (!q||l.t.toLowerCase().includes(q)) && (!c||l.cat===c));
-  return items.length ? `<div class="grid g-4">${items.map(l=>`<div class="lib-card"><div class="d-flex justify-content-between"><span class="ft t-${l.type}"><i class="fa-solid ${typeIcon(l.type)}"></i></span>${l.f==='ALL'?pill('Tous','mute',1):fchip(l.f)}</div><h4>${esc(l.t)}</h4><div class="small muted">${l.cat} · ${l.size}</div><div class="d-flex gap-2 mt-auto"><button class="btn btn-ghost btn-sm flex-fill" data-act="lib-open" data-t="${esc(l.t)}">Consulter</button><button class="btn btn-ghost btn-sm" data-act="fake-dl" data-n="${esc(l.t)}" aria-label="Télécharger"><i class="fa-solid fa-download"></i></button></div></div>`).join('')}</div>` : `<div class="panel">${empty('Aucun document trouvé')}</div>`; }
-INP['lib-q'] = el => { S.ui.libQ = el.value; $('#r-lib').innerHTML = libRegion(); };
-INP['lib-c'] = el => { S.ui.libC = el.value; $('#r-lib').innerHTML = libRegion(); };
-ACT['lib-open'] = el => { const l = S.st.library.find(x=>x.t===el.dataset.t); openModal({title:esc(l.t), size:'modal-lg', body:`<div class="rounded p-4" style="background:var(--soft);border:1px solid var(--line);min-height:320px"><div class="d-flex gap-3 align-items-center mb-3"><span class="lib-card p-0 border-0"><span class="ft t-${l.type}"><i class="fa-solid ${typeIcon(l.type)}"></i></span></span><div><b>${esc(l.t)}</b><div class="small muted">${l.cat} · ${l.size} · version 1.${l.t.length%5}</div></div></div><div style="height:10px;width:70%;background:var(--line);border-radius:4px" class="mb-2"></div><div style="height:10px;width:92%;background:var(--line);border-radius:4px" class="mb-2"></div><div style="height:10px;width:84%;background:var(--line);border-radius:4px" class="mb-4"></div><div style="height:140px;background:var(--line);border-radius:8px;opacity:.6"></div><p class="small muted mt-3 mb-0">Aperçu du document dans la visionneuse sécurisée.</p></div>`, foot:`<button class="btn btn-primary" data-act="fake-dl" data-n="${esc(l.t)}"><i class="fa-solid fa-download me-1"></i>Télécharger</button>`}); };
 
 /* ----- Mes projets ----- */
 function projectTabs(){ const t = [], fs = vf();
@@ -4620,17 +4736,17 @@ view('e-formations','etu','Ma formation','fa-book-open', () => {
   if (tab==='seances') body = Fx.prog.map(x=>{ const st = S.st.seances.find(y=>y.f===f && y.n===x.n), isCur = x===cur, v = S.videos.find(y=>y.f===f && y.n===x.n && y.pub);
     const right = x.done ? (v ? pill('Replay disponible','ok') : pill('Terminé','ok')) : isCur ? pill(x.d===0?"Aujourd'hui":x.d===1?'Demain':'Prochaine','acc') : pill('À venir','grey');
     return `<div class="box-row clickable ${isCur?'sel':''} ${!x.done&&!isCur?'dim':''}" data-act="u-seance" data-id="${st.id}" role="button" tabindex="0"><span class="nsq ${x.done?'done':isCur?'cur':''}">${x.done?'<i class="fa-solid fa-check"></i>':x.n}</span><div class="lr-m"><div class="fw-sb">${esc(x.t)}</div><div class="small muted">Séance ${x.n} · ${fmtD(addDays(x.d),{day:'numeric',month:'short'})} · ${uH(x.hl)} · ${modeLbl(x.mode).toLowerCase()}</div></div>${right}</div>`; }).join('');
-  if (tab==='ress') { const lib = S.st.library.filter(l=>l.f===f||l.f==='ALL'); body = `<div class="u-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">${lib.map(l=>`<div class="lrow m-0"><span class="ftype">${({pdf:'PDF',doc:'DOC',xls:'XLS',ppt:'PPT',vid:'MP4',tuto:'TUTO',zip:'ZIP'})[l.type]}</span><div class="lr-m"><div class="lr-t">${esc(l.t)}</div><div class="lr-s">${l.size} · ${esc(l.cat)}</div></div><button class="btn btn-quiet btn-sm btn-icon" data-act="fake-dl" data-n="${esc(l.t)}" aria-label="Télécharger"><i class="fa-solid fa-download"></i></button></div>`).join('')}</div><div class="mt-3"><a class="link-u" href="#e-bibliotheque">Ouvrir la bibliothèque complète</a></div>`; }
+  if (tab==='ress') { const lib = libFor([f]); body = `<div class="panel p-0">${lib.slice(0,8).map(libRow).join('')}</div><div class="mt-3"><a class="link-u" href="#e-bibliotheque">Ouvrir la bibliothèque complète (${lib.length} ressources)</a></div>`; }
   if (tab==='ann') { const L = S.st.notifs.filter(n=>['Annonces','Communiqués'].includes(n.cat) && (!n.f || n.f===f)); body = L.length ? L.map(n=>`<div class="box-row clickable" data-act="n-read" data-id="${n.id}"><span class="nsq cor"><i class="fa-solid fa-bullhorn"></i></span><div class="lr-m"><div class="fw-sb">${esc(n.t)}</div><div class="small muted">${n.d}</div></div><i class="fa-solid fa-chevron-right muted"></i></div>`).join('') : uEmpty('Aucune annonce','Les annonces de votre formation apparaîtront ici.'); }
   if (tab==='projet') { const r = S.st.reports[f], dg = f==='DG';
     body = `<div class="u-grid u-1-1">${dg ? `<div class="box-row d-block"><div class="small-caps mb-2">Studio Creative · édition ${S.st.studio.edition}</div><h3 class="h3 mb-1">${esc(S.st.studio.title)}</h3><p class="muted small mb-3">${esc(S.st.studio.theme)}</p>${S.st.studio.registered?pill(S.st.studio.submitted?'Projet soumis':'Inscrite','ok'):pill('Inscriptions ouvertes','info')}<div class="mt-3"><a class="btn btn-ghost btn-sm" href="#e-projets">Ouvrir mes projets</a></div></div>`
       : `<div class="box-row d-block"><div class="small-caps mb-2">RECO 60 · projet professionnel</div><h3 class="h3 mb-1">${esc(S.st.reco[f].name)}</h3><div class="d-flex align-items-center gap-3 my-3"><div class="flex-grow-1">${uBar(recoDay(f)/60*100,'cor')}</div><b>Jour ${recoDay(f)} / 60</b></div><a class="btn btn-ghost btn-sm" href="#e-projets">Ouvrir mon RECO 60</a></div>`}
       <div class="box-row d-block"><div class="small-caps mb-2">Rapport de fin de formation</div><h3 class="h3 mb-1">Statut : ${esc(r.st)}</h3><p class="muted small mb-3">${r.versions.length} version${r.versions.length>1?'s':''} déposée${r.versions.length>1?'s':''}${r.comments.length?` · ${r.comments.length} commentaire(s) du formateur`:''}.</p><a class="btn btn-ghost btn-sm" href="#e-rapports">Gérer mon rapport</a></div></div>`; }
   const team = [[Fx.trainer,'Formateur référent'],[Fx.trainer2,'Formateur · '+uFShort(f)],['Service pédagogique','Questions administratives']];
-  const lib = S.st.library.filter(l=>l.f===f).slice(0,3);
+  const lib = libFor([f]).filter(r=>r.f===f).slice(0,3);
   return `${head}<div class="u-grid u-2-1 mt-4"><div>${uTabs([['seances','Séances'],['ress','Ressources'],['ann','Annonces'],['projet','Projet de fin de formation']], tab, 'u-mtab')}<div>${body}</div></div>
   <div class="stack">${uCard('Équipe pédagogique', team.map(([n,r])=>`<div class="d-flex align-items-center gap-3 py-2">${uIni(n)}<div class="lr-m"><div class="fw-sb">${esc(n)}</div><div class="small muted">${r}</div></div><button class="btn btn-quiet btn-sm btn-icon" data-act="msg-new" aria-label="Écrire à ${esc(n)}"><i class="fa-solid fa-message"></i></button></div>`).join(''))}
-  ${uCard('Ressources récentes', lib.map(l=>`<div class="lrow"><span class="ftype">${({pdf:'PDF',doc:'DOC',xls:'XLS',ppt:'PPT',vid:'MP4',tuto:'TUTO',zip:'ZIP'})[l.type]}</span><div class="lr-m"><div class="lr-t" style="font-size:14px">${esc(l.t)}</div><div class="lr-s">${l.size}</div></div><button class="btn btn-quiet btn-sm btn-icon border-0 bg-transparent" data-act="fake-dl" data-n="${esc(l.t)}" aria-label="Télécharger"><i class="fa-solid fa-download"></i></button></div>`).join('') || '<p class="muted small mb-0">Aucune ressource.</p>')}</div></div>`;
+  ${uCard('Bibliothèque', lib.length ? `<div class="lib-rows-flush">${lib.map(libRow).join('')}</div>` : '<p class="muted small mb-0">Aucune ressource.</p>', {tools:`<a class="btn btn-quiet btn-sm" href="#e-bibliotheque">Tout voir</a>`})}</div></div>`;
 });
 VIEWS['e-formations'].crumbTail = 'Formations';
 ACT['u-seance'] = el => uGo('e-seance', {seance: el.dataset.id});
@@ -6745,7 +6861,8 @@ ACT['d-attribuer-ok'] = form => {
 <script>/* assets/app/js/etudiant/epure.js */
 /* ============ MY EVC — Espace étudiant épuré ============
    Objectif : qu'un étudiant comprenne son espace en 5 secondes.
-     - 5 entrées de menu seulement : Accueil, Mes cours, Mes projets, Paiements, Certificat ;
+     - 5 entrées de menu seulement : Accueil, Mes cours, Mes projets, Paiements, Certificat
+       (+ Bibliothèque, ajoutée par etudiant/bibliotheque.js) ;
        le reste est rangé dans « Plus » (replié) ;
      - un accueil qui répond à trois questions : quel est mon prochain cours ? quel projet dois-je rendre ?
        combien me reste-t-il à payer ? avec UNE action principale mise en avant ;
@@ -6830,6 +6947,295 @@ const uPStatusEtu = st => ({afaire:'À démarrer', encours:'En cours', reprendre
   out = out.replace(/<label class="search-field t-search[\s\S]*?<\/label>/, '');                    // recherche : icône seule
   out = out.replace('class="btn btn-quiet btn-icon d-md-none" data-act="cmdk"', 'class="btn btn-quiet btn-icon" data-act="cmdk"');
   return out; }; })();
+
+</script>
+<script>/* assets/app/js/etudiant/bibliotheque.js */
+/* ============ MY EVC — Bibliothèque (espace étudiant) ============
+   Une rubrique où l'étudiant télécharge tout ce qu'il lui faut pour travailler :
+   logiciels, e-books, polices, ressources graphiques, modèles, supports de cours et tutoriels.
+
+   - Chaque étudiant voit les ressources de SES formations (DG, CM, GIA) et celles destinées à tous.
+     Le sélecteur de formation de la barre du haut filtre la bibliothèque comme les autres écrans.
+   - Les ressources viennent de S.lib (données : LIB dans noyau/data.js). L'administration et les
+     formateurs les publient depuis admin/bibliotheque.js : un ajout apparaît aussitôt ici.
+   - Logiciels et polices du commerce : lien vers le site officiel (jamais de copie de logiciel payant).
+
+   Écran : #e-bibliotheque (menu principal, après « Mes projets »). */
+
+/* ---------- 1. Catégories et outils communs (aussi utilisés par l'administration) ---------- */
+const LIB_CATS = {
+  logiciels:  {l:'Logiciels',              icon:'fa-laptop-code',  tone:'lav'},
+  ebooks:     {l:'E-books',                icon:'fa-book',         tone:'cor'},
+  polices:    {l:'Polices',                icon:'fa-font',         tone:'ok'},
+  graphiques: {l:'Ressources graphiques',  icon:'fa-images',       tone:'warn'},
+  modeles:    {l:'Modèles',                icon:'fa-file-lines',   tone:'info'},
+  supports:   {l:'Supports de cours',      icon:'fa-chalkboard',   tone:'lav'},
+  tutos:      {l:'Tutoriels vidéo',        icon:'fa-circle-play',  tone:'cor'}
+};
+const LIB_NOUVEAU = 7;                                  // « Nouveau » pendant 7 jours
+const libCat = r => LIB_CATS[r.cat] || LIB_CATS.supports;
+const libIsNew = r => r.d >= -LIB_NOUVEAU;
+const libExterne = r => !!r.url;
+const libAdded = r => r.d === 0 ? "Aujourd'hui" : fmtD(addDays(r.d), {day:'numeric', month:'long', year:'numeric'});
+const libFChip = r => r.f === 'ALL' ? pill('Toutes formations', 'mute', 1) : fchip(r.f);
+const libIcon = (r, cls = '') => `<span class="lib-ic t-${libCat(r).tone} ${cls}" aria-hidden="true"><i class="fa-solid ${libCat(r).icon}"></i></span>`;
+
+/* Ressources publiées visibles pour une liste de formations */
+const libFor = fs => S.lib.filter(r => r.pub !== false && (r.f === 'ALL' || fs.includes(r.f)));
+const libDone = () => (S.st.libDl = S.st.libDl || []);
+const libGot = r => libDone().includes(r.id);
+
+/* Ligne compacte (fiche formation, tableau de bord de formation) */
+const libRow = r => `<div class="lib-row">${libIcon(r, 'sm')}<div class="lr-m"><div class="lr-t">${esc(r.t)}</div><div class="lr-s">${esc(libCat(r).l)} · ${esc(r.fmt)}${r.size !== '—' ? ` · ${esc(r.size)}` : ''}</div></div>${libBtn(r, true)}</div>`;
+
+/* Bouton principal : « Télécharger » ou « Site officiel » selon la ressource */
+function libBtn(r, icon = false){
+  const ext = libExterne(r), label = ext ? 'Site officiel' : r.fmt === 'Vidéo' ? 'Regarder' : 'Télécharger';
+  const ic = ext ? 'fa-arrow-up-right-from-square' : r.fmt === 'Vidéo' ? 'fa-play' : 'fa-download';
+  return icon
+    ? `<button class="btn btn-quiet btn-sm btn-icon" data-act="lib-dl" data-id="${r.id}" aria-label="${label} : ${esc(r.t)}" title="${label}"><i class="fa-solid ${ic}"></i></button>`
+    : `<button class="btn ${libGot(r) ? 'btn-ghost' : 'btn-primary'} btn-sm" data-act="lib-dl" data-id="${r.id}"><i class="fa-solid ${libGot(r) && !ext ? 'fa-check' : ic}"></i>${libGot(r) && !ext ? 'Téléchargé' : label}</button>`;
+}
+
+/* ---------- 2. Écran étudiant ---------- */
+function libFiltered(){
+  const U = S.ui.lib = S.ui.lib || {cat:'', q:'', tri:'recent'};
+  let L = libFor(vf());
+  if (U.cat === 'mes') L = L.filter(libGot);
+  else if (U.cat) L = L.filter(r => r.cat === U.cat);
+  const q = U.q.trim().toLowerCase();
+  if (q) L = L.filter(r => (r.t + ' ' + r.desc + ' ' + r.fmt).toLowerCase().includes(q));
+  const tri = {recent:(a,b)=>b.d-a.d, populaire:(a,b)=>b.dl-a.dl, az:(a,b)=>a.t.localeCompare(b.t,'fr')}[U.tri];
+  return L.slice().sort(tri);
+}
+
+function libCard(r){
+  return `<article class="lib-item" data-act="lib-voir" data-id="${r.id}" role="button" tabindex="0" aria-label="${esc(r.t)}">
+    <div class="li-top">${libIcon(r)}<div class="li-badges">${libIsNew(r) ? pill('Nouveau', 'acc', 1) : ''}${libFChip(r)}</div></div>
+    <h3 class="li-t">${esc(r.t)}</h3>
+    <p class="li-d">${esc(r.desc)}</p>
+    <div class="li-meta"><span>${esc(r.fmt)}</span>${r.size !== '—' ? `<span>${esc(r.size)}</span>` : ''}<span>${esc(r.lic)}</span></div>
+    <div class="li-foot">${libBtn(r)}<span class="small muted ms-auto" title="Téléchargements"><i class="fa-solid fa-arrow-down me-1"></i>${nfr(r.dl)}</span></div>
+  </article>`;
+}
+
+function libGrid(){
+  const L = libFiltered(), U = S.ui.lib;
+  if (!L.length) return U.cat === 'mes'
+    ? uEmpty('Aucun téléchargement pour le moment', 'Les ressources que vous téléchargez apparaîtront ici.', `<button class="btn btn-ghost btn-sm" data-act="lib-cat" data-k="">Parcourir la bibliothèque</button>`)
+    : uEmpty('Aucune ressource trouvée', U.q ? `Aucun résultat pour « ${esc(U.q)} ».` : 'Cette rubrique sera bientôt complétée par vos formateurs.');
+  return `<div class="lib-grid">${L.map(libCard).join('')}</div>`;
+}
+
+view('e-bibliotheque', 'etu', 'Bibliothèque', 'fa-book-bookmark', () => {
+  const U = S.ui.lib = S.ui.lib || {cat:'', q:'', tri:'recent'}, all = libFor(vf());
+  const n = k => all.filter(r => r.cat === k).length, mes = all.filter(libGot).length;
+  const cles = !U.cat && !U.q ? all.filter(r => r.key) : [];
+  const chips = [['', 'Tout', all.length, 'fa-layer-group'], ...Object.entries(LIB_CATS).filter(([k]) => n(k)).map(([k, c]) => [k, c.l, n(k), c.icon]), ['mes', 'Mes téléchargements', mes, 'fa-clock-rotate-left']];
+  return `
+  <div class="lib-head">
+    <p class="muted mb-0">Logiciels, e-books, polices, modèles et supports de ${vf().length > 1 ? 'vos formations' : `la formation ${esc(uFShort(vf()[0]))}`}, à télécharger quand vous voulez.</p>
+    <div class="lib-tools">
+      <label class="search-field mb-0 flex-grow-1"><i class="fa-solid fa-magnifying-glass"></i><input class="form-control" style="background:var(--surface)" placeholder="Rechercher une ressource…" value="${esc(U.q)}" data-inp="lib-q" aria-label="Rechercher une ressource"></label>
+      <select class="form-select" data-chg="lib-tri" aria-label="Trier" style="max-width:190px">${[['recent','Plus récentes'],['populaire','Plus téléchargées'],['az','De A à Z']].map(([k,l]) => `<option value="${k}" ${U.tri===k?'selected':''}>${l}</option>`).join('')}</select>
+    </div>
+  </div>
+  <div class="lib-cats" role="tablist" aria-label="Catégories">${chips.map(([k, l, c, ic]) => `<button type="button" role="tab" class="lib-cat ${U.cat===k?'on':''}" data-act="lib-cat" data-k="${k}" aria-selected="${U.cat===k}"><i class="fa-solid ${ic}"></i>${esc(l)}<span class="cnt">${c}</span></button>`).join('')}</div>
+  ${cles.length ? `<section class="lib-key"><div class="lk-h"><h2>Pour bien démarrer</h2><span class="small muted">Les indispensables de votre formation</span></div><div class="lk-list">${cles.map(r => `<div class="lk-item">${libIcon(r, 'sm')}<div class="lr-m"><div class="lr-t">${esc(r.t)}</div><div class="lr-s">${esc(libCat(r).l)} · ${esc(r.lic)}</div></div>${libBtn(r, true)}</div>`).join('')}</div></section>` : ''}
+  <div id="lib-region">${libGrid()}</div>`;
+});
+Object.assign(VIEWS['e-bibliotheque'], {
+  crumb: () => `Espace étudiant <span class="sep">›</span> Bibliothèque`,
+  title: 'Bibliothèque'
+});
+
+/* ---------- 3. Fiche d'une ressource et téléchargement ---------- */
+ACT['lib-voir'] = el => {
+  const r = S.lib.find(x => x.id === el.dataset.id); if (!r) return;
+  const ligne = (k, v) => v ? `<div class="lib-dl-row"><span>${k}</span><b>${v}</b></div>` : '';
+  openModal({ title: `${libIcon(r, 'sm')}<span class="ms-2">${esc(r.t)}</span>`,
+    body: `<p>${esc(r.desc)}</p>
+      <div class="lib-dl">${ligne('Catégorie', esc(libCat(r).l))}${ligne('Formation', r.f === 'ALL' ? 'Toutes les formations' : `${fchip(r.f)} ${esc(uFShort(r.f))}`)}${ligne('Format', esc(r.fmt))}${r.size !== '—' ? ligne('Taille', esc(r.size)) : ''}${ligne('Licence', esc(r.lic))}${ligne('Compatible', esc(r.os || ''))}${ligne('Ajoutée le', libAdded(r))}${ligne('Téléchargements', nfr(r.dl))}</div>
+      ${libExterne(r) ? `<div class="alert-strip as-info mt-3"><i class="fa-solid fa-shield-halved"></i><span>Téléchargez toujours depuis le site officiel de l'éditeur. ${r.cat === 'logiciels' ? 'Un tutoriel d’installation est disponible dans « Vidéos des cours ».' : ''}</span></div>` : ''}
+      ${r.lic === 'Réservé EVC' ? `<p class="small muted mt-3 mb-0"><i class="fa-solid fa-lock me-1"></i>Ressource réservée aux étudiants de l'EVC : merci de ne pas la partager en dehors de l'école.</p>` : ''}`,
+    foot: `<button class="btn btn-ghost" data-bs-dismiss="modal">Fermer</button>${libBtn(r).replace('btn-sm', '')}` });
+};
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('.lib-item')) { e.preventDefault(); ACT['lib-voir'](e.target); } });
+
+ACT['lib-dl'] = el => {
+  const r = S.lib.find(x => x.id === el.dataset.id); if (!r) return;
+  if (S.role === 'etu' && S.st) {
+    if (!libGot(r)) { libDone().push(r.id); r.dl++; }
+    if (typeof livePush === 'function') livePush({uid: liveMe().id, txt: `${libExterne(r) ? 'Ouvre le site officiel de' : 'Télécharge'} « ${r.t} »`, ic: 'fa-solid fa-download', kind: 'dl'});
+  }
+  if (libExterne(r)) { window.open(r.url, '_blank', 'noopener'); toast(`Site officiel ouvert : <b>${esc(r.t)}</b>`, 'info'); }
+  else toast(`${r.fmt === 'Vidéo' ? 'Lecture' : 'Téléchargement'} : <b>${esc(r.t)}</b>${r.size !== '—' ? ` (${esc(r.size)})` : ''}`, 'ok');
+  if ($('#modal').classList.contains('show')) closeModal();
+  if (S.view === 'e-bibliotheque') rerender();
+};
+
+/* ---------- 4. Filtres ---------- */
+const libPaint = () => { const z = $('#lib-region'); if (z) z.innerHTML = libGrid(); };
+INP['lib-q'] = el => { S.ui.lib.q = el.value; libPaint(); };
+INP['lib-tri'] = el => { S.ui.lib.tri = el.value; libPaint(); };
+ACT['lib-cat'] = el => { S.ui.lib = S.ui.lib || {cat:'', q:'', tri:'recent'}; S.ui.lib.cat = el.dataset.k; rerender(); };
+
+/* ---------- 5. Raccordements : menu, pastille « nouveautés », accueil ---------- */
+(() => {
+  const m = MENUS.etu[0][1]; if (!m.includes('e-bibliotheque')) m.splice(m.indexOf('e-todo') + 1, 0, 'e-bibliotheque');
+  MENUS.etu.forEach(g => { if (g[0]) g[1] = g[1].filter(x => x !== 'e-bibliotheque'); });
+
+  /* Notifications : catégorie « Bibliothèque » (nouvelle ressource publiée) */
+  if (typeof U_NCAT === 'object') U_NCAT['Bibliothèque'] = ['fa-book-bookmark', 'lav', 'Ouvrir la bibliothèque', 'e-bibliotheque'];
+
+  /* Pastille du menu : nouvelles ressources pas encore téléchargées */
+  const base = menuCount;
+  menuCount = id => id === 'e-bibliotheque' && S.role === 'etu' && S.st ? libFor(fl()).filter(r => libIsNew(r) && !libGot(r)).length : base(id);
+})();
+
+</script>
+<script>/* assets/app/js/admin/bibliotheque.js */
+/* ============ MY EVC — Bibliothèque : gestion (administration et formateurs) ============
+   Publier les ressources que les étudiants téléchargent dans leur Bibliothèque (#e-bibliotheque).
+
+   - #a-bibliotheque  administration : toutes les formations (et les ressources communes) ;
+   - #t-bibliotheque  formateur : uniquement sa formation (Marc Yao → DG dans la démonstration).
+   Ajouter, modifier, publier ou repasser en brouillon, supprimer. Une ressource publiée apparaît
+   aussitôt chez les étudiants concernés ; « Prévenir les étudiants » leur envoie une notification.
+
+   Catégories et outils d'affichage : etudiant/bibliotheque.js (LIB_CATS, libIcon…).
+   En production : table ressources(id, formation_code|NULL, categorie, titre, description, format,
+   taille, licence, compatible, url|fichier, indispensable, publie, cree_le, cree_par) et
+   telechargements(ressource_id, etudiant_id, le). */
+
+const LIB_LICENCES = ['Réservé EVC', 'Libre et gratuit', 'Gratuit', 'Gratuit (version Pro payante)', 'Libre (OFL)', 'Licence payante'];
+const libScope = () => S.role === 'form' ? ['DG'] : FORDER;          // formations gérées par l'utilisateur
+const libManaged = () => S.lib.filter(r => S.role === 'form' ? libScope().includes(r.f) : true);
+const libAuteur = () => S.role === 'form' ? 'Marc Yao' : 'Didier Koné';
+
+/* ---------- 1. Écran de gestion (commun aux deux espaces) ---------- */
+function libAdmRows(){
+  const U = S.ui.libA = S.ui.libA || {}, q = (U.q || '').trim().toLowerCase();
+  const L = libManaged().filter(r => (!U.f || r.f === U.f) && (!U.cat || r.cat === U.cat) && (!U.st || (U.st === 'pub') === (r.pub !== false)) && (!q || r.t.toLowerCase().includes(q)))
+    .sort((a, b) => b.d - a.d);
+  if (!L.length) return `<div class="panel">${empty('Aucune ressource ne correspond à ces filtres.', 'fa-book-bookmark')}</div>`;
+  return `<div class="panel tbl"><table class="table align-middle"><thead><tr><th>Ressource</th><th>Catégorie</th><th>Formation</th><th>Licence</th><th class="text-end">Téléch.</th><th>Ajoutée</th><th>Statut</th><th></th></tr></thead><tbody>
+    ${L.map(r => `<tr>
+      <td><div class="lib-adm-t">${libIcon(r, 'sm')}<div class="lr-m"><b title="${esc(r.t)}">${esc(r.t)}</b><small>${esc(r.fmt)}${r.size !== '—' ? ` · ${esc(r.size)}` : ''}${r.key ? ' · <i class="fa-solid fa-star" title="Indispensable"></i> Indispensable' : ''}</small></div></div></td>
+      <td class="small">${esc(libCat(r).l)}</td>
+      <td>${libFChip(r)}</td>
+      <td class="small">${esc(r.lic)}</td>
+      <td class="text-end">${nfr(r.dl)}</td>
+      <td class="small text-nowrap">${r.d === 0 ? "Aujourd'hui" : fmtD(addDays(r.d), {day:'numeric', month:'short'})}</td>
+      <td>${r.pub === false ? pill('Brouillon', 'mute') : pill('Publiée', 'ok')}</td>
+      <td class="text-end text-nowrap">
+        <button class="btn btn-quiet btn-sm btn-icon" data-act="lib-edit" data-id="${r.id}" aria-label="Modifier ${esc(r.t)}" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+        <button class="btn btn-quiet btn-sm btn-icon" data-act="lib-pub" data-id="${r.id}" aria-label="${r.pub === false ? 'Publier' : 'Repasser en brouillon'}" title="${r.pub === false ? 'Publier' : 'Repasser en brouillon'}"><i class="fa-solid ${r.pub === false ? 'fa-eye' : 'fa-eye-slash'}"></i></button>
+        <button class="btn btn-quiet btn-sm btn-icon" data-act="lib-del" data-id="${r.id}" aria-label="Supprimer ${esc(r.t)}" title="Supprimer"><i class="fa-solid fa-trash-can"></i></button></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function libManager(){
+  const U = S.ui.libA = S.ui.libA || {}, M = libManaged(), pub = M.filter(r => r.pub !== false);
+  const total = M.reduce((a, r) => a + r.dl, 0), top = M.slice().sort((a, b) => b.dl - a.dl)[0], recents = M.filter(r => r.d >= -30).length;
+  const scope = libScope();
+  return `
+  <div class="lib-kpis">
+    ${uKpi('Ressources publiées', nfr(pub.length), `${M.length - pub.length} brouillon${M.length - pub.length > 1 ? 's' : ''}`, 'fa-book-bookmark', 'lav')}
+    ${uKpi('Téléchargements', nfr(total), 'Depuis la rentrée', 'fa-download', 'cor')}
+    ${uKpi('Ajoutées ce mois', nfr(recents), '30 derniers jours', 'fa-plus', 'ok')}
+    ${uKpi('La plus téléchargée', top ? nfr(top.dl) : '—', top ? esc(top.t) : '', 'fa-trophy', 'warn')}
+  </div>
+  <div class="filters-row mb-3">
+    <label class="search-field flex-grow-1 mb-0" style="min-width:220px"><i class="fa-solid fa-magnifying-glass"></i><input class="form-control" style="background:var(--surface)" placeholder="Rechercher une ressource…" value="${esc(U.q || '')}" data-inp="liba-q" aria-label="Rechercher une ressource"></label>
+    ${scope.length > 1 ? `<select class="form-select" data-chg="liba-f" data-k="f" aria-label="Formation" style="max-width:240px"><option value="">Toutes les formations</option>${scope.map(f => `<option value="${f}" ${U.f === f ? 'selected' : ''}>${esc(F[f].name)}</option>`).join('')}<option value="ALL" ${U.f === 'ALL' ? 'selected' : ''}>Communes à toutes</option></select>` : ''}
+    <select class="form-select" data-chg="liba-f" data-k="cat" aria-label="Catégorie" style="max-width:220px"><option value="">Toutes les catégories</option>${Object.entries(LIB_CATS).map(([k, c]) => `<option value="${k}" ${U.cat === k ? 'selected' : ''}>${c.l}</option>`).join('')}</select>
+    <select class="form-select" data-chg="liba-f" data-k="st" aria-label="Statut" style="max-width:170px"><option value="">Tous les statuts</option><option value="pub" ${U.st === 'pub' ? 'selected' : ''}>Publiées</option><option value="brouillon" ${U.st === 'brouillon' ? 'selected' : ''}>Brouillons</option></select>
+  </div>
+  <div id="liba-region">${libAdmRows()}</div>`;
+}
+
+const libCta = () => `<button class="btn btn-primary t-cta" data-act="lib-new"><i class="fa-solid fa-plus"></i>Ajouter une ressource</button>`;
+view('a-bibliotheque', 'admin', 'Bibliothèque', 'fa-book-bookmark', libManager);
+Object.assign(VIEWS['a-bibliotheque'], { title: 'Bibliothèque des étudiants', cta: libCta,
+  crumb: () => `Administration <span class="sep">›</span> Programmes <span class="sep">›</span> Bibliothèque` });
+view('t-bibliotheque', 'form', 'Bibliothèque', 'fa-book-bookmark', libManager);
+Object.assign(VIEWS['t-bibliotheque'], { title: 'Bibliothèque de ma formation', cta: libCta,
+  crumb: () => `Espace formateur <span class="sep">›</span> Bibliothèque` });
+
+/* ---------- 2. Ajouter ou modifier une ressource ---------- */
+function libForm(r){
+  const nouveau = !r, x = r || {cat:'ebooks', f:libScope()[0], lic:'Réservé EVC', pub:true}, ext = !!x.url;
+  const opts = (list, cur) => list.map(([v, l]) => `<option value="${v}" ${cur === v ? 'selected' : ''}>${esc(l)}</option>`).join('');
+  const formations = [...libScope().map(f => [f, F[f].name]), ...(S.role === 'form' ? [] : [['ALL', 'Toutes les formations']])];
+  openModal({ title: nouveau ? 'Ajouter une ressource' : 'Modifier la ressource', size: 'modal-lg',
+    body: `<form id="lib-form" data-submit="lib-save" data-id="${x.id || ''}" class="row g-3" novalidate>
+      <div class="col-12"><label class="form-label" for="lf-t">Titre</label><input class="form-control" id="lf-t" required maxlength="90" value="${esc(x.t || '')}" placeholder="Ex. : Pack de polices pour l'affiche"><div class="invalid-feedback">Indiquez un titre.</div></div>
+      <div class="col-sm-6"><label class="form-label" for="lf-c">Catégorie</label><select class="form-select" id="lf-c">${opts(Object.entries(LIB_CATS).map(([k, c]) => [k, c.l]), x.cat)}</select></div>
+      <div class="col-sm-6"><label class="form-label" for="lf-f">Formation</label><select class="form-select" id="lf-f">${opts(formations, x.f)}</select></div>
+      <div class="col-12"><label class="form-label" for="lf-d">Description</label><textarea class="form-control" id="lf-d" rows="2" required maxlength="240" placeholder="À quoi sert cette ressource, en une ou deux phrases.">${esc(x.desc || '')}</textarea><div class="invalid-feedback">Ajoutez une courte description.</div></div>
+      <div class="col-12"><span class="form-label d-block">Source</span><div class="lib-src" role="radiogroup">
+        <label class="form-check-card"><input class="form-check-input me-2" type="radio" name="lf-src" value="fichier" ${ext ? '' : 'checked'} data-chg="lf-src">Fichier hébergé par l'EVC</label>
+        <label class="form-check-card"><input class="form-check-input me-2" type="radio" name="lf-src" value="lien" ${ext ? 'checked' : ''} data-chg="lf-src">Lien vers le site officiel</label></div></div>
+      <div class="col-12 ${ext ? 'd-none' : ''}" id="lf-fw"><label class="form-label" for="lf-file">Fichier ${nouveau ? '' : '<span class="small muted">(laisser vide pour garder le fichier actuel)</span>'}</label><input class="form-control" type="file" id="lf-file" data-chg="lf-file"></div>
+      <div class="col-12 ${ext ? '' : 'd-none'}" id="lf-uw"><label class="form-label" for="lf-u">Adresse du site officiel</label><input class="form-control" type="url" id="lf-u" value="${esc(x.url || '')}" placeholder="https://…" ${ext ? 'required' : ''}><div class="invalid-feedback">Indiquez une adresse commençant par https://</div></div>
+      <div class="col-sm-4"><label class="form-label" for="lf-fmt">Format</label><input class="form-control" id="lf-fmt" value="${esc(x.fmt || '')}" placeholder="PDF, ZIP · TTF…"></div>
+      <div class="col-sm-4"><label class="form-label" for="lf-s">Taille</label><input class="form-control" id="lf-s" value="${esc(x.size && x.size !== '—' ? x.size : '')}" placeholder="Ex. : 4,2 Mo"></div>
+      <div class="col-sm-4"><label class="form-label" for="lf-l">Licence</label><select class="form-select" id="lf-l">${opts(LIB_LICENCES.map(l => [l, l]), x.lic)}</select></div>
+      <div class="col-12"><label class="form-label" for="lf-os">Compatible <span class="small muted">(facultatif)</span></label><input class="form-control" id="lf-os" value="${esc(x.os || '')}" placeholder="Windows · macOS · mobile"></div>
+      <div class="col-12 d-flex flex-column gap-2">
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="lf-key" ${x.key ? 'checked' : ''}><label class="form-check-label" for="lf-key">Indispensable : afficher dans « Pour bien démarrer »</label></div>
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="lf-pub" ${x.pub !== false ? 'checked' : ''}><label class="form-check-label" for="lf-pub">Publier : visible tout de suite par les étudiants</label></div>
+        ${nouveau ? `<div class="form-check"><input class="form-check-input" type="checkbox" id="lf-n" checked><label class="form-check-label" for="lf-n">Prévenir les étudiants concernés (notification)</label></div>` : ''}
+      </div></form>`,
+    foot: `<button class="btn btn-ghost" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary" type="submit" form="lib-form"><i class="fa-solid fa-check"></i>${nouveau ? 'Ajouter' : 'Enregistrer'}</button>` });
+}
+ACT['lib-new'] = () => libForm(null);
+ACT['lib-edit'] = el => libForm(S.lib.find(r => r.id === el.dataset.id));
+
+INP['lf-src'] = () => { const ext = $('input[name=lf-src]:checked').value === 'lien';
+  $('#lf-fw').classList.toggle('d-none', ext); $('#lf-uw').classList.toggle('d-none', !ext); $('#lf-u').required = ext;
+  if (ext && !$('#lf-fmt').value) $('#lf-fmt').value = 'Site officiel'; };
+INP['lf-file'] = el => { const f = el.files && el.files[0]; if (!f) return;
+  const ext = (f.name.split('.').pop() || '').toUpperCase(), mo = f.size / 1048576;
+  $('#lf-fmt').value = ext; $('#lf-s').value = mo >= 1 ? `${mo.toFixed(1).replace('.', ',')} Mo` : `${Math.max(1, Math.round(f.size / 1024))} Ko`;
+  if (!$('#lf-t').value) $('#lf-t').value = f.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '); };
+
+ACT['lib-save'] = form => {
+  const ext = $('input[name=lf-src]:checked').value === 'lien', id = form.dataset.id, old = id ? S.lib.find(r => r.id === id) : null;
+  if (!ext && !old?.size && !$('#lf-file').files.length && !$('#lf-s').value.trim()) { toast('Ajoutez le fichier à mettre en ligne.', 'warn'); return; }
+  const data = { t: $('#lf-t').value.trim(), cat: $('#lf-c').value, f: $('#lf-f').value, desc: $('#lf-d').value.trim(),
+    fmt: $('#lf-fmt').value.trim() || (ext ? 'Site officiel' : 'Fichier'), size: $('#lf-s').value.trim() || '—', lic: $('#lf-l').value,
+    os: $('#lf-os').value.trim(), url: ext ? $('#lf-u').value.trim() : '', key: $('#lf-key').checked, pub: $('#lf-pub').checked };
+  if (old) { Object.assign(old, data); audit('Ressource modifiée', `Bibliothèque — ${data.t}`); closeModal(); rerender(); toast('Ressource mise à jour.'); return; }
+  const r = { id: 'lb-' + Date.now(), d: 0, dl: 0, by: libAuteur(), ...data }; S.lib.unshift(r);
+  const vise = S.st && (r.f === 'ALL' || PROFILES[S.profile].f.includes(r.f));
+  if (r.pub && $('#lf-n')?.checked && vise) S.st.notifs.unshift({ id: 'n' + Date.now(), cat: 'Bibliothèque', f: r.f === 'ALL' ? null : r.f, t: `Nouvelle ressource : « ${r.t} » est disponible dans votre bibliothèque.`, d: "À l'instant", read: false });
+  audit('Ressource ajoutée', `Bibliothèque ${r.f === 'ALL' ? 'toutes formations' : r.f} — ${r.t}`); closeModal(); rerender();
+  toast(r.pub ? `« ${esc(r.t)} » est publiée${$('#lf-n')?.checked ? ' et les étudiants sont prévenus' : ''}.` : `« ${esc(r.t)} » est enregistrée en brouillon.`);
+};
+
+/* ---------- 3. Publier, supprimer, filtrer ---------- */
+ACT['lib-pub'] = el => { const r = S.lib.find(x => x.id === el.dataset.id); r.pub = r.pub === false;
+  audit(r.pub ? 'Ressource publiée' : 'Ressource masquée', `Bibliothèque — ${r.t}`); rerender();
+  toast(r.pub ? 'Ressource publiée : les étudiants la voient.' : 'Ressource repassée en brouillon : elle est masquée pour les étudiants.', r.pub ? 'ok' : 'info'); };
+ACT['lib-del'] = el => { const r = S.lib.find(x => x.id === el.dataset.id);
+  confirmBox('Supprimer la ressource', `« ${esc(r.t)} » sera retirée de la bibliothèque des étudiants. Cette action est définitive.`, 'lib-del-ok', `data-id="${r.id}"`, true); };
+ACT['lib-del-ok'] = el => { const i = S.lib.findIndex(x => x.id === el.dataset.id); if (i < 0) return;
+  const [r] = S.lib.splice(i, 1); audit('Ressource supprimée', `Bibliothèque — ${r.t}`); closeModal(); rerender(); toast('Ressource supprimée.'); };
+
+const libAPaint = () => { const z = $('#liba-region'); if (z) z.innerHTML = libAdmRows(); };
+INP['liba-q'] = el => { S.ui.libA.q = el.value; libAPaint(); };
+INP['liba-f'] = el => { S.ui.libA[el.dataset.k] = el.value; libAPaint(); };
+
+/* ---------- 4. Raccordements : menus et droits ---------- */
+(() => {
+  ADMIN_MODULES.push(['a-bibliotheque', 'Bibliothèque', 'fa-book-bookmark']); ALL_A.push('a-bibliotheque');
+  /* Les rôles qui gèrent les documents gèrent aussi la bibliothèque */
+  [S.perms, PERM_DEFAULT].forEach(P => Object.values(P).forEach(l => { if (l.includes('a-documents') && !l.includes('a-bibliotheque')) l.push('a-bibliotheque'); }));
+  const prog = MENUS.admin.find(g => g[0] === 'Programmes'); if (prog && !prog[1].includes('a-bibliotheque')) prog[1].push('a-bibliotheque');
+  const plus = MENUS.form.find(g => g[0] === 'Plus'); if (plus && !plus[1].includes('t-bibliotheque')) plus[1].splice(plus[1].indexOf('t-ressources') + 1, 0, 't-bibliotheque');
+})();
 
 </script>
 <script>/* assets/app/js/noyau/liens.js */

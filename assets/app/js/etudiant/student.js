@@ -87,7 +87,7 @@ ACT.pwd = f => { if ($('#pw-new').value !== $('#pw-cf').value) { $('#pw-cf').set
 view('e-formations','etu','Mes formations','fa-layer-group', () => {
   const fs = vf(); if (!fs.includes(S.ui.ftab)) S.ui.ftab = fs[0]; const f = S.ui.ftab, Fx = S.formations[f];
   const nextS = S.st.seances.filter(x=>x.f===f && x.d>=0).sort((a,b)=>a.d-b.d).slice(0,3);
-  const lib = S.st.library.filter(l=>l.f===f).slice(0,4); const todos = S.st.todos.filter(t=>t.f===f); const evs = S.st.evals.filter(e=>e.f===f);
+  const lib = libFor([f]).filter(r=>r.f===f).slice(0,4); const todos = S.st.todos.filter(t=>t.f===f); const evs = S.st.evals.filter(e=>e.f===f);
   return `${fs.length>1?`<ul class="nav nav-tabs mb-3">${fs.map(x=>`<li class="nav-item"><button class="nav-link ${x===f?'active':''}" data-act="ftab" data-f="${x}">${fchip(x)} <span class="ms-1">${fname(x)}</span></button></li>`).join('')}</ul>`:''}
   <div class="row g-3 c-${f}">
     <div class="col-xl-8 d-flex flex-column gap-3">
@@ -99,7 +99,7 @@ view('e-formations','etu','Mes formations','fa-layer-group', () => {
     </div>
     <div class="col-xl-4 d-flex flex-column gap-3">
       <section class="fcard c-${f}"><span class="small-caps">Progression individuelle</span><div class="d-flex align-items-end gap-2"><span class="big-pct">${prog(f)}%</span><span class="muted small mb-1">du programme</span></div>${bar(prog(f),f)}<div class="stat-line"><span>Présence</span><b>${Fx.presence} %</b></div><div class="stat-line"><span>Travaux validés</span><b>${todos.filter(t=>t.status==='valide').length} / ${todos.length}</b></div><div class="stat-line"><span>Moyenne</span><b>${avgF(f)??'—'} / 20</b></div></section>
-      ${panel('Supports de cours', lib.map(l=>`<div class="row-item"><span class="lib-card p-0 border-0"><span class="ft t-${l.type}" style="width:30px;height:34px;font-size:.8rem"><i class="fa-solid ${typeIcon(l.type)}"></i></span></span><div class="ri-main"><div class="ri-t small">${esc(l.t)}</div><div class="ri-s">${l.size}</div></div><button class="btn btn-ghost btn-sm" data-act="fake-dl" data-n="${esc(l.t)}"><i class="fa-solid fa-download"></i></button></div>`).join(''), {p0:true, tools:`<a class="btn btn-ghost btn-sm" href="#e-bibliotheque">Bibliothèque</a>`})}
+      ${panel('Bibliothèque', lib.map(libRow).join(''), {p0:true, tools:`<a class="btn btn-ghost btn-sm" href="#e-bibliotheque">Tout voir</a>`})}
       ${panel('Travaux et projets', `<div class="d-flex flex-column gap-2">${Object.keys(STATUS).map(k=>{ const n=todos.filter(t=>t.status===k).length; return n?`<div class="stat-line"><span>${statusPill(k)}</span><b>${n}</b></div>`:''; }).join('')}<div class="d-flex gap-2 mt-2 flex-wrap"><a class="btn btn-ghost btn-sm" href="#e-todo">My To-Do</a><a class="btn btn-ghost btn-sm" href="#e-projets">Projets</a></div></div>`)}
       ${panel('Évaluations et résultats', evs.map(e=>`<div class="stat-line py-1"><span>${esc(e.t)}</span>${e.note!=null?uAppPill(e.note):'<b>—</b>'}</div>`).join(''))}
       ${panel('Conditions de certification', certCriteria(f).map(c=>`<div class="d-flex gap-2 align-items-center py-1 small"><span class="ci ${c.s} crit p-0 border-0" style="width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:.6rem"><i class="fa-solid ${c.s==='ok'?'fa-check':c.s==='ko'?'fa-xmark':'fa-hourglass-half'}"></i></span>${c.t}</div>`).join(''), {tools:`<a class="btn btn-ghost btn-sm" href="#e-certification">Dossier</a>`})}
@@ -189,19 +189,6 @@ ACT['todo-submit'] = f => { const t = S.st.todos.find(x=>x.id===f.dataset.id), f
   adminNotify('done', t.t, `${me} a terminé et publié son projet « ${t.t} »`);
   S.st.notifs.unshift({id:'n'+Date.now(),cat:'Travaux',f:t.f,t:`« ${t.t} » est publié. L'administration va le valider.`,d:"À l'instant",read:false});
   audit('Projet publié', `${t.t} — ${me}`); closeModal(); rerender(); toast("Projet publié. L'administration est notifiée et va le valider."); };
-
-/* ----- Bibliothèque ----- */
-view('e-bibliotheque','etu','Bibliothèque','fa-book-open', () => {
-  const locked = S.st.library.filter(l=>l.f!=='ALL' && !fl().includes(l.f)).length, cats = [...new Set(S.st.library.map(l=>l.cat))];
-  return `<div class="toolbar"><div class="grow"><div class="input-group"><span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span><input class="form-control" placeholder="Rechercher un document, un tutoriel…" data-inp="lib-q" aria-label="Rechercher"></div></div><select class="form-select" style="max-width:240px" data-chg="lib-c" aria-label="Catégorie"><option value="">Toutes les catégories</option>${cats.map(c=>`<option>${c}</option>`).join('')}</select></div>
-  ${locked?`<div class="alert-strip as-info mb-3"><i class="fa-solid fa-lock"></i>${locked} documents sont réservés à d'autres formations. L'accès suit automatiquement vos inscriptions.</div>`:''}<div id="r-lib">${libRegion()}</div>`;
-});
-function libRegion(){ const q=(S.ui.libQ||'').toLowerCase(), c=S.ui.libC||'';
-  const items = S.st.library.filter(l=>(l.f==='ALL'||vf().includes(l.f)) && (!q||l.t.toLowerCase().includes(q)) && (!c||l.cat===c));
-  return items.length ? `<div class="grid g-4">${items.map(l=>`<div class="lib-card"><div class="d-flex justify-content-between"><span class="ft t-${l.type}"><i class="fa-solid ${typeIcon(l.type)}"></i></span>${l.f==='ALL'?pill('Tous','mute',1):fchip(l.f)}</div><h4>${esc(l.t)}</h4><div class="small muted">${l.cat} · ${l.size}</div><div class="d-flex gap-2 mt-auto"><button class="btn btn-ghost btn-sm flex-fill" data-act="lib-open" data-t="${esc(l.t)}">Consulter</button><button class="btn btn-ghost btn-sm" data-act="fake-dl" data-n="${esc(l.t)}" aria-label="Télécharger"><i class="fa-solid fa-download"></i></button></div></div>`).join('')}</div>` : `<div class="panel">${empty('Aucun document trouvé')}</div>`; }
-INP['lib-q'] = el => { S.ui.libQ = el.value; $('#r-lib').innerHTML = libRegion(); };
-INP['lib-c'] = el => { S.ui.libC = el.value; $('#r-lib').innerHTML = libRegion(); };
-ACT['lib-open'] = el => { const l = S.st.library.find(x=>x.t===el.dataset.t); openModal({title:esc(l.t), size:'modal-lg', body:`<div class="rounded p-4" style="background:var(--soft);border:1px solid var(--line);min-height:320px"><div class="d-flex gap-3 align-items-center mb-3"><span class="lib-card p-0 border-0"><span class="ft t-${l.type}"><i class="fa-solid ${typeIcon(l.type)}"></i></span></span><div><b>${esc(l.t)}</b><div class="small muted">${l.cat} · ${l.size} · version 1.${l.t.length%5}</div></div></div><div style="height:10px;width:70%;background:var(--line);border-radius:4px" class="mb-2"></div><div style="height:10px;width:92%;background:var(--line);border-radius:4px" class="mb-2"></div><div style="height:10px;width:84%;background:var(--line);border-radius:4px" class="mb-4"></div><div style="height:140px;background:var(--line);border-radius:8px;opacity:.6"></div><p class="small muted mt-3 mb-0">Aperçu du document dans la visionneuse sécurisée.</p></div>`, foot:`<button class="btn btn-primary" data-act="fake-dl" data-n="${esc(l.t)}"><i class="fa-solid fa-download me-1"></i>Télécharger</button>`}); };
 
 /* ----- Mes projets ----- */
 function projectTabs(){ const t = [], fs = vf();

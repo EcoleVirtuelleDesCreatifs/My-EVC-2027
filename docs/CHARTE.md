@@ -73,7 +73,7 @@ Règle : le corail sert à **agir**, pas à décorer. Texte corail sur fond clai
 ### Principes pour l'espace étudiant
 
 1. **Une action principale par écran**, en corail.
-2. Pas plus de 5 entrées visibles dans le menu ; le reste dans « Plus ».
+2. Pas plus de 6 entrées visibles dans le menu (Accueil, Mes cours, Mes projets, Bibliothèque, Paiements, Certificat) ; le reste dans « Plus ».
 3. Des mots simples : « Mes cours », « Mes projets », « Payer », « Rendre mon projet ».
 4. Chaque carte de l'accueil mène à un seul écran.
 5. Pas de notes chiffrées : appréciations (Excellent, Très bien, Acquis, À renforcer).

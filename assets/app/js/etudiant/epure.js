@@ -1,6 +1,7 @@
 /* ============ MY EVC — Espace étudiant épuré ============
    Objectif : qu'un étudiant comprenne son espace en 5 secondes.
-     - 5 entrées de menu seulement : Accueil, Mes cours, Mes projets, Paiements, Certificat ;
+     - 5 entrées de menu seulement : Accueil, Mes cours, Mes projets, Paiements, Certificat
+       (+ Bibliothèque, ajoutée par etudiant/bibliotheque.js) ;
        le reste est rangé dans « Plus » (replié) ;
      - un accueil qui répond à trois questions : quel est mon prochain cours ? quel projet dois-je rendre ?
        combien me reste-t-il à payer ? avec UNE action principale mise en avant ;
