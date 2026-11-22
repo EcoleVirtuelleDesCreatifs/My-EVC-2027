@@ -28,7 +28,7 @@
   <button type="button" data-copy aria-label="Copier le lien" style="--c:#F39822"><svg class="ico" viewBox="0 0 24 24"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg><span class="copied">Lien copié !</span></button>
 </div>
     </div></div>
-    <article class="col-lg-7 art-body">{!! $news->body !!}</article>
+    <article class="col-lg-7 art-body">{!! $news->bodyHtml() !!}</article>
     <aside class="col-lg-4">
       @if ($others->isNotEmpty())
         <div class="nw-side"><h6>À lire aussi</h6>

@@ -65,6 +65,26 @@ class Formations extends Page
         $this->toast('Session enregistrée.');
     }
 
+    public function supprimerSession(int $id): void
+    {
+        abort_unless(auth()->user()->can('admin.formations'), 403);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($id) {
+            $p = Promotion::lockForUpdate()->findOrFail($id);
+            if ($p->students()->exists() || $p->enrollments()->exists() || $p->seances()->exists()) {
+                $this->toast('Cette session est utilisée par des étudiants, des inscriptions ou des séances. Elle ne peut pas être supprimée.', 'warn');
+                return;
+            }
+            $name = $p->name;
+            $p->delete();
+            AuditLog::record('Session supprimée', $name);
+            if ($this->editP === $id) {
+                $this->newP = false;
+                $this->editP = null;
+            }
+            $this->toast('Session supprimée.');
+        });
+    }
+
     public function closeModal(): void
     {
         $this->editF = null;

@@ -73,7 +73,7 @@ form.addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)re
 
 /* Récapitulatif */
 function data(){const d={};new FormData(form).forEach((v,k)=>{if(v instanceof File||!String(v).trim())return;(d[k]=d[k]||[]).push(v)});return d}
-const GROUPS=[["Formations",["Formations","Modalité","Disponibilités"]],["Identité",["Nom","Prénoms","Genre","Date de naissance","Nationalité","Téléphone","E-mail","Pays","Ville","Commune"]],
+const GROUPS=[["Formations",["Formations"]],["Identité",["Nom","Prénoms","Genre","Date de naissance","Nationalité","Téléphone","E-mail","Pays","Ville","Commune"]],
  ["Profil",["Situation","Niveau d'études","Établissement","Poste","Niveau dans le domaine","Outils","Ordinateur","Connexion","Objectif","Source","Motivation"]],
  ["Portfolio",["Lien portfolio"]],["Personne à contacter",["Contact - Nom","Contact - Lien","Contact - Téléphone","Contact - E-mail","Contact - Fonction","Contact - Résidence","Contact - Prend en charge les frais"]]];
 function recap(){const d=data();const fl=Object.entries(files).filter(([k,v])=>v.length);

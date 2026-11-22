@@ -51,6 +51,19 @@ class Video extends Model
         return null;
     }
 
+    public function externalUrl(): ?string
+    {
+        $embed = $this->embedUrl();
+        if ($this->source === 'youtube' && $embed && preg_match('~/embed/([\w-]{11})~', $embed, $m)) {
+            return 'https://www.youtube.com/watch?v='.$m[1];
+        }
+        if ($this->source === 'vimeo' && $embed && preg_match('~/video/(\d+)~', $embed, $m)) {
+            return 'https://vimeo.com/'.$m[1];
+        }
+
+        return null;
+    }
+
     public function durationLabel(): string
     {
         return $this->duration_min >= 60 ? intdiv($this->duration_min, 60).' h '.str_pad((string) ($this->duration_min % 60), 2, '0', STR_PAD_LEFT) : $this->duration_min.' min';

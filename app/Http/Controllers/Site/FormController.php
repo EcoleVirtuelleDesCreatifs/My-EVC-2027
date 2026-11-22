@@ -65,7 +65,7 @@ class FormController extends Controller
 
         Notification::route('mail', $c->email)->notify(new CandidatureRecue($c));
         User::permission('admin.candidatures')->get()->each->notify(new Avis('Nouvelle préinscription',
-            $c->full_name.' — '.implode(' + ', $codes).' ('.$c->reference.')', route('admin.candidature', $c), 'fa-user-plus', 'cor'));
+            $c->full_name.' — '.implode(' + ', $codes).' ('.$c->reference.')', route('admin.candidature', $c), 'fa-user-plus', 'cor', true));
 
         return response()->json(['reference' => $c->reference, 'suivi' => self::suiviUrl($c)]);
     }
@@ -114,7 +114,13 @@ class FormController extends Controller
     public function verifier(Request $request)
     {
         $code = $request->filled('reference') ? Certificate::normalize($request->query('reference')) : null;
-        $certificate = $code ? Certificate::with(['student.user', 'formation'])->where('code', $code)->first() : null;
+        $certificate = $code ? Certificate::with(['student.user', 'formation', 'registryRequest'])->where('code', $code)->first() : null;
+        if ($certificate?->registryRequest) {
+            if ($url = $certificate->registryRequest->verification_url) {
+                return redirect()->away($url);
+            }
+            $certificate = null;
+        }
 
         return view('site.verification', compact('code', 'certificate'));
     }

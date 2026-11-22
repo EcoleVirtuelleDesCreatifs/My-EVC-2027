@@ -16,6 +16,9 @@ class Messagerie extends Page
     #[Url(as: 'c', except: null)]
     public ?int $conversation = null;
 
+    #[\Livewire\Attributes\Locked]
+    public int $dernierMessageVu = 0;
+
     public string $recherche = '';
 
     public string $texte = '';
@@ -37,6 +40,27 @@ class Messagerie extends Page
         if ($this->conversation && ! $this->courante()) {
             $this->conversation = null;
         }
+        $this->dernierMessageVu = (int) $this->messagesAccessibles()->max('id');
+        $this->actualiser();
+    }
+
+    private function messagesAccessibles()
+    {
+        return \App\Models\Message::whereIn('conversation_id', Conversation::forUser(auth()->user())->reorder()->select('conversations.id'));
+    }
+
+    public function actualiser(bool $visible = true): void
+    {
+        $dernier = (int) $this->messagesAccessibles()->max('id');
+        if ($dernier > $this->dernierMessageVu && $this->messagesAccessibles()->where('id', '>', $this->dernierMessageVu)
+            ->where('id', '<=', $dernier)->where('user_id', '!=', auth()->id())->exists()) {
+            $this->dispatch('message-recu');
+        }
+        $this->dernierMessageVu = max($this->dernierMessageVu, $dernier);
+        if ($visible && ($c = $this->courante())) {
+            app(MessagingService::class)->markRead($c, auth()->user());
+        }
+        $this->dispatch('menu-actualiser');
     }
 
     private function courante(): ?Conversation
@@ -47,6 +71,7 @@ class Messagerie extends Page
     public function ouvrir(int $id): void
     {
         $this->conversation = $id;
+        $this->actualiser();
         $this->reset('texte', 'piece');
         $this->resetErrorBag();
     }
@@ -64,6 +89,7 @@ class Messagerie extends Page
         $svc->send($c, auth()->user(), trim($this->texte) ?: '📎 '.$this->piece->getClientOriginalName(), $this->piece);
         $this->reset('texte', 'piece');
         $this->dispatch('message-envoye');
+        $this->dispatch('menu-actualiser');
     }
 
     public function ouvrirNouveau(?int $userId = null): void
@@ -83,6 +109,8 @@ class Messagerie extends Page
         $c = $svc->start(auth()->user(), $this->destinataires, trim($this->objet), trim($this->premier));
         $this->nouveau = false;
         $this->conversation = $c->id;
+        $this->dispatch('message-envoye');
+        $this->dispatch('menu-actualiser');
         $this->toast('Message envoyé.');
     }
 
@@ -98,9 +126,6 @@ class Messagerie extends Page
             ->when($this->recherche, fn ($q) => $q->where(fn ($w) => $w->where('subject', 'like', "%{$this->recherche}%")
                 ->orWhereHas('participants', fn ($p) => $p->where('name', 'like', "%{$this->recherche}%"))))->take(60)->get();
         $c = $this->courante()?->load(['messages.user', 'participants']);
-        if ($c) {
-            $svc->markRead($c, $u);
-        }
         $recipients = $this->nouveau ? $svc->recipients($u)->filter(fn ($r) => ! $this->filtreDest || str_contains(mb_strtolower($r->name.' '.$r->roleLabel()), mb_strtolower($this->filtreDest)))->take(40) : collect();
 
         return $this->page('livewire.shared.messagerie', compact('list', 'c', 'u', 'recipients'), 'Messagerie', 'MY EVC <span class="sep">›</span> Messagerie',

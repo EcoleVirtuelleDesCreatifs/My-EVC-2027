@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'registre' => [
+        'url' => env('EVC_REGISTRE_URL'),
+        'token' => env('EVC_REGISTRE_TOKEN'),
+        'timeout' => 10,
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

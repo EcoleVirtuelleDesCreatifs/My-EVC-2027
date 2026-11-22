@@ -20,6 +20,10 @@ Route::get('/', [PageController::class, 'home'])->name('site.accueil');
 Route::get('/actualites', [NewsController::class, 'index'])->name('site.actualites');
 Route::get('/actualites/{news}', [NewsController::class, 'show'])->name('site.actualite');
 Route::get('/candidature/suivi', [FormController::class, 'suivi'])->name('candidature.suivi');
+Route::middleware(['signed', 'throttle:120,1'])->group(function () {
+    Route::get('/candidature/{candidature}/questionnaire', [\App\Http\Controllers\Site\SaopController::class, 'show'])->name('candidature.questionnaire');
+    Route::post('/candidature/{candidature}/questionnaire', [\App\Http\Controllers\Site\SaopController::class, 'save']);
+});
 Route::get('/certificats/verifier', [FormController::class, 'verifier'])->name('certificat.verifier');
 Route::get('/sitemap.xml', [PageController::class, 'sitemap'])->name('site.sitemap');
 
@@ -82,6 +86,8 @@ Route::prefix('myevc')->group(function () {
             Route::get('/seances/{seance}/appel', Formateur\Appel::class)->name('appel');
             Route::get('/corrections', Formateur\Corrections::class)->name('corrections');
             Route::get('/bibliotheque', Admin\Bibliotheque::class)->name('bibliotheque');
+            Route::get('/bibliotheque/nouvelle', Admin\RessourceEditeur::class)->name('ressource.nouvelle');
+            Route::get('/bibliotheque/{resource}/modifier', Admin\RessourceEditeur::class)->name('ressource.modifier');
             Route::get('/webtv', Gestion\WebTv::class)->name('webtv');
             Route::get('/reco-60', Gestion\Reco::class)->name('reco');
             Route::get('/reco-60/{project}', Gestion\RecoFiche::class)->name('reco.fiche');
@@ -100,9 +106,13 @@ Route::prefix('myevc')->group(function () {
             Route::get('/formations', Admin\Formations::class)->middleware('can:admin.formations')->name('formations');
             Route::get('/seances', Admin\Seances::class)->middleware('can:admin.formations')->name('seances');
             Route::get('/projets', Admin\Projets::class)->middleware('can:admin.projets')->name('projets');
+            Route::get('/projets/nouveau', Admin\ProjetEditeur::class)->middleware('can:admin.projets')->name('projet.nouveau');
+            Route::get('/projets/{project}/modifier', Admin\ProjetEditeur::class)->middleware('can:admin.projets')->name('projet.modifier');
             Route::get('/disponibilite', Admin\Disponibilite::class)->middleware('can:admin.projets')->name('disponibilite');
             Route::get('/finances', Admin\Finances::class)->middleware('can:admin.finances')->name('finances');
             Route::get('/bibliotheque', Admin\Bibliotheque::class)->middleware('can:admin.bibliotheque')->name('bibliotheque');
+            Route::get('/bibliotheque/nouvelle', Admin\RessourceEditeur::class)->middleware('can:admin.bibliotheque')->name('ressource.nouvelle');
+            Route::get('/bibliotheque/{resource}/modifier', Admin\RessourceEditeur::class)->middleware('can:admin.bibliotheque')->name('ressource.modifier');
             Route::get('/actualites', Admin\Actualites::class)->middleware('can:admin.actualites')->name('actualites');
             Route::get('/messages', Admin\Messages::class)->middleware('can:admin.messages')->name('messages');
             Route::get('/certificats', Admin\Certificats::class)->middleware('can:admin.certificats')->name('certificats');

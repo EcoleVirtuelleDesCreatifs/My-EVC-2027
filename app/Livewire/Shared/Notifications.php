@@ -13,6 +13,7 @@ class Notifications extends Page
     {
         $n = auth()->user()->notifications()->findOrFail($id);
         $n->markAsRead();
+        $this->dispatch('menu-actualiser');
         if ($url = $n->data['url'] ?? null) {
             $this->redirect($url, navigate: true);
         }
@@ -21,6 +22,7 @@ class Notifications extends Page
     public function toutLu(): void
     {
         auth()->user()->unreadNotifications->markAsRead();
+        $this->dispatch('menu-actualiser');
         $this->toast('Toutes les notifications sont lues.');
     }
 

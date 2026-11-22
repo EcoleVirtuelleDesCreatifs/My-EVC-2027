@@ -77,5 +77,7 @@ class MessagingService
         if ($last && $read !== $last) {
             $c->participants()->updateExistingPivot($u->id, ['last_read_id' => $last, 'last_read_at' => now()]);
         }
+        $u->unreadNotifications()->where('type', Avis::class)
+            ->where('data->url', route('myevc.messagerie', ['c' => $c->id]))->update(['read_at' => now()]);
     }
 }

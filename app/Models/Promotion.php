@@ -21,6 +21,16 @@ class Promotion extends Model
         return $this->hasMany(Student::class);
     }
 
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function seances(): HasMany
+    {
+        return $this->hasMany(Seance::class);
+    }
+
     public static function current(): ?self
     {
         return static::whereIn('status', ['en_cours', 'ouverte'])->orderByRaw("status = 'en_cours' desc")->orderBy('starts_on')->first();

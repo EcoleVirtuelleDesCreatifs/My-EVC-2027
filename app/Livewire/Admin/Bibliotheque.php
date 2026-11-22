@@ -54,14 +54,14 @@ class Bibliotheque extends Page
     }
 
     /** Formations gérées par l'utilisateur (null = toutes, y compris les ressources communes). */
-    private function scope(): ?array
+    protected function scope(): ?array
     {
         return auth()->user()->space() === 'formateur' ? auth()->user()->taughtFormationIds() : null;
     }
 
-    private function query()
+    protected function query()
     {
-        return Resource::with('formation')->when($this->scope(), fn ($q, $ids) => $q->whereIn('formation_id', $ids));
+        return Resource::with('formation')->when($this->scope() !== null, fn ($q) => $q->whereIn('formation_id', $this->scope()));
     }
 
     public function creer(): void
@@ -90,25 +90,34 @@ class Bibliotheque extends Page
     {
         $lien = ($this->r['source'] ?? 'fichier') === 'lien';
         $scope = $this->scope();
+        $x = $this->editId ? $this->query()->findOrFail($this->editId) : new Resource(['created_by' => auth()->id()]);
         $this->validate([
+            'r.source' => 'required|in:fichier,lien', 'r.essential' => 'boolean', 'r.published' => 'boolean',
             'r.title' => 'required|string|max:150', 'r.category' => 'required|in:'.implode(',', array_keys(Resource::CATEGORIES)),
-            'r.formation_id' => $scope ? 'required|in:'.implode(',', $scope) : 'nullable|exists:formations,id',
+            'r.formation_id' => $scope !== null ? 'required|in:'.implode(',', $scope) : 'nullable|exists:formations,id',
             'r.description' => 'required|string|max:300', 'r.licence' => 'required|in:'.implode(',', Resource::LICENCES),
-            'r.url' => $lien ? 'required|url|max:255' : 'nullable', 'r.format' => 'nullable|string|max:60', 'r.size' => 'nullable|string|max:30', 'r.compatible' => 'nullable|string|max:120',
-            'fichier' => (! $lien && ! $this->editId ? 'required|' : 'nullable|').'file|max:51200',
+            'r.url' => $lien ? 'required|url:http,https|max:255' : 'nullable', 'r.format' => 'nullable|string|max:60', 'r.size' => 'nullable|string|max:30', 'r.compatible' => 'nullable|string|max:120',
+            'fichier' => (! $lien && ! $x->path ? 'required|' : 'nullable|').'file|max:51200',
         ], [], ['r.title' => 'titre', 'r.description' => 'description', 'r.url' => 'adresse du site officiel', 'r.formation_id' => 'formation']);
 
-        $x = $this->editId ? $this->query()->findOrFail($this->editId) : new Resource(['created_by' => auth()->id()]);
         $x->fill([
             'title' => $this->r['title'], 'category' => $this->r['category'], 'formation_id' => $this->r['formation_id'] ?: null, 'description' => $this->r['description'],
             'format' => $this->r['format'] ?: ($lien ? 'Site officiel' : 'Fichier'), 'size' => $this->r['size'] ?: null, 'licence' => $this->r['licence'],
             'compatible' => $this->r['compatible'] ?: null, 'url' => $lien ? $this->r['url'] : null, 'essential' => (bool) $this->r['essential'], 'published' => (bool) $this->r['published'],
         ]);
         if ($this->fichier && ! $lien) {
-            if ($x->path) {
-                Storage::disk('local')->delete($x->path);
+            $extension = strtolower($this->fichier->getClientOriginalExtension());
+            $extension = preg_match('/\A[a-z0-9]{1,12}\z/', $extension) ? $extension : 'bin';
+            $path = $this->fichier->storeAs('library', str($this->r['title'])->slug().'-'.str()->uuid().'.'.$extension, 'local');
+            if (! $path || ! Storage::disk('local')->exists($path)) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['fichier' => 'Le stockage du fichier a échoué. Le fichier précédent est conservé. Réessayez ou contactez l’administration.']);
             }
-            $x->path = $this->fichier->storeAs('library', str($this->r['title'])->slug().'-'.now()->format('YmdHis').'.'.$this->fichier->getClientOriginalExtension(), 'local');
+            $x->path = $path;
+            $bytes = $this->fichier->getSize();
+            $x->size = $bytes >= 1048576 ? round($bytes / 1048576, 1).' Mo' : ceil($bytes / 1024).' Ko';
+            if (! $this->r['format']) {
+                $x->format = strtoupper($extension);
+            }
         }
         if ($lien) {
             $x->path = null;
@@ -166,6 +175,6 @@ class Bibliotheque extends Page
         return $this->page('livewire.admin.bibliotheque', compact('all', 'items', 'formations', 'trainer'),
             $trainer ? 'Bibliothèque de ma formation' : 'Bibliothèque des étudiants',
             ($trainer ? 'Espace formateur' : 'Administration <span class="sep">›</span> Contenus').' <span class="sep">›</span> Bibliothèque',
-            '<button class="btn btn-primary t-cta" wire:click="creer"><i class="fa-solid fa-plus"></i>Ajouter une ressource</button>');
+            '<a class="btn btn-primary t-cta" href="'.route(($trainer ? 'formateur' : 'admin').'.ressource.nouvelle').'" wire:navigate><i class="fa-solid fa-plus"></i>Ajouter une ressource</a>');
     }
 }

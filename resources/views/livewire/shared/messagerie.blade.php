@@ -1,5 +1,10 @@
-<div class="msg-app {{ $c ? 'has-thread' : '' }}" wire:poll.10s>
+<div class="msg-app {{ $c ? 'has-thread' : '' }}" wire:poll.5s.visible="actualiser(document.visibilityState === 'visible')" x-data="{ soundEnabled: window.evcMessageSoundsEnabled() }" x-on:message-sound-setting.window="soundEnabled = $event.detail.enabled" x-on:visibilitychange.document="if (document.visibilityState === 'visible') $wire.actualiser(true)">
   <aside class="msg-list panel">
+    <div class="px-3 pt-3 d-flex flex-wrap gap-2">
+      <button type="button" class="btn btn-ghost btn-sm" x-on:click="window.evcToggleMessageSounds()" x-bind:aria-pressed="soundEnabled" aria-label="Activer ou couper les sonneries"><i class="fa-solid" x-bind:class="soundEnabled ? 'fa-volume-high' : 'fa-volume-xmark'" aria-hidden="true"></i><span x-text="soundEnabled ? 'Sonneries activées' : 'Activer les sonneries'">Sonneries activées</span></button>
+      <button type="button" class="btn btn-ghost btn-sm" data-message-sound-test>Tester le son</button>
+      <p class="small muted mb-0 w-100">Envoi et réception · Cliquez sur « Tester le son » pour autoriser l’audio dans ce navigateur.</p>
+    </div>
     <div class="p-3 border-bottom d-flex gap-2">
       <label class="search-field flex-grow-1 mb-0"><i class="fa-solid fa-magnifying-glass"></i><input class="form-control" placeholder="Rechercher…" wire:model.live.debounce.300ms="recherche"></label>
       <button class="btn btn-primary btn-icon d-sm-none" wire:click="ouvrirNouveau" aria-label="Nouveau message"><i class="fa-solid fa-pen"></i></button>
@@ -38,7 +43,12 @@
             @unless ($mine)<small class="b-who">{{ $m->user?->name ?? 'Utilisateur supprimé' }}</small>@endunless
             <div class="b-txt">{{ $m->body }}</div>
             @if ($m->file_path)<a class="file-chip mt-1" href="{{ route('fichier.message', $m) }}"><i class="fa-solid fa-paperclip"></i>{{ $m->file_name }}</a>@endif
-            <small class="b-time">{{ $m->created_at->format('H\hi') }}</small>
+            <small class="b-time">{{ $m->created_at->format('H\hi') }}
+              @if ($mine)
+                @php($read = $others->isNotEmpty() && $others->every(fn ($participant) => (int) $participant->pivot->last_read_id >= $m->id))
+                <span class="b-receipt {{ $read ? 'is-read' : '' }}" data-read="{{ $read ? 'true' : 'false' }}" role="img" aria-label="{{ $read ? 'Lu par tous les destinataires' : 'Envoyé, pas encore lu par tous les destinataires' }}" title="{{ $read ? 'Lu par tous les destinataires' : 'Envoyé, pas encore lu par tous les destinataires' }}"><i class="fa-solid {{ $read ? 'fa-check-double' : 'fa-check' }}" aria-hidden="true"></i></span>
+              @endif
+            </small>
           </div>
         @endforeach
       </div>

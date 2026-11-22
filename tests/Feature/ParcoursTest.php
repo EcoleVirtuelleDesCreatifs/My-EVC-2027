@@ -34,6 +34,31 @@ class ParcoursTest extends TestCase
         $this->seedBase();
     }
 
+    public function test_un_changement_d_etape_notifie_le_candidat_sans_doublon(): void
+    {
+        Notification::fake();
+        $admin = $this->makeStaff('Super Administrateur');
+        $c = Candidature::create(['reference' => 'PRE-2026-0008', 'first_name' => 'Rose', 'last_name' => 'Kacou', 'email' => 'rose@exemple.ci', 'phone' => '0700', 'formations' => ['DG'], 'stage' => 'recue', 'notes' => 'Note confidentielle']);
+        $page = Livewire::actingAs($admin)->test(CandidatureFiche::class, ['candidature' => $c]);
+        foreach (['eligible', 'test', 'paiement', 'refusee'] as $stage) {
+            if ($stage === 'test') {
+                $c->update(['saop_started_at' => now()->subMinutes(5), 'saop_submitted_at' => now()]);
+            }
+            $page->call('etape', $stage)->assertHasNoErrors();
+            $this->assertSame($stage, $c->fresh()->stage);
+        }
+        Notification::assertSentOnDemandTimes(\App\Notifications\CandidatureMiseAJour::class, 4);
+        Notification::assertSentOnDemand(\App\Notifications\CandidatureMiseAJour::class, function ($notification, $channels, $notifiable) use ($c) {
+            $mail = $notification->toMail($notifiable);
+            $html = (string) $mail->render();
+            $this->assertStringContainsString($c->reference, $html);
+            $this->assertStringNotContainsString('Note confidentielle', $html);
+            return $channels === ['mail'] && $notifiable->routes['mail'] === $c->email;
+        });
+        $page->call('etape', 'refusee');
+        Notification::assertSentOnDemandTimes(\App\Notifications\CandidatureMiseAJour::class, 4);
+    }
+
     public function test_activation_d_une_candidature(): void
     {
         Notification::fake();
@@ -127,6 +152,36 @@ class ParcoursTest extends TestCase
         $this->assertSame('retard', $svc->checkIn($s, $late)->status);
         $this->expectException(\Illuminate\Validation\ValidationException::class);
         $svc->checkIn($s, $closed);
+    }
+
+    public function test_les_actions_bibliotheque_ne_masquent_pas_les_proprietes_livewire(): void
+    {
+        $class = new \ReflectionClass(\App\Livewire\Etudiant\Bibliotheque::class);
+        foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+            if ($method->getDeclaringClass()->getName() === $class->getName()) {
+                $this->assertFalse($class->hasProperty($method->getName()), 'Action masquée par une propriété : '.$method->getName());
+            }
+        }
+    }
+
+    public function test_les_rayons_bibliotheque_filtrent_les_ouvrages_et_mon_etagere(): void
+    {
+        $s = $this->makeStudent(['CM']);
+        $resources = [];
+        foreach (array_keys(Resource::CATEGORIES) as $category) {
+            $resources[$category] = Resource::create(['category' => $category, 'title' => 'Ouvrage '.$category,
+                'description' => 'Ressource pédagogique', 'format' => 'PDF', 'url' => 'https://exemple.ci/ressource']);
+        }
+        $s->downloads()->create(['resource_id' => $resources['logiciels']->id]);
+        $page = Livewire::actingAs($s->user)->test(\App\Livewire\Etudiant\Bibliotheque::class);
+        $page->assertViewHas('view', fn ($view) => $view['mode'] === 'shelves');
+        foreach ($resources as $category => $resource) {
+            $page->set('q', 'ancienne recherche')->call('choisirRayon', $category)
+                ->assertSet('rayon', $category)->assertSet('q', '')
+                ->assertViewHas('view', fn ($view) => $view['mode'] === 'grid' && $view['items']->pluck('id')->all() === [$resource->id]);
+        }
+        $page->call('choisirRayon', 'mes')->assertViewHas('view', fn ($view) => $view['items']->pluck('id')->all() === [$resources['logiciels']->id]);
+        $page->call('choisirRayon', '')->assertViewHas('view', fn ($view) => $view['mode'] === 'shelves');
     }
 
     public function test_bibliotheque_reservee_aux_formations_de_l_etudiant(): void

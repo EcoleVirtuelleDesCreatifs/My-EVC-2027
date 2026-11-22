@@ -15,7 +15,7 @@
           @forelse ($cands as $c)
             <label class="d-flex align-items-center gap-2 p-1 small"><input type="checkbox" class="form-check-input mt-0" value="{{ $c->id }}" wire:model.live="aEtudiants">{{ $c->user->name }} <span class="muted mono">{{ $c->matricule }}</span></label>
           @empty
-            <p class="small muted mb-0 p-2">Choisissez d'abord un projet.</p>
+            <p class="small muted mb-0 p-2">{{ $aProjet ? 'Aucun nouvel étudiant disponible pour ce projet. Les anciens destinataires ne sont plus proposés.' : 'Choisissez d’abord un projet.' }}</p>
           @endforelse
         </div>
         @error('aEtudiants')<div class="small text-danger mt-1">{{ $message }}</div>@enderror

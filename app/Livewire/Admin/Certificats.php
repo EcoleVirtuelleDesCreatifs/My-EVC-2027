@@ -7,7 +7,8 @@ use App\Models\AuditLog;
 use App\Models\Certificate;
 use App\Models\Formation;
 use App\Models\Student;
-use App\Notifications\Avis;
+use App\Models\CertificateRequest;
+use App\Services\RegistreService;
 use Livewire\Attributes\Url;
 
 class Certificats extends Page
@@ -24,26 +25,34 @@ class Certificats extends Page
 
     public function ouvrir(int $studentId, int $formationId): void
     {
+        $s = Student::with('formations')->findOrFail($studentId);
+        abort_unless($s->formations->contains('id', $formationId), 422);
+        $this->resetErrorBag();
         $this->delivrer = $studentId.'-'.$formationId;
         $this->appreciation = 'Très bien';
     }
 
     public function confirmer(): void
     {
-        $this->validate(['appreciation' => 'required|in:Excellent,Très bien,Bien,Acquis']);
+        $this->validate([
+            'delivrer' => ['required', 'regex:/^[1-9][0-9]*-[1-9][0-9]*$/'],
+            'appreciation' => 'required|in:Excellent,Très bien,Bien,Acquis',
+        ], ['delivrer.required' => 'Sélectionnez un dossier avec « Décision du jury » ou « Délivrer » avant de confirmer.',
+            'delivrer.regex' => 'La sélection du dossier est invalide. Veuillez sélectionner à nouveau l’étudiant.']);
         [$sid, $fid] = array_map('intval', explode('-', (string) $this->delivrer));
         $s = Student::with('user', 'formations', 'certificates')->findOrFail($sid);
         $f = Formation::findOrFail($fid);
         abort_unless($s->formations->contains('id', $fid), 422);
-        $c = Certificate::firstOrCreate(['student_id' => $sid, 'formation_id' => $fid], ['code' => Certificate::nextCode(), 'appreciation' => $this->appreciation, 'issued_on' => now()]);
-        $s->enrollments()->where('formation_id', $fid)->update(['status' => 'terminee']);
-        if ($s->formations->every(fn ($x) => $s->certificates()->where('formation_id', $x->id)->exists())) {
-            $s->update(['status' => 'certifie']);
-        }
-        $s->user->notify(new Avis('Certificat délivré', 'Félicitations ! Votre certificat « '.$f->name.' » est disponible ('.$c->code.').', route('etudiant.certificat'), 'fa-award', 'ok', true));
-        AuditLog::record('Certificat délivré', $c->code.' — '.$s->user->name.' ('.$f->code.')');
+        $request = app(RegistreService::class)->transmettre($s, $f, $this->appreciation);
+        AuditLog::record('Dossier transmis au registre', $s->matricule.' — '.$f->code.' — dossier '.$request->registry_document_id);
         $this->delivrer = null;
-        $this->toast('Certificat '.$c->code.' délivré.');
+        $this->toast('Dossier transmis au registre. La délivrance et la publication restent soumises aux validations officielles.');
+    }
+
+    public function synchroniser(): void
+    {
+        $counts = app(RegistreService::class)->synchroniserTout();
+        $this->toast($counts['ok'].' dossier(s) synchronisé(s).'.($counts['echecs'] ? ' '.$counts['echecs'].' échec(s), vérifiez la connexion au registre.' : ''), $counts['echecs'] ? 'warn' : 'ok');
     }
 
     public function closeModal(): void
@@ -53,6 +62,7 @@ class Certificats extends Page
 
     public function render()
     {
+        $requests = CertificateRequest::with('formation')->get()->keyBy(fn ($r) => $r->student_id.'-'.$r->formation_id);
         $eligibles = collect();
         if ($this->onglet === 'eligibles') {
             $students = Student::with(['user', 'formations', 'certificates', 'schedules', 'payments'])->whereIn('status', ['actif', 'certifie'])
@@ -63,12 +73,12 @@ class Certificats extends Page
                         continue;
                     }
                     $checks = $s->certificationChecks($f);
-                    $eligibles->push(['s' => $s, 'f' => $f, 'checks' => $checks, 'ok' => collect($checks)->filter()->count()]);
+                    $eligibles->push(['s' => $s, 'f' => $f, 'checks' => $checks, 'ok' => collect($checks)->filter()->count(), 'request' => $requests->get($s->id.'-'.$f->id)]);
                 }
             }
             $eligibles = $eligibles->sortByDesc('ok')->values();
         }
-        $issued = Certificate::with('student.user', 'formation')->when($this->formation, fn ($q) => $q->where('formation_id', $this->formation))->latest('issued_on')->get();
+        $issued = Certificate::with('student.user', 'formation', 'registryRequest')->when($this->formation, fn ($q) => $q->where('formation_id', $this->formation))->latest('issued_on')->get();
 
         return $this->page('livewire.admin.certificats', ['eligibles' => $eligibles, 'issued' => $issued, 'formations' => Formation::active()->get()], 'Certificats', 'Administration <span class="sep">›</span> Scolarité <span class="sep">›</span> Certificats');
     }

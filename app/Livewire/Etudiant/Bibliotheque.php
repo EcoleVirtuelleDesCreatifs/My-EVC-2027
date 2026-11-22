@@ -22,7 +22,7 @@ class Bibliotheque extends Page
 
     public ?int $ficheId = null;
 
-    public function rayon(string $k): void
+    public function choisirRayon(string $k): void
     {
         $this->rayon = $k;
         $this->q = '';

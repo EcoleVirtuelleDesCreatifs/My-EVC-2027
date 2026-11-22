@@ -32,6 +32,7 @@ class Actualites extends Page
         $x = News::findOrFail($id);
         $this->n = $x->only(['title', 'category', 'label', 'excerpt', 'body', 'featured']) + ['publie' => (bool) $x->published_at, 'date' => ($x->published_at ?? now())->toDateString()];
         $this->n['label'] ??= '';
+        $this->n['body'] = $x->bodyHtml();
         $this->editId = $id;
         $this->reset('couverture');
         $this->form = true;
@@ -41,12 +42,12 @@ class Actualites extends Page
     {
         $this->validate([
             'n.title' => 'required|string|max:180', 'n.category' => 'required|string|max:60', 'n.label' => 'nullable|string|max:60', 'n.excerpt' => 'required|string|max:400',
-            'n.body' => 'required|string', 'n.date' => 'required|date', 'couverture' => ($this->editId ? 'nullable' : 'required').'|image|max:5120',
+            'n.body' => 'required|string|max:20000', 'n.date' => 'required|date', 'couverture' => ($this->editId ? 'nullable' : 'required').'|image|max:5120',
         ], [], ['n.title' => 'titre', 'n.excerpt' => 'chapeau', 'n.body' => 'texte', 'couverture' => 'image de couverture']);
         $x = $this->editId ? News::findOrFail($this->editId) : new News(['slug' => $this->slug($this->n['title'])]);
-        $body = trim($this->n['body']);
-        if (! str_contains($body, '<')) {
-            $body = collect(preg_split('/\n\s*\n/', $body))->map(fn ($p) => '<p>'.nl2br(e(trim($p))).'</p>')->implode("\n");
+        $body = News::sanitizeBody($this->n['body']);
+        if (\App\Support\ProjectBrief::text($body) === '') {
+            throw \Illuminate\Validation\ValidationException::withMessages(['n.body' => 'Rédigez le texte de l’actualité avant de l’enregistrer.']);
         }
         $x->fill(['title' => $this->n['title'], 'category' => $this->n['category'], 'label' => $this->n['label'] ?: null, 'excerpt' => $this->n['excerpt'],
             'body' => $body, 'featured' => (bool) $this->n['featured'], 'published_at' => $this->n['publie'] ? $this->n['date'].' '.now()->format('H:i:s') : null]);

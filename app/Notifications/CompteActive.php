@@ -19,11 +19,10 @@ class CompteActive extends Notification
     {
         return (new MailMessage)
             ->subject('Bienvenue à l\'EVC : activez votre espace MY EVC')
-            ->greeting('Bienvenue '.explode(' ', $notifiable->name)[0].' !')
-            ->line('Votre inscription est confirmée. Votre matricule : **'.$this->matricule.'**.')
-            ->line('Choisissez votre mot de passe pour accéder à MY EVC : vos cours, vos projets, la bibliothèque et vos paiements.')
-            ->action('Activer mon compte', route('password.reset', ['token' => $this->token, 'email' => $notifiable->email, 'activation' => 1]))
-            ->line('Ce lien est valable 7 jours.')
-            ->salutation('L\'équipe de l\'EVC');
+            ->view(['html' => 'auth.mail-activation', 'text' => 'auth.mail-activation-texte'], [
+                'prenom' => explode(' ', trim($notifiable->name))[0],
+                'matricule' => $this->matricule,
+                'activationUrl' => route('password.reset', ['token' => $this->token, 'email' => $notifiable->email, 'activation' => 1]),
+            ]);
     }
 }

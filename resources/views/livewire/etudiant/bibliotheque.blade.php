@@ -16,20 +16,20 @@
 
   <div class="lib-layout">
     <nav class="lib-rayons" aria-label="Rayons de la bibliothèque">
-      <button type="button" class="ray {{ $rayon === '' && $q === '' ? 'on' : '' }}" wire:click="rayon('')"><i class="fa-solid fa-building-columns"></i><span>Tous les rayons</span><b>{{ $all->count() }}</b></button>
+      <button type="button" class="ray {{ $rayon === '' && $q === '' ? 'on' : '' }}" wire:click="choisirRayon('')"><i class="fa-solid fa-building-columns"></i><span>Tous les rayons</span><b>{{ $all->count() }}</b></button>
       @foreach (\App\Models\Resource::CATEGORIES as $k => $c)
-        <button type="button" class="ray {{ $rayon === $k && $q === '' ? 'on' : '' }}" wire:click="rayon('{{ $k }}')"><i class="fa-solid {{ $c[2] }}"></i><span>{{ $c[0] }}</span><b>{{ $counts[$k] ?? 0 }}</b></button>
+        <button type="button" class="ray {{ $rayon === $k && $q === '' ? 'on' : '' }}" wire:click="choisirRayon('{{ $k }}')"><i class="fa-solid {{ $c[2] }}"></i><span>{{ $c[0] }}</span><b>{{ $counts[$k] ?? 0 }}</b></button>
       @endforeach
-      <button type="button" class="ray {{ $rayon === 'mes' && $q === '' ? 'on' : '' }}" wire:click="rayon('mes')"><i class="fa-solid fa-bookmark"></i><span>Mon étagère</span><b>{{ count(array_intersect($got, $all->pluck('id')->all())) }}</b></button>
+      <button type="button" class="ray {{ $rayon === 'mes' && $q === '' ? 'on' : '' }}" wire:click="choisirRayon('mes')"><i class="fa-solid fa-bookmark"></i><span>Mon étagère</span><b>{{ count(array_intersect($got, $all->pluck('id')->all())) }}</b></button>
     </nav>
 
-    <div class="bookcase" wire:loading.class="wire-loading" wire:target="q,tri,rayon,choisirFormation">
+    <div class="bookcase" wire:loading.class="wire-loading" wire:target="q,tri,rayon,choisirRayon,choisirFormation">
       @if ($view['mode'] === 'shelves')
         @foreach ($shelves as [$plate, $title, $items, $key])
           @continue($items->isEmpty())
           <section class="shelf">
             <header class="shelf-h"><span class="shelf-plate">{!! $plate !!}</span><h2>{{ $title }}</h2><span class="shelf-n">{{ $n($items->count()) }}</span>
-              @if ($key)<button type="button" class="shelf-all" wire:click="rayon('{{ $key }}')">Tout le rayon<i class="fa-solid fa-chevron-right"></i></button>@endif</header>
+              @if ($key)<button type="button" class="shelf-all" wire:click="choisirRayon('{{ $key }}')">Tout le rayon<i class="fa-solid fa-chevron-right"></i></button>@endif</header>
             <div class="shelf-books">@foreach ($items as $r)@include('livewire.etudiant._book-slot')@endforeach</div>
             <div class="shelf-plank" aria-hidden="true"></div>
           </section>
@@ -42,7 +42,7 @@
           <div class="case-empty"><i class="fa-solid fa-book-open"></i>
             <h3>{{ $rayon === 'mes' ? 'Votre étagère est vide' : ($q !== '' ? 'Aucun ouvrage trouvé' : 'Rayon vide pour le moment') }}</h3>
             <p>{{ $rayon === 'mes' ? 'Les ouvrages que vous téléchargez se rangent ici.' : ($q !== '' ? 'Essayez un autre mot : « Excel », « polices », « mockup »…' : 'Vos formateurs le complètent au fil des séances.') }}</p>
-            @if ($rayon === 'mes')<button class="btn btn-ghost btn-sm" wire:click="rayon('')">Parcourir les rayons</button>@endif
+            @if ($rayon === 'mes')<button class="btn btn-ghost btn-sm" wire:click="choisirRayon('')">Parcourir les rayons</button>@endif
           </div>
         @endif
       @endif

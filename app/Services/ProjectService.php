@@ -30,17 +30,25 @@ class ProjectService
 
                 continue;
             }
-            $a = Assignment::firstOrNew(['project_id' => $project->id, 'student_id' => $s->id]);
-            if ($a->exists && $a->status !== 'valide') {
+            $a = Assignment::firstOrCreate(['project_id' => $project->id, 'student_id' => $s->id],
+                ['due_on' => $due, 'status' => 'afaire', 'assigned_by' => auth()->id()]);
+            if (! $a->wasRecentlyCreated) {
                 $skip++;
 
                 continue;
             }
-            $a->fill(['due_on' => $due, 'status' => 'afaire', 'assigned_by' => auth()->id(), 'appreciation' => null,
-                'started_at' => null, 'submitted_at' => null, 'validated_at' => null])->save();
             $a->log('attribution', 'Projet attribué, à rendre le '.$due->translatedFormat('j F Y').'.');
             if ($notify) {
-                $s->user->notify(new Avis('Nouveau projet', '« '.$project->title.' » — à rendre le '.$due->translatedFormat('j F').'.', route('etudiant.projet', $a), 'fa-pen-nib', 'cor', true));
+                $s->user->notify(new Avis('Nouveau projet', '« '.$project->title.' » — à rendre le '.$due->translatedFormat('j F').'.', route('etudiant.projet', $a), 'fa-pen-nib', 'cor', true, mailData: [
+                    'titre' => 'Un nouveau projet vous attend', 'categorie' => 'VOTRE PARCOURS PÉDAGOGIQUE',
+                    'introduction' => 'Un nouveau projet pratique vous a été attribué par l’équipe pédagogique. Consultez sa fiche pour découvrir le brief, les livrables attendus et les critères d’évaluation.',
+                    'libelleMiseEnAvant' => 'PROJET À RÉALISER', 'miseEnAvant' => $project->title,
+                    'details' => ['Formation' => $project->formation->name, 'Type / niveau' => $project->type,
+                        'Matricule étudiant' => $s->matricule, 'Date limite de remise' => $due->copy()->locale('fr')->translatedFormat('j F Y')],
+                    'actionLabel' => 'Consulter mon projet',
+                    'etapes' => ['Lisez l’ensemble des consignes et préparez vos ressources.', 'Démarrez le projet depuis votre fiche MY EVC.', 'Déposez vos fichiers ou liens dans l’espace prévu avant la date limite.'],
+                    'conseil' => 'Une question sur le brief ? Échangez avec votre formateur depuis la fiche du projet. Les consignes et les ressources restent accessibles dans votre espace étudiant.',
+                ]));
             }
             $done++;
         }

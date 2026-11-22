@@ -8,7 +8,7 @@
         <span><i class="fa-solid fa-tag me-1"></i>{{ $a->project->type }}</span>
       </div>
       <h3 class="small-caps">Consignes</h3>
-      <p style="white-space:pre-line">{{ $a->project->brief }}</p>
+      <div class="mb-3"><x-project-sheet :title="$a->project->title" :type="$a->project->type">{!! $a->project->briefHtml() !!}</x-project-sheet></div>
       @if ($a->status === 'afaire')
         <button class="btn btn-primary btn-lg" wire:click="demarrer" wire:loading.attr="disabled"><i class="fa-solid fa-play"></i>Je démarre</button>
       @endif

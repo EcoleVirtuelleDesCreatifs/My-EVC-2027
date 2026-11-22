@@ -22,7 +22,7 @@
         <div class="col-sm-4"><label class="form-label">Étiquette <span class="small muted">(ex. « Promo 2026 »)</span></label><input class="form-control" wire:model="n.label"></div>
         <div class="col-sm-4"><label class="form-label">Date de publication</label><input class="form-control" type="date" wire:model="n.date"></div>
         <div class="col-12"><label class="form-label">Chapeau</label><textarea class="form-control @error('n.excerpt') is-invalid @enderror" rows="2" wire:model="n.excerpt"></textarea>@error('n.excerpt')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-        <div class="col-12"><label class="form-label">Texte <span class="small muted">(paragraphes séparés par une ligne vide ; HTML accepté)</span></label><textarea class="form-control @error('n.body') is-invalid @enderror" rows="10" wire:model="n.body"></textarea>@error('n.body')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+        <div class="col-12"><x-rich-editor field="n.body" label="Texte de l’actualité" wire:key="news-editor-{{ $editId ?? 'new' }}" /></div>
         <div class="col-sm-6"><label class="form-label">Image de couverture</label><input type="file" class="form-control @error('couverture') is-invalid @enderror" wire:model="couverture" accept="image/*">@error('couverture')<div class="invalid-feedback">{{ $message }}</div>@enderror
           @if ($couverture)<img src="{{ $couverture->temporaryUrl() }}" alt="" class="mt-2 rounded" style="max-height:110px">@endif</div>
         <div class="col-sm-6 d-flex flex-column gap-2 justify-content-end">

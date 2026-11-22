@@ -30,10 +30,6 @@
             <p class="pi-help">Vous pouvez en cocher plusieurs.</p>
             <div class="pick-grid" data-need-one="Formations"><label class="pick"><input type="checkbox" name="Formations" value="Infographie & design graphique" data-key="design" data-price="185 000"><span><i class="pk-l" style="background:var(--orange)">A</i><b>Infographie & design graphique</b><small>4 mois · 185 000 FCFA</small><em class="pk-c"><svg class="ico"><use href="#i-check"/></svg></em></span></label><label class="pick"><input type="checkbox" name="Formations" value="Community management & social media" data-key="cm" data-price="165 000"><span><i class="pk-l" style="background:var(--royal)">B</i><b>Community management & social media</b><small>2 mois · 165 000 FCFA</small><em class="pk-c"><svg class="ico"><use href="#i-check"/></svg></em></span></label><label class="pick"><input type="checkbox" name="Formations" value="Bureautique & informatique (GIA)" data-key="gia" data-price="265 000"><span><i class="pk-l" style="background:var(--blue)">C</i><b>Bureautique & informatique (GIA)</b><small>2 mois · 265 000 FCFA</small><em class="pk-c"><svg class="ico"><use href="#i-check"/></svg></em></span></label></div>
             <div class="pi-err" data-for="Formations">Choisissez au moins une formation.</div>
-            <div class="row g-3 mt-2">
-              <div class="col-md-6"><label class="form-label">Modalité souhaitée *</label><div class="chips-in"><label class="cin"><input type="radio" name="Modalité" value="En présentiel (Abidjan)" required><span>En présentiel (Abidjan)</span></label><label class="cin"><input type="radio" name="Modalité" value="En ligne"><span>En ligne</span></label></div></div>
-              <div class="col-md-6"><label class="form-label" for="piRythme">Disponibilités</label><select class="form-select" id="piRythme" name="Disponibilités"><option>En semaine</option><option>Le week-end</option><option>Soirs</option><option>Flexible</option></select></div>
-            </div>
           </fieldset>
 
           <!-- 2 IDENTITÉ -->

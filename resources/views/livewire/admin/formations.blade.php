@@ -23,7 +23,7 @@
       @foreach ($promotions as $p)
         <tr><td class="fw-sb">{{ $p->name }}</td><td>{{ $p->starts_on->translatedFormat('j M Y') }}</td><td>{{ $p->ends_on->translatedFormat('j M Y') }}</td><td class="text-end">{{ $p->students_count }}</td>
           <td><x-pill :tone="['ouverte' => 'info', 'en_cours' => 'ok', 'terminee' => 'mute'][$p->status]">{{ \App\Models\Promotion::STATUSES[$p->status] }}</x-pill></td>
-          <td class="table-actions"><button class="btn btn-quiet btn-sm btn-icon" wire:click="modifierSession({{ $p->id }})" aria-label="Modifier"><i class="fa-solid fa-pen"></i></button></td></tr>
+          <td class="table-actions"><button class="btn btn-quiet btn-sm btn-icon" wire:click="modifierSession({{ $p->id }})" aria-label="Modifier"><i class="fa-solid fa-pen"></i></button><button class="btn btn-quiet btn-sm btn-icon text-danger" wire:click="supprimerSession({{ $p->id }})" wire:confirm="Supprimer définitivement la session « {{ $p->name }} » ? Les sessions utilisées ne peuvent pas être supprimées." wire:loading.attr="disabled" aria-label="Supprimer la session" title="Supprimer la session"><i class="fa-solid fa-trash-can"></i></button></td></tr>
       @endforeach
     </tbody></table></div>
   </x-panel>

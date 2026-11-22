@@ -29,6 +29,11 @@ class User extends Authenticatable
         return ['email_verified_at' => 'datetime', 'last_login_at' => 'datetime', 'password' => 'hashed'];
     }
 
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new \App\Notifications\ReinitialisationMotDePasse($token));
+    }
+
     public function student(): HasOne
     {
         return $this->hasOne(Student::class);

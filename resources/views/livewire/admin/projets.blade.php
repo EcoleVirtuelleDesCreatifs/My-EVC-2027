@@ -20,28 +20,30 @@
     </x-panel>
   @else
     <x-panel :p0="true">
-      <x-slot:tools><button class="btn btn-ghost btn-sm" wire:click="creer"><i class="fa-solid fa-plus"></i>Nouveau projet</button></x-slot:tools>
+      <x-slot:tools><a class="btn btn-ghost btn-sm" href="{{ route('admin.projet.nouveau', ['formation' => $formation]) }}" wire:navigate><i class="fa-solid fa-plus"></i>Nouveau projet</a></x-slot:tools>
       <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Projet</th><th>Type</th><th class="text-end">Attribués</th><th class="text-end">Validés</th><th>Statut</th><th></th></tr></thead><tbody>
         @foreach ($catalogue as $p)
-          <tr><td><x-fchip :code="$p->formation->code" /> <span class="fw-sb">{{ $p->title }}</span><div class="small muted text-truncate" style="max-width:420px">{{ $p->brief }}</div></td>
-            <td class="small">{{ $p->type }}</td><td class="text-end">{{ $p->assignments_count }}</td><td class="text-end">{{ $p->valides_count }}</td>
+          <tr><td><x-fchip :code="$p->formation->code" /> <span class="fw-sb">{{ $p->title }}</span><div class="small muted text-truncate" style="max-width:420px">{{ $p->briefExcerpt() }}</div></td>
+            <td class="small">{{ $p->type }}</td><td class="text-end"><button type="button" class="btn btn-ghost btn-sm" wire:click="voirDestinataires({{ $p->id }})" aria-label="Voir les destinataires de {{ $p->title }}">{{ $p->assignments_count }} étudiant(s)<i class="fa-solid fa-users ms-1"></i></button></td><td class="text-end">{{ $p->valides_count }}</td>
             <td><x-pill :tone="$p->published ? 'ok' : 'mute'">{{ $p->published ? 'Publié' : 'Brouillon' }}</x-pill></td>
-            <td class="table-actions"><button class="btn btn-ghost btn-sm" wire:click="ouvrirAttribution([], {{ $p->id }})">Attribuer</button><button class="btn btn-quiet btn-sm btn-icon" wire:click="modifier({{ $p->id }})" aria-label="Modifier"><i class="fa-solid fa-pen"></i></button></td></tr>
+            <td class="table-actions"><button class="btn btn-ghost btn-sm" wire:click="ouvrirAttribution([], {{ $p->id }})">Attribuer</button><a class="btn btn-quiet btn-sm btn-icon" href="{{ route('admin.projet.modifier', $p) }}" wire:navigate aria-label="Modifier le projet"><i class="fa-solid fa-pen"></i></a></td></tr>
         @endforeach
       </tbody></table></div>
     </x-panel>
   @endif
 
-  @if ($form)
-    <x-modal :title="$editId ? 'Modifier le projet' : 'Nouveau projet'" icon="fa-palette" size="modal-lg">
-      <div class="row g-3">
-        <div class="col-sm-6"><label class="form-label">Formation</label><select class="form-select" wire:model="p.formation_id">@foreach ($formations as $f)<option value="{{ $f->id }}">{{ $f->short_name }}</option>@endforeach</select></div>
-        <div class="col-sm-6"><label class="form-label">Type</label><input class="form-control" wire:model="p.type" placeholder="Identité visuelle, Excel…"></div>
-        <div class="col-12"><label class="form-label">Titre</label><input class="form-control @error('p.title') is-invalid @enderror" wire:model="p.title">@error('p.title')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-        <div class="col-12"><label class="form-label">Consignes</label><textarea class="form-control @error('p.brief') is-invalid @enderror" rows="5" wire:model="p.brief"></textarea>@error('p.brief')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-        <div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="pub" wire:model="p.published"><label class="form-check-label" for="pub">Publié (peut être attribué)</label></div></div>
-      </div>
-      <x-slot:footer><button class="btn btn-ghost" wire:click="closeModal">Annuler</button><button class="btn btn-primary" wire:click="enregistrer">Enregistrer</button></x-slot:footer>
+  @if ($destProject)
+    <x-modal title="Étudiants destinataires" icon="fa-users" size="modal-lg">
+      <p class="fw-sb">{{ $destProject->title }}</p>
+      <input class="form-control mb-3" type="search" wire:model.live.debounce.300ms="rechercheDestinataire" placeholder="Rechercher par nom ou matricule" aria-label="Rechercher un destinataire">
+      <p class="small muted">{{ $destinations->total() }} destinataire(s)</p>
+      <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Étudiant</th><th>État du projet</th><th>Échéance</th></tr></thead><tbody>
+        @forelse ($destinations as $a)
+          <tr wire:key="destinataire-{{ $a->id }}"><td>@can('admin.etudiants')<a href="{{ route('admin.etudiant', $a->student) }}" wire:navigate>{{ $a->student->user->name }}</a>@else{{ $a->student->user->name }}@endcan<div class="small muted mono">{{ $a->student->matricule }}</div></td><td><x-pill :tone="$a->tone()">{{ $a->isLate() ? 'En retard' : $a->label(true) }}</x-pill></td><td class="small">{{ $a->due_on->translatedFormat('j M Y') }}</td></tr>
+        @empty<tr><td colspan="3" class="muted">Aucun étudiant destinataire{{ $rechercheDestinataire ? ' correspondant à la recherche' : '' }}.</td></tr>@endforelse
+      </tbody></table></div>
+      {{ $destinations->links() }}
+      <x-slot:footer><button type="button" class="btn btn-ghost" wire:click="closeModal">Fermer</button></x-slot:footer>
     </x-modal>
   @endif
   @include('livewire.partials.attribution')

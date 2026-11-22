@@ -22,10 +22,9 @@ class CandidatureRecue extends Notification
 
         return (new MailMessage)
             ->subject('Votre préinscription '.$c->reference.' · EVC')
-            ->greeting('Bonjour '.$c->first_name.',')
-            ->line('Nous avons bien reçu votre préinscription à l\'École Virtuelle des Créatifs.')
-            ->line('Votre référence : **'.$c->reference.'**. Un conseiller étudie votre profil sous 48 heures et vous recontacte.')
-            ->action('Suivre ma candidature', FormController::suiviUrl($c))
-            ->salutation('L\'équipe de l\'EVC');
+            ->view(['html' => 'site.mail-preinscription', 'text' => 'site.mail-preinscription-texte'], [
+                'candidature' => $c,
+                'suiviUrl' => FormController::suiviUrl($c),
+            ]);
     }
 }

@@ -16,11 +16,14 @@ class Menu
 {
     public static function groups(User $u): array
     {
-        return match ($u->space()) {
+        $groups = match ($u->space()) {
             'etudiant' => self::etudiant($u),
             'formateur' => self::formateur($u),
             default => self::admin($u),
         };
+        $groups[0][1][] = ['myevc.notifications', 'Notifications', 'fa-bell', $u->unreadNotifications()->count()];
+
+        return $groups;
     }
 
     public static function bottom(User $u): array
@@ -48,7 +51,7 @@ class Menu
                 $reco ? ['etudiant.reco', 'RECO 60', 'fa-hourglass-half'] : null, ['etudiant.quiz', 'Quiz', 'fa-list-check', $quiz], ['etudiant.webtv', 'Vidéos des cours', 'fa-tv'],
                 ['etudiant.bibliotheque', 'Bibliothèque', 'fa-book-bookmark', $new], ['myevc.messagerie', 'Messages', 'fa-message', Conversation::unreadCount($u)],
                 ['etudiant.paiements', 'Paiements', 'fa-credit-card'], ['etudiant.certificat', 'Certificat', 'fa-award']])), false],
-            ['Plus', [['myevc.notifications', 'Notifications', 'fa-bell'], ['myevc.profil', 'Mon profil', 'fa-user']], true],
+            ['Plus', [['myevc.profil', 'Mon profil', 'fa-user']], true],
         ];
     }
 
@@ -63,7 +66,7 @@ class Menu
             ['', array_values(array_filter([['formateur.accueil', 'Accueil', 'fa-house-chimney'], ['formateur.seances', 'Séances et appel', 'fa-calendar-days'], ['formateur.corrections', 'Corrections', 'fa-pen-to-square', $pending],
                 $hasReco ? ['formateur.reco', 'RECO 60', 'fa-hourglass-half', $reco] : null, ['formateur.quiz', 'Quiz', 'fa-list-check'], ['formateur.webtv', 'Web TV', 'fa-tv'],
                 ['formateur.bibliotheque', 'Bibliothèque', 'fa-book-bookmark'], ['myevc.messagerie', 'Messages', 'fa-message', Conversation::unreadCount($u)]])), false],
-            ['Plus', [['myevc.notifications', 'Notifications', 'fa-bell'], ['myevc.profil', 'Mon profil', 'fa-user']], true],
+            ['Plus', [['myevc.profil', 'Mon profil', 'fa-user']], true],
         ];
     }
 

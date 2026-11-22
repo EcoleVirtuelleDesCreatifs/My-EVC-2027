@@ -71,6 +71,62 @@ class ModulesTest extends TestCase
         $this->assertSame(1, $v->fresh()->views_count);
     }
 
+    public function test_confirmation_certificat_sans_selection_ne_provoque_pas_d_erreur_serveur(): void
+    {
+        \Illuminate\Support\Facades\Notification::fake();
+        $admin = $this->makeStaff('Super Administrateur');
+        foreach ([null, '', '12', '12-abc', '0-1'] as $selection) {
+            Livewire::actingAs($admin)->test(\App\Livewire\Admin\Certificats::class)
+                ->set('delivrer', $selection)->call('confirmer')->assertHasErrors('delivrer');
+        }
+        $this->assertDatabaseCount('certificates', 0);
+        \Illuminate\Support\Facades\Notification::assertNothingSent();
+    }
+
+    public function test_decision_du_jury_transmet_sans_delivrer_ni_notifier_avant_publication(): void
+    {
+        \Illuminate\Support\Facades\Notification::fake();
+        $s = $this->makeStudent(['CM']);
+        $admin = $this->makeStaff('Super Administrateur');
+        $fid = $s->formations->first()->id;
+        config(['services.registre.url' => 'https://registre.example.test', 'services.registre.token' => str_repeat('a', 64)]);
+        \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response([
+            'id' => 41, 'type' => 'certificat', 'formation' => 'CM', 'matricule' => $s->matricule,
+            'statut' => 'brouillon', 'reference' => null, 'pdf_disponible' => false,
+        ], 200)]);
+        $page = Livewire::actingAs($admin)->test(\App\Livewire\Admin\Certificats::class)
+            ->call('ouvrir', $s->id, $fid)->assertHasNoErrors()->assertSet('delivrer', $s->id.'-'.$fid)
+            ->assertSee('Transmettre au registre officiel')->assertSee('wire:loading.attr="disabled"', false);
+        $page->call('confirmer')->assertHasNoErrors()->assertSet('delivrer', null)->assertSee('Dossier reçu par le registre');
+        $page->call('confirmer')->assertHasErrors('delivrer');
+        $page->call('ouvrir', $s->id, $fid)->call('confirmer')->assertHasNoErrors();
+        $this->assertDatabaseCount('certificates', 0);
+        $this->assertDatabaseCount('certificate_requests', 1);
+        \Illuminate\Support\Facades\Notification::assertNothingSent();
+    }
+
+    public function test_conditions_certificats_admin_visibles_et_completes(): void
+    {
+        $this->makeStudent(['CM']);
+        $admin = $this->makeStaff('Super Administrateur');
+        $this->actingAs($admin)->get(route('admin.certificats'))->assertOk()
+            ->assertSee('Formation soldée')->assertSee('RECO 60 évalué')->assertSee('Toutes les séances réalisées')
+            ->assertSee('p-mute text-white', false);
+    }
+
+    public function test_lecteur_youtube_et_acces_direct_sans_parametres_de_playlist(): void
+    {
+        $s = $this->makeStudent(['CM']);
+        $v = Video::create(['formation_id' => Formation::where('code', 'CM')->value('id'), 'title' => 'Vidéo YouTube',
+            'module' => 'Tutoriels', 'source' => 'youtube', 'url' => 'https://www.youtube.com/watch?v=VrPKpng-TrI&list=RDVrPKpng-TrI&start_radio=1', 'published' => true]);
+        $this->assertSame('https://www.youtube.com/watch?v=VrPKpng-TrI', $v->externalUrl());
+        $this->actingAs($s->user)->get(route('etudiant.video', $v))->assertOk()
+            ->assertSee('referrerpolicy="strict-origin-when-cross-origin"', false)
+            ->assertSee('Regarder sur YouTube')->assertSee($v->externalUrl(), false)
+            ->assertSee('https://www.youtube-nocookie.com/embed/VrPKpng-TrI', false);
+        $this->assertNull((new Video(['source' => 'fichier']))->externalUrl());
+    }
+
     public function test_lien_youtube_valide_et_converti(): void
     {
         $trainer = $this->makeStaff('formateur', 'DG');
@@ -193,6 +249,120 @@ class ModulesTest extends TestCase
     }
 
     /* ---------------- Messagerie ---------------- */
+
+    public function test_notifications_visibles_dans_le_menu_de_tous_les_roles(): void
+    {
+        $s = $this->makeStudent(['DG']);
+        $trainer = $this->makeStaff('formateur', 'DG');
+        $admin = $this->makeStaff('Super Administrateur');
+        foreach ([$s->user, $trainer, $admin] as $user) {
+            $user->notify(new \App\Notifications\Avis('Information', 'Notification de test'));
+            $groups = \App\Support\Menu::groups($user);
+            $notification = collect($groups[0][1])->first(fn ($item) => $item[0] === 'myevc.notifications');
+            $this->assertNotNull($notification);
+            $this->assertSame(1, $notification[3]);
+            $this->actingAs($user)->get(route('myevc.messagerie'))->assertOk()
+                ->assertSee('x-on:menu-compteurs.window', false)
+                ->assertSee('x-text="unreadMessages"', false)->assertSee('x-text="unreadNotifications"', false);
+        }
+    }
+
+    public function test_compteurs_menu_synchronises_apres_reception_et_lecture(): void
+    {
+        $s = $this->makeStudent(['DG']);
+        $trainer = $this->makeStaff('formateur', 'DG');
+        $svc = app(MessagingService::class);
+        $svc->start($s->user, [$trainer->id], 'Question', 'Bonjour');
+        $c = $svc->start($s->user, [$trainer->id], 'Autre question', 'Deuxième conversation');
+        $trainer->notify(new \App\Notifications\Avis('Information', 'À conserver'));
+        $menu = Livewire::actingAs($trainer)->test(\App\Livewire\Shared\MenuCompteurs::class)
+            ->assertDispatched('menu-compteurs', messages: 2, notifications: 3);
+        Livewire::actingAs($trainer)->test(Messagerie::class, ['conversation' => $c->id])
+            ->assertDispatched('menu-actualiser');
+        $menu->dispatch('menu-actualiser')->assertDispatched('menu-compteurs', messages: 1, notifications: 2);
+        Livewire::actingAs($trainer)->test(\App\Livewire\Shared\Notifications::class)
+            ->call('toutLu')->assertDispatched('menu-actualiser');
+        $menu->dispatch('menu-actualiser')->assertDispatched('menu-compteurs', messages: 1, notifications: 0);
+    }
+
+    public function test_un_nouveau_message_recu_declenche_une_sonnerie_sans_doublon(): void
+    {
+        $s = $this->makeStudent(['DG']);
+        $trainer = $this->makeStaff('formateur', 'DG');
+        $svc = app(MessagingService::class);
+        $c = $svc->start($s->user, [$trainer->id], 'Sonneries', 'Ancien message');
+        $page = Livewire::actingAs($s->user)->test(Messagerie::class, ['conversation' => $c->id]);
+        $page->assertNotDispatched('message-recu');
+        $svc->send($c, $trainer, 'Nouvelle réponse');
+        $page->call('actualiser')->assertDispatched('message-recu');
+        $page->call('actualiser')->assertNotDispatched('message-recu');
+        $page->set('texte', 'Merci')->call('envoyer');
+        $page->call('actualiser')->assertNotDispatched('message-recu');
+    }
+
+    public function test_les_messages_d_autrui_ne_declenchent_pas_de_sonnerie(): void
+    {
+        $s = $this->makeStudent(['DG']);
+        $other = $this->makeStudent(['DG']);
+        $trainer = $this->makeStaff('formateur', 'DG');
+        $svc = app(MessagingService::class);
+        $c = $svc->start($other->user, [$trainer->id], 'Privé', 'Autre conversation');
+        $page = Livewire::actingAs($s->user)->test(Messagerie::class);
+        $svc->send($c, $trainer, 'Message privé');
+        $page->call('actualiser')->assertNotDispatched('message-recu');
+    }
+
+    public function test_accuses_de_lecture_et_son_apres_envoi_reussi(): void
+    {
+        $s = $this->makeStudent(['DG']);
+        $trainer = $this->makeStaff('formateur', 'DG');
+        $svc = app(MessagingService::class);
+        $page = Livewire::actingAs($s->user)->test(Messagerie::class)->call('ouvrirNouveau')
+            ->set('destinataires', [$trainer->id])->set('objet', 'Lecture')->set('premier', 'Bonjour')
+            ->call('demarrer')->assertDispatched('message-envoye')->assertSee('data-read="false"', false);
+        $c = Conversation::firstOrFail();
+        $svc->markRead($c, $trainer);
+        $page->call('$refresh')->assertSee('data-read="true"', false)->assertSee('Lu par tous les destinataires');
+        $page->set('texte', 'Deuxième message')->call('envoyer')->assertDispatched('message-envoye')
+            ->assertSee('data-read="false"', false)->assertSee('data-read="true"', false);
+    }
+
+    public function test_accuse_bleu_attend_la_lecture_de_tous_les_destinataires(): void
+    {
+        $s = $this->makeStudent(['DG']);
+        $trainer = $this->makeStaff('formateur', 'DG');
+        $admin = $this->makeStaff('Super Administrateur');
+        $svc = app(MessagingService::class);
+        $c = $svc->start($s->user, [$trainer->id, $admin->id], 'Groupe', 'Message collectif');
+        $svc->markRead($c, $trainer);
+        $page = Livewire::actingAs($s->user)->test(Messagerie::class, ['conversation' => $c->id]);
+        $page->assertSee('data-read="false"', false)->assertDontSee('data-read="true"', false);
+        $svc->markRead($c, $admin);
+        $page->call('$refresh')->assertSee('data-read="true"', false);
+    }
+
+    public function test_actualisation_en_arriere_plan_ne_marque_pas_les_messages_comme_lus(): void
+    {
+        $s = $this->makeStudent(['DG']);
+        $trainer = $this->makeStaff('formateur', 'DG');
+        $svc = app(MessagingService::class);
+        $c = $svc->start($s->user, [$trainer->id], 'Lecture visible', 'Premier message');
+        $page = Livewire::actingAs($trainer)->test(Messagerie::class, ['conversation' => $c->id]);
+        $svc->send($c, $s->user, 'Nouveau message');
+        $page->call('actualiser', false);
+        $this->assertSame(1, Conversation::unreadCount($trainer));
+        $page->call('actualiser', true);
+        $this->assertSame(0, Conversation::unreadCount($trainer));
+    }
+
+    public function test_message_invalide_ne_declenche_pas_le_son(): void
+    {
+        $s = $this->makeStudent(['DG']);
+        $trainer = $this->makeStaff('formateur', 'DG');
+        $c = app(MessagingService::class)->start($s->user, [$trainer->id], 'Validation', 'Bonjour');
+        Livewire::actingAs($s->user)->test(Messagerie::class, ['conversation' => $c->id])
+            ->set('texte', '')->call('envoyer')->assertHasErrors('texte')->assertNotDispatched('message-envoye');
+    }
 
     public function test_messagerie_destinataires_envoi_et_non_lus(): void
     {

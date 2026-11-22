@@ -9,6 +9,7 @@
       <div class="mt-1">@foreach ($s->formations as $f)<x-fchip :code="$f->code" /> @endforeach</div>
     </div>
     <div class="d-flex gap-2 flex-wrap">
+      @can('admin.etudiants')<button type="button" class="btn btn-primary btn-sm" wire:click="modifierProfil"><i class="fa-solid fa-user-pen"></i>Modifier le profil</button>@endcan
       @if ($s->user->phone)<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="https://wa.me/{{ preg_replace('/\D/', '', $s->user->phone) }}"><i class="fa-brands fa-whatsapp"></i>WhatsApp</a>@endif
       <a class="btn btn-ghost btn-sm" href="{{ route('pdf.attestation', $s) }}" target="_blank"><i class="fa-solid fa-file-pdf"></i>Attestation</a>
     </div>
@@ -95,10 +96,24 @@
   @if ($attribution)
     <x-modal title="Attribuer un projet" icon="fa-paper-plane">
       <div class="d-flex flex-column gap-3">
-        <div><label class="form-label" for="pj">Projet</label><select class="form-select @error('projet') is-invalid @enderror" id="pj" wire:model="projet"><option value="">Choisir…</option>@foreach ($projects as $p)<option value="{{ $p->id }}">{{ $p->formation->code }} — {{ $p->title }}{{ $s->assignments->contains('project_id', $p->id) ? ' (déjà reçu)' : '' }}</option>@endforeach</select>@error('projet')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+        <div><label class="form-label" for="pj">Projet</label><select class="form-select @error('projet') is-invalid @enderror" id="pj" wire:model="projet" @disabled($projects->isEmpty())><option value="">Choisir…</option>@foreach ($projects as $p)<option value="{{ $p->id }}">{{ $p->formation->code }} — {{ $p->title }}</option>@endforeach</select>@error('projet')<div class="invalid-feedback">{{ $message }}</div>@enderror
+          <p class="small muted mt-2 mb-0">{{ $projects->isEmpty() ? 'Aucun nouveau projet disponible pour cet étudiant.' : 'Seuls les projets publiés de ses formations qu’il n’a jamais reçus sont proposés.' }} Les projets déjà attribués restent dans son historique.</p>
+        </div>
         <div><label class="form-label" for="ech">À rendre le</label><input class="form-control @error('echeance') is-invalid @enderror" type="date" id="ech" wire:model="echeance">@error('echeance')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
       </div>
-      <x-slot:footer><button class="btn btn-ghost" wire:click="closeModal">Annuler</button><button class="btn btn-primary" wire:click="attribuer"><i class="fa-solid fa-paper-plane"></i>Attribuer</button></x-slot:footer>
+      <x-slot:footer><button class="btn btn-ghost" wire:click="closeModal">Annuler</button><button class="btn btn-primary" wire:click="attribuer" @disabled($projects->isEmpty()) wire:loading.attr="disabled" wire:target="attribuer"><i class="fa-solid fa-paper-plane"></i>Attribuer</button></x-slot:footer>
+    </x-modal>
+  @endif
+  @if ($editionProfil)
+    <x-modal title="Modifier le profil étudiant" icon="fa-user-pen" size="modal-lg">
+      <form id="student-profile-form" wire:submit="enregistrerProfil" class="row g-3">
+        @foreach (['name' => ['Nom complet', 'text'], 'email' => ['Adresse e-mail', 'email'], 'phone' => ['Téléphone / WhatsApp', 'tel'], 'birth_date' => ['Date de naissance', 'date'], 'gender' => ['Genre', 'text'], 'country' => ['Pays', 'text'], 'city' => ['Ville', 'text']] as $field => [$label, $type])
+          <div class="col-md-6"><label class="form-label" for="student-profile-{{ $field }}">{{ $label }}</label><input id="student-profile-{{ $field }}" type="{{ $type }}" class="form-control @error('profil.'.$field) is-invalid @enderror" wire:model="profil.{{ $field }}" @required(in_array($field, ['name', 'email']))>@error('profil.'.$field)<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+        @endforeach
+        <div class="col-md-6"><label class="form-label" for="student-profile-level">Niveau</label><select id="student-profile-level" class="form-select" wire:model="profil.level">@foreach (['Débutant', 'Intermédiaire', 'Avancé'] as $level)<option>{{ $level }}</option>@endforeach</select>@error('profil.level')<div class="text-danger small">{{ $message }}</div>@enderror</div>
+        <p class="small muted mb-0">Le matricule, les formations, la session, les paiements, les rôles et le mot de passe ne sont pas modifiés. L’adresse e-mail sert aussi à la connexion.</p>
+      </form>
+      <x-slot:footer><button type="button" class="btn btn-ghost" wire:click="closeModal">Annuler</button><button type="submit" form="student-profile-form" class="btn btn-primary" wire:loading.attr="disabled" wire:target="enregistrerProfil">Enregistrer le profil</button></x-slot:footer>
     </x-modal>
   @endif
   @include('livewire.partials.correction')

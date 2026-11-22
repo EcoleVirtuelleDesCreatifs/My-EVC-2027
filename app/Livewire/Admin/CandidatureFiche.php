@@ -7,6 +7,8 @@ use App\Models\AuditLog;
 use App\Models\Candidature;
 use App\Models\Promotion;
 use App\Services\AdmissionService;
+use App\Notifications\CandidatureMiseAJour;
+use Illuminate\Support\Facades\Notification;
 
 class CandidatureFiche extends Page
 {
@@ -33,9 +35,26 @@ class CandidatureFiche extends Page
     public function etape(string $stage): void
     {
         abort_unless(array_key_exists($stage, Candidature::STAGES) && $stage !== 'activee', 422);
+        $this->candidature->refresh();
+        if ($this->candidature->stage === $stage) {
+            return;
+        }
+        if ($stage === 'test' && ! $this->candidature->saopClosed()) {
+            $this->toast('Le questionnaire doit être soumis ou arrivé à échéance avant son évaluation.', 'warn');
+            return;
+        }
         $this->candidature->update(['stage' => $stage]);
+        Notification::route('mail', $this->candidature->email)->notify(new CandidatureMiseAJour($this->candidature, $stage));
         AuditLog::record('Candidature : '.Candidature::STAGES[$stage][0], $this->candidature->reference);
         $this->toast('Étape mise à jour : '.Candidature::STAGES[$stage][0].'.');
+    }
+
+    public function envoyerQuestionnaire(): void
+    {
+        $this->candidature->refresh();
+        abort_unless($this->candidature->stage === 'eligible' && ! $this->candidature->saopClosed(), 422);
+        Notification::route('mail', $this->candidature->email)->notify(new CandidatureMiseAJour($this->candidature, 'eligible'));
+        $this->toast('Le lien du questionnaire a été envoyé au candidat.');
     }
 
     public function enregistrer(): void

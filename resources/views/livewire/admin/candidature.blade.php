@@ -18,6 +18,14 @@
         <x-panel :title="$g"><div class="lib-dl">@foreach ($rows as $k)<div class="lib-dl-row"><span>{{ str_replace('Contact - ', '', $k) }}</span><b style="white-space:pre-line">{{ implode(', ', $c->answers[$k]) }}</b></div>@endforeach</div></x-panel>
       @endif
     @endforeach
+    <x-panel title="Questionnaire SAOP · 30 minutes">
+      <p class="small muted">{{ $c->saop_submitted_at ? 'Soumis le '.$c->saop_submitted_at->translatedFormat('d/m/Y à H:i') : ($c->saopClosed() ? 'Temps écoulé · réponses verrouillées' : ($c->saop_started_at ? 'En cours · échéance : '.$c->saop_started_at->copy()->addMinutes(30)->format('d/m/Y H:i') : 'Pas encore démarré')) }}</p>
+      <p class="small">Évaluation humaine : les contraintes techniques, la résidence et les besoins d’accompagnement ne constituent pas des motifs automatiques d’exclusion.</p>
+      @foreach (\App\Services\SaopQuestionnaire::QUESTIONS as $number => [$title, $question, $hint])
+        <details class="mb-3"><summary>{{ $number }}. {{ $title }}</summary><p class="small muted">{{ $question }}</p><div style="white-space:pre-wrap;overflow-wrap:anywhere">{{ $c->saop_answers[$number] ?? 'Aucune réponse enregistrée.' }}</div></details>
+      @endforeach
+      @if ($c->stage === 'eligible' && ! $c->saopClosed())<button class="btn btn-ghost btn-sm" wire:click="envoyerQuestionnaire" wire:loading.attr="disabled" wire:confirm="Envoyer le lien du questionnaire par e-mail au candidat ?">Renvoyer le lien par e-mail</button>@endif
+    </x-panel>
     @if ($c->files->isNotEmpty())
       <x-panel title="Pièces jointes"><div class="d-flex flex-wrap gap-2">@foreach ($c->files as $file)<a class="file-chip" href="{{ route('admin.candidature.fichier', $file) }}"><i class="fa-solid fa-paperclip"></i>{{ $file->label }} — {{ $file->original_name }}</a>@endforeach</div></x-panel>
     @endif

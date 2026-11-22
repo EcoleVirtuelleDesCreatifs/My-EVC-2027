@@ -36,6 +36,9 @@
               </li>
             @endforeach
           </ol>
+          @if ($candidature->stage === 'eligible')
+            <a href="{{ $candidature->saopUrl() }}" class="btn btn-evc btn-lg mt-4">{{ $candidature->saopClosed() ? 'Questionnaire SAOP clôturé' : 'Accéder à mon questionnaire SAOP' }}</a>
+          @endif
           @if ($candidature->stage === 'activee')
             <a href="{{ route('login') }}" class="btn btn-evc btn-lg mt-4">Accéder à MY EVC</a>
           @endif

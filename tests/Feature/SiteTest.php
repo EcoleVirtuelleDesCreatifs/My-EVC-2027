@@ -7,6 +7,9 @@ use App\Models\Candidature;
 use App\Models\Certificate;
 use App\Models\ContactMessage;
 use App\Models\NewsletterSubscriber;
+use App\Models\User;
+use App\Notifications\Avis;
+use App\Notifications\CandidatureRecue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
@@ -45,6 +48,9 @@ class SiteTest extends TestCase
     {
         Storage::fake('local');
         Notification::fake();
+        $staff = User::factory()->create();
+        $staff->givePermissionTo('admin.candidatures');
+        $other = User::factory()->create();
         $res = $this->postJson('/preinscription', [
             'answers' => ['Nom' => ['Diabaté'], 'Prénoms' => ['Salimata'], 'E-mail' => ['Salimata@Exemple.ci'], 'Téléphone' => ['+225 07 00 00 00 00'],
                 'Formations' => ['Infographie & design graphique', 'Bureautique & informatique (GIA)'], 'Modalité' => ['En ligne']],
@@ -57,6 +63,32 @@ class SiteTest extends TestCase
         $this->assertSame($res['reference'], $c->reference);
         $this->assertCount(1, $c->files);
         Storage::disk('local')->assertExists($c->files[0]->path);
+        Notification::assertSentOnDemand(CandidatureRecue::class, fn ($notification, $channels, $notifiable) =>
+            $notifiable->routes['mail'] === $c->email && $channels === ['mail'] && $notification->candidature->is($c));
+        Notification::assertSentTo($staff, Avis::class, fn ($notification, $channels) =>
+            $notification->title === 'Nouvelle préinscription' && $channels === ['database', 'mail']
+            && $notification->url === route('admin.candidature', $c));
+        Notification::assertNothingSentTo($other);
+    }
+
+    public function test_le_mail_de_preinscription_est_personnalise_et_en_francais(): void
+    {
+        $c = new Candidature(['reference' => 'PRE-2026-0099', 'first_name' => '<script>Awa</script>', 'formations' => ['DG']]);
+        $mail = (new CandidatureRecue($c))->toMail(new \Illuminate\Notifications\AnonymousNotifiable);
+        $html = (string) $mail->render();
+
+        $this->assertStringContainsString('Votre préinscription est confirmée', $html);
+        $this->assertStringContainsString('PRE-2026-0099', $html);
+        $this->assertStringContainsString('Suivre ma candidature', $html);
+        $this->assertStringContainsString('48 heures', $html);
+        $this->assertStringContainsString('&lt;script&gt;Awa&lt;/script&gt;', $html);
+        $this->assertStringNotContainsString('<script>', $html);
+        $this->assertStringNotContainsString("If you're having trouble", $html);
+        $this->assertSame('Votre préinscription PRE-2026-0099 · EVC', $mail->subject);
+        $this->assertSame('site.mail-preinscription-texte', $mail->view['text']);
+        $text = view($mail->view['text'], $mail->viewData)->render();
+        $this->assertStringContainsString('PRE-2026-0099', $text);
+        $this->assertStringContainsString($mail->viewData['suiviUrl'], $text);
     }
 
     public function test_la_preinscription_refuse_un_dossier_incomplet(): void

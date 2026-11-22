@@ -28,6 +28,14 @@ trait AttribueProjets
         $this->aNotifier = true;
         $this->resetErrorBag();
         $this->attribution = true;
+        if ($this->aProjet) {
+            $this->updatedAProjet();
+        }
+    }
+
+    public function updatedAProjet(): void
+    {
+        $this->aEtudiants = array_values(array_intersect(array_map('intval', $this->aEtudiants), $this->candidatsAttribution()->pluck('id')->all()));
     }
 
     public function confirmerAttribution(ProjectService $svc): void
@@ -38,7 +46,7 @@ trait AttribueProjets
         [$n, $skip] = $svc->assign(Project::findOrFail($this->aProjet), $students, Carbon::parse($this->aEcheance), $this->aNotifier);
         $this->attribution = false;
         $this->aEtudiants = [];
-        $this->toast($n ? "Projet attribué à $n étudiant".($n > 1 ? 's' : '').($skip ? " · $skip ignoré(s) (autre formation ou déjà en cours)" : '').'.' : 'Aucun étudiant ne pouvait recevoir ce projet.', $n ? 'ok' : 'warn');
+        $this->toast($n ? "Projet attribué à $n étudiant".($n > 1 ? 's' : '').($skip ? " · $skip ignoré(s) (autre formation ou projet déjà reçu)" : '').'.' : 'Aucun étudiant ne pouvait recevoir ce projet.', $n ? 'ok' : 'warn');
     }
 
     /** Étudiants de la formation du projet choisi (pour la liste à cocher). */
@@ -47,7 +55,8 @@ trait AttribueProjets
         $p = $this->aProjet ? Project::find($this->aProjet) : null;
 
         return Student::with('user')->where('status', 'actif')
-            ->when($p, fn ($q) => $q->whereHas('enrollments', fn ($e) => $e->where('formation_id', $p->formation_id)))
+            ->when($p, fn ($q) => $q->whereHas('enrollments', fn ($e) => $e->where('formation_id', $p->formation_id))
+                ->whereDoesntHave('assignments', fn ($a) => $a->where('project_id', $p->id)))
             ->get()->sortBy(fn ($s) => $s->user->name);
     }
 }

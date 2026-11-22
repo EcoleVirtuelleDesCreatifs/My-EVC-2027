@@ -12,7 +12,7 @@
     @if (! $trainer)<select class="form-select" wire:model.live="formation" aria-label="Formation"><option value="">Toutes les formations</option>@foreach ($formations as $f)<option value="{{ $f->id }}">{{ $f->short_name }}</option>@endforeach<option value="ALL">Communes à toutes</option></select>@endif
     <select class="form-select" wire:model.live="rayon" aria-label="Rayon"><option value="">Tous les rayons</option>@foreach (\App\Models\Resource::CATEGORIES as $k => $c)<option value="{{ $k }}">{{ $c[0] }}</option>@endforeach</select>
     <select class="form-select" wire:model.live="statut" aria-label="Statut"><option value="">Tous les statuts</option><option value="pub">Publiées</option><option value="brouillon">Brouillons</option></select>
-    <button class="btn btn-primary d-sm-none" wire:click="creer"><i class="fa-solid fa-plus"></i>Ajouter</button>
+    <a class="btn btn-primary d-sm-none" href="{{ route(($trainer ? 'formateur' : 'admin').'.ressource.nouvelle') }}" wire:navigate><i class="fa-solid fa-plus"></i>Ajouter</a>
   </div>
   <div class="panel tbl" wire:loading.class="wire-loading">
     <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Ressource</th><th>Rayon</th><th>Formation</th><th>Licence</th><th class="text-end">Téléch.</th><th>Ajoutée</th><th>Statut</th><th></th></tr></thead><tbody>
@@ -26,7 +26,7 @@
           <td class="small text-nowrap">{{ $x->created_at->translatedFormat('j M') }}</td>
           <td>@if ($x->published)<x-pill tone="ok">Publiée</x-pill>@else<x-pill>Brouillon</x-pill>@endif</td>
           <td class="table-actions">
-            <button class="btn btn-quiet btn-sm btn-icon" wire:click="modifier({{ $x->id }})" title="Modifier" aria-label="Modifier"><i class="fa-solid fa-pen"></i></button>
+            <a class="btn btn-quiet btn-sm btn-icon" href="{{ route(($trainer ? 'formateur' : 'admin').'.ressource.modifier', $x) }}" wire:navigate title="Modifier" aria-label="Modifier"><i class="fa-solid fa-pen"></i></a>
             <button class="btn btn-quiet btn-sm btn-icon" wire:click="publier({{ $x->id }})" title="{{ $x->published ? 'Repasser en brouillon' : 'Publier' }}" aria-label="{{ $x->published ? 'Repasser en brouillon' : 'Publier' }}"><i class="fa-solid {{ $x->published ? 'fa-eye-slash' : 'fa-eye' }}"></i></button>
             <button class="btn btn-quiet btn-sm btn-icon" wire:click="supprimer({{ $x->id }})" wire:confirm="Supprimer « {{ $x->title }} » de la bibliothèque ? Cette action est définitive." title="Supprimer" aria-label="Supprimer"><i class="fa-solid fa-trash-can"></i></button>
           </td>

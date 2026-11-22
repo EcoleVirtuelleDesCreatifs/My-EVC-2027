@@ -15,6 +15,16 @@ class Project extends Model
         return ['published' => 'boolean'];
     }
 
+    public function briefHtml(): string
+    {
+        return $this->brief_format === 'html' ? \App\Support\ProjectBrief::fromHtml($this->brief) : \App\Support\ProjectBrief::fromText($this->brief);
+    }
+
+    public function briefExcerpt(): string
+    {
+        return $this->brief_format === 'html' ? \App\Support\ProjectBrief::text($this->briefHtml()) : $this->brief;
+    }
+
     public function formation(): BelongsTo
     {
         return $this->belongsTo(Formation::class);

@@ -14,7 +14,7 @@
         <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Échéance</th><th>Date</th><th class="text-end">Montant</th><th class="text-end">Réglé</th><th>État</th></tr></thead><tbody>
           @foreach ($schedules as $x)
             @php([$lbl, $tone] = $x->state())
-            <tr><td><x-fchip :code="$x->formation->code" /> {{ $x->label }}</td><td>{{ $x->due_on->translatedFormat('j M Y') }}</td><td class="text-end">{{ fcfa($x->amount) }}</td><td class="text-end">{{ fcfa($x->paid()) }}</td><td><x-pill :tone="$tone">{{ $lbl }}</x-pill></td></tr>
+            <tr><td><x-fchip :code="$x->formation->code" /> {{ $x->label }}</td><td>{{ $x->due_on->translatedFormat('j M Y') }}</td><td class="text-end">{{ fcfa($x->amount) }}</td><td class="text-end">{{ fcfa($x->paid()) }}</td><td><x-pill :tone="$tone" :class="$lbl === 'À venir' ? 'text-white' : ''">{{ $lbl }}</x-pill></td></tr>
           @endforeach
         </tbody></table></div>
       </x-panel>

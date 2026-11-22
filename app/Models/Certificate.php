@@ -24,6 +24,11 @@ class Certificate extends Model
         return $this->belongsTo(Formation::class);
     }
 
+    public function registryRequest(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(CertificateRequest::class);
+    }
+
     public static function nextCode(): string
     {
         $prefix = 'EVC-CERT-'.now()->year.'-';

@@ -23,7 +23,17 @@ class PdfController extends Controller
     public function certificate(Request $request, Certificate $certificate)
     {
         $this->authorizeStudent($request, $certificate->student, 'admin.certificats');
-        $certificate->load('student.user', 'formation');
+        $certificate->load('student.user', 'formation', 'registryRequest');
+        if ($certificate->registryRequest) {
+            try {
+                $bytes = app(\App\Services\RegistreService::class)->pdf($certificate->registryRequest);
+            } catch (\Illuminate\Validation\ValidationException) {
+                abort(503, 'Le registre officiel est temporairement indisponible. Réessayez plus tard.');
+            }
+
+            return response($bytes, 200, ['Content-Type' => 'application/pdf', 'Cache-Control' => 'no-store, private',
+                'Content-Disposition' => 'attachment; filename="certificat-'.$certificate->code.'.pdf"']);
+        }
 
         return $this->pdf('pdf.certificat', ['c' => $certificate], 'certificat-'.$certificate->code, 'landscape');
     }
