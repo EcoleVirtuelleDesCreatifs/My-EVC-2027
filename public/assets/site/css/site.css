@@ -2,6 +2,10 @@
    EVC · École Virtuelle des Créatifs — site vitrine
    Thème Bootswatch Cerulean (Bootstrap 5.3) + Montserrat
    ========================================================= */
+/* Images : les attributs width/height réservent la place sans figer l'affichage */
+img:where([width][height]){height:auto}
+img:where([src*="/logo"]){width:auto}
+
 :root{
   --navy:#0E1A3C; --navy-2:#17265A; --navy-3:#22337A; --blue:#336A99; --royal:#3563AD;
   --orange:#F39822; --orange-2:#FFB04A; --gold:#FDC967; --cream:#F7F4EE; --sand:#EFE8DA;
@@ -1259,3 +1263,18 @@ span.flag svg{display:block}
   .to-top{display:none!important}
   .oc-cta+.solo{border-top:0}
 }
+
+/* Bandeau de consentement aux cookies */
+.ck-banner{position:fixed;left:50%;bottom:22px;z-index:1060;width:min(640px,calc(100% - 1.5rem));transform:translate(-50%,16px);opacity:0;transition:opacity .3s var(--ease),transform .3s var(--ease);background:#fff;color:var(--ink);border-radius:1.1rem;padding:1.15rem 1.25rem;box-shadow:0 24px 60px -18px rgba(14,26,60,.45);border:1px solid var(--line)}
+.ck-banner.show{opacity:1;transform:translate(-50%,0)}
+.ck-title{font-weight:800;color:var(--navy);margin:0 0 .35rem}
+.ck-text{font-size:.85rem;color:var(--muted);margin:0 0 .85rem}
+.ck-text a{color:var(--royal);font-weight:600}
+.ck-prefs{display:grid;gap:.5rem;margin-bottom:.85rem}
+.ck-opt{display:flex;gap:.7rem;align-items:flex-start;padding:.6rem .75rem;border:1px solid var(--line);border-radius:.75rem;cursor:pointer;font-size:.82rem}
+.ck-opt input{margin-top:.2rem;accent-color:var(--royal);width:1.05rem;height:1.05rem;flex:none}
+.ck-opt b{display:block;color:var(--navy)}.ck-opt small{color:var(--muted)}
+.ck-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end}
+.ck-actions .btn{flex:1 1 auto;font-weight:700}
+@media(max-width:991px){.ck-banner{bottom:calc(92px + env(safe-area-inset-bottom))}}
+@media(prefers-reduced-motion:reduce){.ck-banner{transition:none}}

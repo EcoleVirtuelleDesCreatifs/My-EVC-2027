@@ -38,11 +38,34 @@ class Video extends Model
         return $q->where('published', true)->whereIn('formation_id', $formationIds);
     }
 
+    public function youtubeId(): ?string
+    {
+        $url = parse_url((string) $this->url);
+        if ($this->source !== 'youtube' || ! is_array($url) || ! in_array(strtolower($url['scheme'] ?? ''), ['http', 'https'], true)) {
+            return null;
+        }
+        $host = strtolower($url['host'] ?? '');
+        $path = $url['path'] ?? '';
+        if (in_array($host, ['youtu.be', 'www.youtu.be'], true)) {
+            return preg_match('~^/([a-zA-Z0-9_-]{11})/?$~D', $path, $m) ? $m[1] : null;
+        }
+        if (! in_array($host, ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'], true)) {
+            return null;
+        }
+        if (preg_match('~^/(?:embed|shorts|live)/([a-zA-Z0-9_-]{11})/?$~D', $path, $m)) {
+            return $m[1];
+        }
+        parse_str($url['query'] ?? '', $query);
+        $id = $query['v'] ?? null;
+
+        return in_array($path, ['/watch', '/watch/'], true) && is_string($id) && preg_match('~^[a-zA-Z0-9_-]{11}$~D', $id) ? $id : null;
+    }
+
     /** Lien d'intégration (YouTube, Vimeo) ou null pour un fichier hébergé. */
     public function embedUrl(): ?string
     {
-        if ($this->source === 'youtube' && preg_match('~(?:youtu\.be/|v=|embed/|shorts/)([\w-]{11})~', (string) $this->url, $m)) {
-            return 'https://www.youtube-nocookie.com/embed/'.$m[1].'?rel=0&modestbranding=1';
+        if ($id = $this->youtubeId()) {
+            return 'https://www.youtube-nocookie.com/embed/'.$id.'?rel=0&playsinline=1';
         }
         if ($this->source === 'vimeo' && preg_match('~vimeo\.com/(?:video/)?(\d+)~', (string) $this->url, $m)) {
             return 'https://player.vimeo.com/video/'.$m[1];

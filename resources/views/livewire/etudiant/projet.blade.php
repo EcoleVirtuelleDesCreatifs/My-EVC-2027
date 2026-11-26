@@ -37,6 +37,42 @@
       </x-panel>
     @endif
 
+    @if ($a->status === 'soumis' && ($last = $a->submissions->first()))
+      <x-panel title="Mon rendu en cours de validation" sub="Vous pouvez encore le modifier tant que votre formateur ne l’a pas corrigé.">
+        @if (! $modification)
+          <div class="alert-strip as-info mb-3"><i class="fa-solid fa-hourglass-half"></i><span>Rendu le {{ $a->submitted_at?->translatedFormat('j F Y à H\hi') }}@if ($last->updated_at->gt($last->created_at->copy()->addMinute())) · modifié le {{ $last->updated_at->translatedFormat('j F à H\hi') }}@endif</span></div>
+          <button class="btn btn-ghost" wire:click="modifierRendu"><i class="fa-solid fa-pen"></i>Modifier mon rendu</button>
+        @else
+          <form wire:submit="enregistrerModification" class="d-flex flex-column gap-3">
+            @if ($last->files->isNotEmpty())
+              <div><p class="form-label mb-2">Fichiers déposés</p>
+                <div class="d-flex flex-column gap-2">
+                  @foreach ($last->files as $file)
+                    @php($off = in_array($file->id, $aRetirer, true))
+                    <div class="amend-file {{ $off ? 'off' : '' }}"><i class="fa-solid fa-paperclip"></i><span class="flex-grow-1 text-truncate">{{ $file->original_name }}</span>
+                      <button type="button" class="btn btn-ghost btn-sm" wire:click="basculerRetrait({{ $file->id }})">{{ $off ? 'Conserver' : 'Retirer' }}</button></div>
+                  @endforeach
+                </div></div>
+            @endif
+            <div>
+              <label class="form-label" for="ajout">Ajouter des fichiers <span class="small muted">(50 Mo max. chacun)</span></label>
+              <input type="file" id="ajout" class="form-control @error('fichiers.*') is-invalid @enderror" wire:model="fichiers" multiple>
+              <div wire:loading wire:target="fichiers" class="small muted mt-1"><i class="fa-solid fa-spinner fa-spin me-1"></i>Envoi des fichiers…</div>
+              @error('fichiers.*')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+              @if ($fichiers)
+                <div class="d-flex flex-wrap gap-2 mt-2">@foreach ($fichiers as $i => $fi)<span class="file-chip"><i class="fa-solid fa-paperclip"></i>{{ $fi->getClientOriginalName() }}<button type="button" class="btn-close btn-sm ms-1" style="font-size:9px" wire:click="retirerFichier({{ $i }})" aria-label="Retirer"></button></span>@endforeach</div>
+              @endif
+            </div>
+            <div><label class="form-label" for="liensM">Liens <span class="small muted">(un par ligne)</span></label><textarea id="liensM" class="form-control" rows="2" wire:model="liens" placeholder="https://"></textarea></div>
+            <div><label class="form-label" for="msgM">Message pour le formateur</label><textarea id="msgM" class="form-control" rows="2" wire:model="message"></textarea></div>
+            @error('depot')<div class="alert alert-danger small mb-0">{{ $message }}</div>@enderror
+            <div class="d-flex gap-2 flex-wrap"><button class="btn btn-primary" type="submit" wire:loading.attr="disabled" wire:target="enregistrerModification,fichiers"><i class="fa-solid fa-floppy-disk"></i>Enregistrer les modifications</button>
+              <button class="btn btn-ghost" type="button" wire:click="annulerModification">Annuler</button></div>
+          </form>
+        @endif
+      </x-panel>
+    @endif
+
     @if ($a->submissions->isNotEmpty())
       <x-panel title="Mes dépôts">
         @foreach ($a->submissions as $sub)
@@ -54,7 +90,7 @@
   </div>
 
   <x-panel title="Historique et échanges">
-    <ul class="timeline-c">
+    <ul class="timeline-c" wire:poll.15s.visible>
       @foreach ($a->comments as $c)
         <li class="k-{{ $c->kind }}"><span class="tc-dot"></span>
           <div class="small"><b>{{ $c->user?->name ?? 'EVC' }}</b> <span class="muted">· {{ $c->created_at->diffForHumans() }}</span></div>

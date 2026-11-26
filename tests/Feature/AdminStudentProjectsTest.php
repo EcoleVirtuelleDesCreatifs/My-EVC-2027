@@ -104,4 +104,21 @@ class AdminStudentProjectsTest extends TestCase
         Livewire::actingAs($staff)->test(EtudiantFiche::class, ['student' => $s])->call('modifierProfil')->assertForbidden();
         Livewire::actingAs($staff)->test(EtudiantFiche::class, ['student' => $s])->call('enregistrerProfil')->assertForbidden();
     }
+
+    public function test_la_fiche_etudiant_s_actualise_apres_le_premier_versement(): void
+    {
+        $s = $this->makeStudent(['DG']);
+        $admin = $this->makeStaff('Super Administrateur');
+        $page = Livewire::actingAs($admin)->test(EtudiantFiche::class, ['student' => $s])->set('onglet', 'paiements')
+            ->assertSee('Payé : 0 FCFA')->assertSee('Aucun versement')->assertSeeHtml('wire:poll.15s.visible');
+
+        $page->call('ouvrirVersement')->assertDontSeeHtml('wire:poll.15s.visible')
+            ->set('methode', \App\Models\Payment::METHODS[0])->call('enregistrerVersement')->assertHasNoErrors()
+            ->assertSee('Payé : 95 000 FCFA')->assertSee('réglé 95 000 FCFA')->assertSee('Payée')->assertDontSee('Aucun versement')
+            ->assertSeeHtml('wire:poll.15s.visible');
+
+        /* Versement saisi depuis Finances pendant que la fiche est ouverte : visible à l'actualisation suivante */
+        app(\App\Services\PaymentService::class)->record($s->fresh(), 90000, \App\Models\Payment::METHODS[0]);
+        $page->call('$refresh')->assertSee('Payé : 185 000 FCFA');
+    }
 }

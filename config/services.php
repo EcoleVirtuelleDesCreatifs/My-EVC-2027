@@ -20,6 +20,12 @@ return [
         'timeout' => 10,
     ],
 
+    /* Mesure d'audience du site public : chargée uniquement après consentement. */
+    'analytics' => [
+        'ga4' => preg_match('/^G-[A-Z0-9]{4,20}$/', (string) env('GA4_MEASUREMENT_ID')) ? env('GA4_MEASUREMENT_ID') : null,
+        'meta_pixel' => preg_match('/^\d{5,20}$/', (string) env('META_PIXEL_ID')) ? env('META_PIXEL_ID') : null,
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

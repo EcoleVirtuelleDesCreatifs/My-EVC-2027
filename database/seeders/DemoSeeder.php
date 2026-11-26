@@ -34,6 +34,9 @@ class DemoSeeder extends Seeder
 
     public function run(): void
     {
+        if (app()->isProduction()) {
+            throw new \RuntimeException('Les données de démonstration sont interdites en production.');
+        }
         if (User::where('email', 'admin@evc.test')->exists()) {
             return;
         }

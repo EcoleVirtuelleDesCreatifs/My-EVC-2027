@@ -19,7 +19,7 @@
         <p>{{ $c->first_name }} · Dossier {{ $c->reference }}</p>
     </header>
     @if ($c->saopClosed())
-        <section class="card"><h2>Questionnaire clôturé</h2><p>{{ $c->saop_submitted_at ? 'Vos réponses ont été soumises.' : 'Les 30 minutes sont écoulées. Les réponses sauvegardées sont conservées pour examen.' }} Notre équipe étudiera votre questionnaire.</p><p>Aucune réponse ne peut désormais être modifiée.</p></section>
+        <section class="card"><h2>Questionnaire clôturé</h2><p>{{ $c->saop_submitted_at ? 'Vos réponses ont été soumises.' : 'Les 30 minutes sont écoulées. Les réponses sauvegardées sont conservées pour examen.' }} Notre équipe étudiera votre questionnaire.</p><p>Aucune réponse ne peut désormais être modifiée.</p><p>Vous pouvez maintenant fermer cette page.</p><a href="/">Retour à l’accueil</a></section>
     @elseif (! $c->saop_started_at)
         <section class="card">
             <h2>Avant de commencer</h2>
@@ -77,8 +77,10 @@
                     deadline = Math.min(deadline, performance.now() + data.remaining * 1000);
                     status.textContent = dirty ? 'Modifications à sauvegarder…' : 'Réponses enregistrées';
                     status.className = '';
-                    if (data.closed) lock();
-                    if (data.closed && action === 'submit') message.textContent = 'Vos réponses sont enregistrées. Le questionnaire est clôturé et sera examiné par notre équipe.';
+                    if (data.closed) {
+                        lock();
+                        window.location.reload();
+                    }
                 } catch (error) {
                     dirty = true;
                     status.textContent = 'Attention : réponses non sauvegardées';

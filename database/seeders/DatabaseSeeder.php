@@ -7,15 +7,12 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * php artisan db:seed           → rôles, contenus et jeu de démonstration (hors production)
-     * En production : seuls les rôles et les contenus sont créés ; un compte Super Administrateur
+     * php artisan db:seed           → rôles, formations et liens officiels de la bibliothèque
+     * Aucune donnée de démonstration n’est créée ; un compte Super Administrateur
      * se crée avec « php artisan evc:admin ».
      */
     public function run(): void
     {
-        $this->call([RolesSeeder::class, ContentSeeder::class, LibrarySeeder::class]);
-        if (! app()->isProduction()) {
-            $this->call([DemoSeeder::class, Phase2DemoSeeder::class]);
-        }
+        $this->call([RolesSeeder::class, FormationSeeder::class, LibrarySeeder::class]);
     }
 }

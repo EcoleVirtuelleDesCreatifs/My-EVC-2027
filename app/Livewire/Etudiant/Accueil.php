@@ -36,7 +36,10 @@ class Accueil extends Page
         $fresh = $open->firstWhere('status', 'afaire');
         $paySoon = $nextPay && $nextPay->due_on->lte(now()->addDays(7)) ? $nextPay : null;
         $quiz = \App\Models\Quiz::visibleFor($fids)->with(['attempts' => fn ($q) => $q->where('student_id', $s->id)])->get()->first(fn ($q) => $q->stateFor($s)[2] && ! $q->stateFor($s)[3]);
+        $readOnly = $s->isReadOnly();
         $action = match (true) {
+            $readOnly => ['tone' => 'calm', 'k' => 'Formation terminée', 't' => 'Bravo pour votre parcours à l’EVC !', 's' => 'Retrouvez vos réalisations validées dans votre portfolio et téléchargez votre certificat lorsqu’il est délivré.',
+                'btn' => ['route' => route('etudiant.portfolio'), 'l' => 'Voir mon portfolio', 'ic' => 'fa-swatchbook']],
             (bool) $live => ['tone' => 'live', 'k' => 'Aujourd\'hui', 't' => 'Cours en direct : '.$live->title, 's' => $live->hours().' · '.($live->mode === 'virtuel' ? 'en ligne' : 'en salle').' · '.$live->trainer?->name,
                 'btn' => in_array($live->id, $checked) && $live->meet_url ? ['url' => $live->meet_url, 'l' => 'Rejoindre le cours', 'ic' => 'fa-video'] : ['wire' => 'rejoindre('.$live->id.')', 'l' => $live->mode === 'virtuel' ? 'Rejoindre le cours' : 'Je suis présent', 'ic' => $live->mode === 'virtuel' ? 'fa-video' : 'fa-check']],
             (bool) $late => ['tone' => 'bad', 'k' => 'En retard', 't' => $late->project->title, 's' => 'Ce projet était à rendre '.mb_strtolower($late->dueText()).'. Rendez-le dès que possible.', 'btn' => ['route' => route('etudiant.projet', $late), 'l' => 'Rendre mon projet', 'ic' => 'fa-upload']],
@@ -52,7 +55,7 @@ class Accueil extends Page
         $validated = $s->assignments()->where('status', 'valide')->count();
         $total = $s->assignments()->count();
 
-        return $this->page('livewire.etudiant.accueil', compact('s', 'action', 'next', 'open', 'nextPay', 'progress', 'validated', 'total'),
+        return $this->page('livewire.etudiant.accueil', compact('s', 'action', 'next', 'open', 'nextPay', 'progress', 'validated', 'total', 'readOnly'),
             'Accueil', 'Espace étudiant · '.ucfirst(now()->translatedFormat('l j F Y')));
     }
 }

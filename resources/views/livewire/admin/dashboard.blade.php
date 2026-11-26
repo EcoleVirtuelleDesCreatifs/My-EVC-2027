@@ -2,7 +2,7 @@
   <div class="stat-grid mb-4">
     <x-kpi label="Étudiants actifs" :value="$actifs" icon="fa-user-graduate" tone="lav" />
     @can('admin.candidatures')<x-kpi label="Candidatures à traiter" :value="$aTraiter" icon="fa-user-plus" :tone="$aTraiter ? 'cor' : 'ok'" sub="Dossiers reçus et 1ers versements" />@endcan
-    @can('admin.finances')<x-kpi label="Encaissé ce mois" :value="fcfa($moisEncaisse)" icon="fa-wallet" tone="ok" :sub="'Reste à encaisser : '.fcfa(max(0, $totalDu - $totalPaye))" />@endcan
+    @can('admin.finances')<x-kpi label="Solde de caisse" :value="fcfa($caisse['balance'])" icon="fa-cash-register" :tone="$caisse['balance'] >= 0 ? 'ok' : 'bad'" :sub="'Ce mois : +'.fcfa($caisse['periodIn']).' / −'.fcfa($caisse['periodOut']).' · reste à encaisser '.fcfa($caisse['due'])" />@endcan
     @can('admin.projets')<x-kpi label="Projets à valider" :value="$aValider" icon="fa-pen-to-square" :tone="$aValider ? 'warn' : 'ok'" sub="Rendus par les étudiants" />@endcan
   </div>
 

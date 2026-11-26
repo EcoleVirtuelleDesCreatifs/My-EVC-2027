@@ -11,6 +11,9 @@ class DemoFile
 {
     public static function make(string $title, string $format, string $dir = 'library'): string
     {
+        if (app()->isProduction()) {
+            throw new \RuntimeException('Les fichiers de démonstration sont interdits en production.');
+        }
         $slug = Str::slug($title) ?: 'ressource';
         if (str_starts_with(strtoupper($format), 'PDF')) {
             $path = "$dir/$slug.pdf";

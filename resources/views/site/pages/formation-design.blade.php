@@ -1,6 +1,6 @@
 @extends('layouts.site')
 @section('title', "Infographie & design graphique · EVC — École Virtuelle des Créatifs")
-@section('description', "Infographie & design graphique à l'EVC : 4 mois, 185 000 FCFA payables en 2 fois. Programme, outils, débouchés et inscription.")
+@section('description', "Formation infographie et design graphique à Abidjan : ".$publicCourse->months." mois, ".number_format($publicCourse->price, 0, ',', ' ')." FCFA. Programme, outils, débouchés et inscription à l'EVC.")
 @section('og_image', '/assets/site/img/ceremonie.jpg')
 @section('page', 'formations')
 
@@ -10,9 +10,12 @@
   <div class="bg"><img decoding="async" src="/assets/site/img/atelier.jpg" alt=""></div>
   <div class="container">
     <nav class="crumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a><span>/</span><a href="/formations">Formations</a><span>/</span><span>Design graphique</span></nav>
-    <h1 class="mb-3 reveal">Infographie &amp; design graphique <span>· 4 mois</span></h1>
-    <p class="mb-0 reveal d1">Vous aimez les couleurs, les images, les idées ? En 4 mois, apprenez à créer des logos, des affiches et des visuels de niveau professionnel.</p>
-    <div class="d-flex flex-wrap gap-2 mt-4 reveal d2"><span class="pill"><b>4 MOIS</b>En ligne et en présentiel</span><span class="pill"><b>185 000 F</b>Paiement en 2 fois</span><span class="pill"><b>CERTIFIANT</b>Certificat + recommandation</span></div>
+@endverbatim
+    <h1 class="mb-3 reveal">Infographie &amp; design graphique <span>· {{ $publicCourse->months }} mois</span></h1>
+    <p class="mb-0 reveal d1">Vous aimez les couleurs, les images, les idées ? En {{ $publicCourse->months }} mois, apprenez à créer des logos, des affiches et des visuels de niveau professionnel.</p>
+    <div class="d-flex flex-wrap gap-2 mt-4 reveal d2"><span class="pill"><b>{{ $publicCourse->months }} MOIS</b>En ligne et en présentiel</span><span class="pill"><b>{{ number_format($publicCourse->price, 0, ',', ' ') }} F</b>Paiement en 2 fois</span><span class="pill"><b>CERTIFIANT</b>Certificat + recommandation</span></div>
+    @unless ($publicCourse->active)<p class="mt-3 mb-0">Les préinscriptions à cette formation sont actuellement fermées.</p>@endunless
+@verbatim
   </div>
 </header>
 <section class="section">
@@ -40,9 +43,11 @@
     </div>
     <div class="col-lg-4">
       <aside class="sticky-card reveal">
-        <div class="sc-head"><span class="kicker light mb-2">Tarif · 4 mois</span><div class="amount">185 000 <small style="font-size:1rem">FCFA</small></div><small style="color:#B5BEDD">Paiement en 2 fois : 95 000 FCFA à l'inscription, puis 90 000 FCFA après 2 mois</small></div>
+@endverbatim
+        <div class="sc-head"><span class="kicker light mb-2">Tarif · {{ $publicCourse->months }} mois</span><div class="amount">{{ number_format($publicCourse->price, 0, ',', ' ') }} <small style="font-size:1rem">FCFA</small></div><small style="color:#B5BEDD">Paiement en 2 fois : {{ number_format($publicCourse->deposit, 0, ',', ' ') }} FCFA à l'inscription, puis {{ number_format($publicCourse->balance(), 0, ',', ' ') }} FCFA après 2 mois</small></div>
         <div class="sc-body">
-          <div class="row-i"><span>Durée</span><b>4 mois</b></div>
+          <div class="row-i"><span>Durée</span><b>{{ $publicCourse->months }} mois</b></div>
+@verbatim
           <div class="row-i"><span>Rythme</span><b>En ligne et en présentiel</b></div>
           <div class="row-i"><span>Lieu</span><b>Abidjan (Palmeraie) & en ligne</b></div>
           <div class="row-i"><span>Prérequis</span><b>Aucun diplôme exigé</b></div>

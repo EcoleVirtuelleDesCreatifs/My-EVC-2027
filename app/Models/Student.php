@@ -18,7 +18,7 @@ class Student extends Model
 
     protected function casts(): array
     {
-        return ['birth_date' => 'date'];
+        return ['birth_date' => 'date', 'access_until' => 'date'];
     }
 
     public function user(): BelongsTo
@@ -44,6 +44,35 @@ class Student extends Model
     public function assignments(): HasMany
     {
         return $this->hasMany(Assignment::class);
+    }
+
+    /* ---------- Fin de formation : compte en lecture seule ---------- */
+    private ?\Illuminate\Support\Carbon $accessEndCache = null;
+
+    private bool $accessEndComputed = false;
+
+    /** Fin de l'accès complet : date de prolongation fixée par l'administration, sinon fin de la dernière session suivie. */
+    public function accessEndsOn(): ?\Illuminate\Support\Carbon
+    {
+        if (! $this->accessEndComputed) {
+            $this->accessEndComputed = true;
+            $ids = $this->enrollments()->pluck('promotion_id')->map(fn ($id) => $id ?? $this->promotion_id)->push($this->promotion_id)->filter()->unique();
+            $end = Promotion::whereIn('id', $ids)->max('ends_on');
+            $this->accessEndCache = $this->access_until?->copy() ?? ($end ? \Illuminate\Support\Carbon::parse($end) : null);
+        }
+
+        return $this->accessEndCache?->copy();
+    }
+
+    /** Formation terminée : connexion possible, consultation seule, messagerie uniquement. */
+    public function isReadOnly(): bool
+    {
+        return ($end = $this->accessEndsOn()) !== null && $end->endOfDay()->isPast();
+    }
+
+    public function finalReports(): HasMany
+    {
+        return $this->hasMany(FinalReport::class);
     }
 
     public function schedules(): HasMany

@@ -4,19 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>@yield('title', 'EVC — École Virtuelle des Créatifs')</title>
-<meta name="description" content="@yield('description')">
-<meta property="og:title" content="@yield('title', 'EVC — École Virtuelle des Créatifs')">
-<meta property="og:description" content="@yield('description')">
-<meta property="og:image" content="{{ url(trim($__env->yieldContent('og_image', '/assets/site/img/ceremonie.jpg'))) }}">
-<link rel="canonical" href="{{ url()->current() }}">
+@php($seo = \App\Support\SiteSeo::make($__env->yieldContent('title', 'École Virtuelle des Créatifs'), $__env->yieldContent('description'), $__env->yieldContent('content'), isset($news) && $news instanceof \App\Models\News ? $news : null, $publicCourse ?? null))
+<title>{{ $seo['title'] }}</title>
+<meta name="description" content="{{ $seo['description'] }}">
+<meta property="og:title" content="{{ $seo['title'] }}">
+<meta property="og:description" content="{{ $seo['description'] }}">
+<meta property="og:type" content="{{ isset($news) && $news instanceof \App\Models\News ? 'article' : 'website' }}">
+<meta property="og:url" content="{{ \App\Support\SiteSeo::absolute(request()->path()) }}">
+@if (isset($news) && $news instanceof \App\Models\News)
+<meta name="author" content="Rédaction EVC">
+<meta property="article:published_time" content="{{ $news->published_at->toAtomString() }}">
+<meta property="article:modified_time" content="{{ ($news->updated_at ?? $news->published_at)->max($news->published_at)->toAtomString() }}">
+@endif
+<script type="application/ld+json">{!! json_encode($seo['graph'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) !!}</script>
+@php($ogImage = trim($__env->yieldContent('og_image', '/assets/site/img/ceremonie.jpg')))
+<meta property="og:image" content="{{ \App\Support\SiteSeo::absolute($ogImage) }}">
+@if ($ogSize = \App\Support\ResponsiveImages::find($ogImage))
+<meta property="og:image:width" content="{{ $ogSize['width'] }}">
+<meta property="og:image:height" content="{{ $ogSize['height'] }}">
+@endif
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="École Virtuelle des Créatifs">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="{{ \App\Support\SiteSeo::absolute(request()->path()) }}">
 <link rel="icon" href="/assets/site/img/logo.png">
 <meta name="theme-color" content="#0E1A3C">
-<link rel="stylesheet" href="/assets/vendor/bootswatch-cerulean/bootstrap.min.css">
+<link rel="stylesheet" href="/assets/site/css/bootstrap.site.css?v={{ filemtime(public_path('assets/site/css/bootstrap.site.css')) }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,500;1,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site/css/site.css">
+<link rel="stylesheet" href="/assets/site/css/site.css?v={{ filemtime(public_path('assets/site/css/site.css')) }}">
 </head>
 <body data-page="@yield('page', 'accueil')" class="pg-@yield('page', 'accueil')" data-wa="{{ \App\Models\Setting::get('whatsapp_ci') }}">
 @verbatim
@@ -32,7 +49,7 @@
     <div class="d-flex gap-4 align-items-center">
       <a href="/actualites" data-nav="actualites" class="topbar-news d-flex align-items-center gap-2"><svg class="ico"><use href="#i-doc"/></svg>Actualités</a>
       <a href="/entreprises" class="tb-hide-md">Entreprises & partenaires</a>
-      <a href="/jury-certification#verifier" class="d-flex align-items-center gap-2"><svg class="ico"><use href="#i-shield"/></svg>Vérifier un certificat</a>
+      <a href="https://verification.ecolevirtuelledescreatifs.com/" class="d-flex align-items-center gap-2"><svg class="ico"><use href="#i-shield"/></svg>Vérifier un certificat</a>
       <a href="/contact#faq">FAQ</a>
       <a href="/contact" class="topbar-contact d-flex align-items-center gap-2" data-nav="contact"><svg class="ico"><use href="#i-chat"/></svg>Contact</a>
     </div>
@@ -61,9 +78,9 @@
           <div class="dropdown-menu dd mega">
             <div class="row g-2">
               <div class="col-lg-8">
-                <a class="mega-item" href="/formation-design"><span class="thumb"><img loading="lazy" decoding="async" src="/assets/site/img/oeuvre-mood-vendredi.jpg" alt=""></span><span><b>Infographie & design graphique</b><small>Photoshop, Illustrator, InDesign · logos, affiches, identités visuelles</small><span class="price">4 mois · 185 000 FCFA</span></span></a>
-                <a class="mega-item" href="/formation-community-management"><span class="thumb"><img loading="lazy" decoding="async" src="/assets/site/img/promo-cm.jpg" alt=""></span><span><b>Community management & social media</b><small>Facebook, Instagram, TikTok · stratégie, contenus, publicité sociale</small><span class="price">2 mois · 165 000 FCFA</span></span></a>
-                <a class="mega-item" href="/formation-bureautique"><span class="thumb"><img loading="lazy" decoding="async" src="/assets/site/img/classe-4.jpg" alt=""></span><span><b>Bureautique & informatique (GIA)</b><small>Word, Excel, PowerPoint, Google, Canva · productivité en entreprise</small><span class="price">2 mois · 265 000 FCFA</span></span></a>
+                <a class="mega-item" href="/formation-design"><span class="thumb"><img sizes="78px" loading="lazy" decoding="async" src="/assets/site/img/oeuvre-mood-vendredi.jpg" alt=""></span><span><b>Infographie & design graphique</b><small>Photoshop, Illustrator, InDesign · logos, affiches, identités visuelles</small><span class="price">4 mois · 185 000 FCFA</span></span></a>
+                <a class="mega-item" href="/formation-community-management"><span class="thumb"><img sizes="78px" loading="lazy" decoding="async" src="/assets/site/img/promo-cm.jpg" alt=""></span><span><b>Community management & social media</b><small>Facebook, Instagram, TikTok · stratégie, contenus, publicité sociale</small><span class="price">2 mois · 165 000 FCFA</span></span></a>
+                <a class="mega-item" href="/formation-bureautique"><span class="thumb"><img sizes="78px" loading="lazy" decoding="async" src="/assets/site/img/classe-4.jpg" alt=""></span><span><b>Bureautique & informatique (GIA)</b><small>Word, Excel, PowerPoint, Google, Canva · productivité en entreprise</small><span class="price">2 mois · 265 000 FCFA</span></span></a>
               </div>
               <div class="col-lg-4">
                 <div class="mega-aside">
@@ -84,7 +101,7 @@
             <li><a class="dropdown-item" href="/pedagogie#parcours"><svg class="ico"><use href="#i-flag"/></svg>Parcours en 8 étapes</a></li>
             <li><a class="dropdown-item" href="/pedagogie#myevc"><svg class="ico"><use href="#i-app"/></svg>Plateforme My EVC</a></li>
             <li><a class="dropdown-item" href="/pedagogie#certification"><svg class="ico"><use href="#i-award"/></svg>Certification</a></li>
-            <li><a class="dropdown-item" href="/jury-certification#verifier"><svg class="ico"><use href="#i-shield"/></svg>Vérifier un certificat</a></li>
+            <li><a class="dropdown-item" href="https://verification.ecolevirtuelledescreatifs.com/"><svg class="ico"><use href="#i-shield"/></svg>Vérifier un certificat</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" data-nav="studio" href="/studio-creative"><svg class="ico"><use href="#i-pen"/></svg>Studio Creative & jury</a></li>
             <li><a class="dropdown-item" href="/studio-creative#reco60"><svg class="ico"><use href="#i-cal"/></svg>RECO 60</a></li>
@@ -116,16 +133,16 @@
     <div class="oc-cta"><a href="/preinscription" class="btn btn-evc">Préinscription</a><a href="/myevc/connexion" class="btn btn-light" style="color:var(--navy)"><svg class="ico"><use href="#i-user"/></svg> My EVC</a></div>
     <a class="solo" href="/">Accueil</a>
     <div class="accordion" id="mAcc">
-      <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m1">L'école</button></h2><div id="m1" class="accordion-collapse collapse" data-bs-parent="#mAcc"><div class="accordion-body"><a href="/ecole#presentation">Présentation</a><a href="/ecole#fondateur">Mot du fondateur</a><a href="/ecole#vision">Vision & valeurs</a><a href="/ecole#gouvernance">Gouvernance</a><a href="/ecole#cap2027">Cap 2027</a></div></div></div>
-      <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m2">Formations</button></h2><div id="m2" class="accordion-collapse collapse" data-bs-parent="#mAcc"><div class="accordion-body"><a href="/formations">Toutes les formations</a><a href="/formation-design">Design graphique · 4 mois</a><a href="/formation-community-management">Community management · 2 mois</a><a href="/formation-bureautique">Bureautique GIA · 2 mois</a></div></div></div>
-      <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m3">Pédagogie</button></h2><div id="m3" class="accordion-collapse collapse" data-bs-parent="#mAcc"><div class="accordion-body"><a href="/pedagogie">Modèle pédagogique</a><a href="/pedagogie#parcours">Parcours en 8 étapes</a><a href="/pedagogie#myevc">My EVC</a><a href="/pedagogie#certification">Certification</a><a href="/studio-creative">Studio Creative</a><a href="/studio-creative#reco60">RECO 60</a></div></div></div>
+      <div class="accordion-item"><p class="accordion-header mb-0"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m1">L'école</button></p><div id="m1" class="accordion-collapse collapse" data-bs-parent="#mAcc"><div class="accordion-body"><a href="/ecole#presentation">Présentation</a><a href="/ecole#fondateur">Mot du fondateur</a><a href="/ecole#vision">Vision & valeurs</a><a href="/ecole#gouvernance">Gouvernance</a><a href="/ecole#cap2027">Cap 2027</a></div></div></div>
+      <div class="accordion-item"><p class="accordion-header mb-0"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m2">Formations</button></p><div id="m2" class="accordion-collapse collapse" data-bs-parent="#mAcc"><div class="accordion-body"><a href="/formations">Toutes les formations</a><a href="/formation-design">Design graphique · 4 mois</a><a href="/formation-community-management">Community management · 2 mois</a><a href="/formation-bureautique">Bureautique GIA · 2 mois</a></div></div></div>
+      <div class="accordion-item"><p class="accordion-header mb-0"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m3">Pédagogie</button></p><div id="m3" class="accordion-collapse collapse" data-bs-parent="#mAcc"><div class="accordion-body"><a href="/pedagogie">Modèle pédagogique</a><a href="/pedagogie#parcours">Parcours en 8 étapes</a><a href="/pedagogie#myevc">My EVC</a><a href="/pedagogie#certification">Certification</a><a href="/studio-creative">Studio Creative</a><a href="/studio-creative#reco60">RECO 60</a></div></div></div>
     </div>
     <div class="accordion" id="mAcc2">
-      <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m4">Réalisations</button></h2><div id="m4" class="accordion-collapse collapse" data-bs-parent="#mAcc2"><div class="accordion-body"><a href="/realisations#galerie">Créations des apprenants</a><a href="/realisations#temoignages">Témoignages</a><a href="/phototheque">Photothèque · La vie à l'EVC</a></div></div></div>
+      <div class="accordion-item"><p class="accordion-header mb-0"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m4">Réalisations</button></p><div id="m4" class="accordion-collapse collapse" data-bs-parent="#mAcc2"><div class="accordion-body"><a href="/realisations#galerie">Créations des apprenants</a><a href="/realisations#temoignages">Témoignages</a><a href="/phototheque">Photothèque · La vie à l'EVC</a></div></div></div>
     </div>
     <a class="solo" href="/actualites">Actualités</a>
     <a class="solo" href="/jury-certification">Jury & certification</a>
-    <a class="solo" href="/jury-certification#verifier">Vérifier un certificat</a>
+    <a class="solo" href="https://verification.ecolevirtuelledescreatifs.com/">Vérifier un certificat</a>
     <a class="solo" href="/entreprises">Entreprises & partenaires</a>
     <a class="solo" href="/contact">Contact</a>
     <div class="mt-auto pt-4">
@@ -149,7 +166,7 @@
         <form class="newsletter mt-4"><input type="email" placeholder="Votre e-mail pour nos actualités" aria-label="Votre e-mail" required><button class="btn btn-evc btn-sm" type="submit">S'abonner</button></form>
       </div>
       <div class="col-6 col-lg-2"><h6>L'école</h6><ul><li><a href="/ecole">Présentation</a></li><li><a href="/ecole#fondateur">Mot du fondateur</a></li><li><a href="/ecole#vision">Vision & valeurs</a></li><li><a href="/ecole#cap2027">Cap 2027</a></li><li><a href="/realisations">Réalisations</a></li><li><a href="/actualites">Actualités</a></li><li><a href="/realisations#temoignages">Témoignages</a></li><li><a href="/phototheque">Photothèque</a></li></ul></div>
-      <div class="col-6 col-lg-2"><h6>Formations</h6><ul><li><a href="/formation-design">Design graphique</a></li><li><a href="/formation-community-management">Community management</a></li><li><a href="/formation-bureautique">Bureautique GIA</a></li><li><a href="/studio-creative">Studio Creative</a></li><li><a href="/studio-creative#reco60">RECO 60</a></li><li><a href="/jury-certification">Jury & certification</a></li><li><a href="/jury-certification#verifier">Vérifier un certificat</a></li><li><a href="/admissions">Admissions & tarifs</a></li></ul></div>
+      <div class="col-6 col-lg-2"><h6>Formations</h6><ul><li><a href="/formation-design">Design graphique</a></li><li><a href="/formation-community-management">Community management</a></li><li><a href="/formation-bureautique">Bureautique GIA</a></li><li><a href="/studio-creative">Studio Creative</a></li><li><a href="/studio-creative#reco60">RECO 60</a></li><li><a href="/jury-certification">Jury & certification</a></li><li><a href="https://verification.ecolevirtuelledescreatifs.com/">Vérifier un certificat</a></li><li><a href="/admissions">Admissions & tarifs</a></li></ul></div>
       <div class="col-lg-4"><h6>Nous contacter</h6>
         <div class="foot-ct"><span class="foot-flag"><span class="flag" style="width:38px;height:38px" role="img" aria-label="Drapeau : Côte d'Ivoire"><svg width="38" height="38" viewBox="0 0 60 60" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect x="0.0" width="20.5" height="60" fill="#F77F00"/><rect x="20.0" width="20.5" height="60" fill="#fff"/><rect x="40.0" width="20.5" height="60" fill="#009E60"/></svg></span></span><div><b>Côte d'Ivoire</b>
           <a href="https://wa.me/2250747259507?text=INFORMATION" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg>WhatsApp · +225 07 47 25 95 07</a>
@@ -161,7 +178,7 @@
     </div>
     <div class="legal d-flex flex-wrap justify-content-between gap-2">
       <span>© EVC 2026–2027 · École Virtuelle des Créatifs · SARL de droit ivoirien · Fondateur et DG : Bilé Bossombra</span>
-      <span class="foot-legal"><a href="/mentions-legales">Mentions légales</a><a href="/confidentialite">Confidentialité</a><a href="/conditions-utilisation">CGU</a><a href="/conditions-generales-vente">Conditions d'inscription</a><a href="/reglement-interieur">Règlement intérieur</a></span>
+      <span class="foot-legal"><a href="/mentions-legales">Mentions légales</a><a href="/confidentialite">Confidentialité</a><a href="/conditions-utilisation">CGU</a><a href="/conditions-generales-vente">Conditions d'inscription</a><a href="/reglement-interieur">Règlement intérieur</a><a href="/confidentialite#s9" data-ck-open hidden>Gestion des cookies</a></span>
     </div>
   </div>
 </footer>
@@ -179,8 +196,28 @@
 </div>
 
 <script src="/assets/vendor/bootstrap/bootstrap.bundle.min.js" defer></script>
-<script src="/assets/site/js/site.js" defer></script>
 @endverbatim
+@php($analytics = array_filter(['ga4' => config('services.analytics.ga4'), 'pixel' => config('services.analytics.meta_pixel')]))
+@if ($analytics)
+<script>window.EVC_ANALYTICS = @json($analytics);</script>
+<div class="ck-banner" id="ckBanner" role="dialog" aria-labelledby="ckTitle" aria-describedby="ckText" hidden>
+  <p class="ck-title" id="ckTitle">Vos choix sur les cookies</p>
+  <p class="ck-text" id="ckText">Avec votre accord, nous mesurons la fréquentation du site et l’efficacité de nos campagnes. Aucun de ces outils n’est chargé sans votre accord, et votre refus n’empêche pas l’utilisation du site. <a href="/confidentialite#s9">En savoir plus</a></p>
+  <div class="ck-prefs" hidden>
+    <label class="ck-opt"><input type="checkbox" checked disabled><span><b>Essentiels</b><small>Session, sécurité des formulaires et préférences d’affichage. Toujours actifs.</small></span></label>
+    <label class="ck-opt" data-ck-tool="analytics"><input type="checkbox" data-ck="analytics"><span><b>Mesure d’audience — Google Analytics 4</b><small>Pages consultées, provenance des visites, préinscriptions et clics WhatsApp.</small></span></label>
+    <label class="ck-opt" data-ck-tool="marketing"><input type="checkbox" data-ck="marketing"><span><b>Campagnes — Meta Pixel</b><small>Mesure des résultats de nos publicités Facebook et Instagram.</small></span></label>
+  </div>
+  <div class="ck-actions">
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-ck-act="refuse">Tout refuser</button>
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-ck-act="custom">Personnaliser</button>
+    <button type="button" class="btn btn-outline-secondary btn-sm" data-ck-act="save" hidden>Enregistrer mes choix</button>
+    <button type="button" class="btn btn-evc btn-sm" data-ck-act="accept">Tout accepter</button>
+  </div>
+</div>
+@endif
+<script src="/assets/site/js/consent.js?v={{ filemtime(public_path('assets/site/js/consent.js')) }}" defer></script>
+<script src="/assets/site/js/site.js?v={{ filemtime(public_path('assets/site/js/site.js')) }}" defer></script>
 @stack('scripts')
 </body>
 </html>

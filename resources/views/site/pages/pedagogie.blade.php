@@ -61,21 +61,26 @@
         <div class="col-sm-6 reveal"><div class="card-evc p-3"><b class="d-block mb-1" style="color:var(--navy)">Pour l'institution</b><small class="text-muted-evc">Centralisation, traçabilité et gestion de l'éligibilité à la certification.</small></div></div>
         <div class="col-sm-6 reveal d1"><div class="card-evc p-3"><b class="d-block mb-1" style="color:var(--navy)">Après le parcours</b><small class="text-muted-evc">Accès en lecture seule au compte et aux ressources archivées.</small></div></div>
       </div>
-      <p class="small reveal"><span class="chip">Bientôt</span> Messagerie, suivi encore plus précis, gestion des documents et assistant basé sur l'intelligence artificielle.</p>
+      <p class="small reveal">Retrouvez vos échanges avec l’équipe, vos notifications et vos documents dans un espace sécurisé, selon votre profil et vos formations.</p>
     </div>
     <div class="col-lg-6 reveal d1">
       <div class="mx-auto position-relative" style="max-width:520px">
         <div class="rounded-4 p-3" style="background:var(--navy);box-shadow:var(--shadow)">
           <div class="d-flex gap-2 mb-3"><i style="width:10px;height:10px;border-radius:50%;background:#ff5f57"></i><i style="width:10px;height:10px;border-radius:50%;background:#febc2e"></i><i style="width:10px;height:10px;border-radius:50%;background:#28c840"></i></div>
           <div class="bg-white rounded-3 p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3"><div><small class="text-muted-evc">Bonjour 👋</small><h5 class="mb-0">Mon parcours · Design graphique</h5></div><img loading="lazy" decoding="async" src="/assets/site/img/logo.png" alt="" style="height:30px"></div>
-            <div class="mb-3"><div class="d-flex justify-content-between small fw-semibold"><span>Progression</span><span>78 %</span></div><div class="progress" style="height:8px"><div class="progress-bar" style="width:78%;background:var(--orange)"></div></div></div>
-            <div class="mb-3"><div class="d-flex justify-content-between small fw-semibold"><span>Projets livrés</span><span>9 / 12</span></div><div class="progress" style="height:8px"><div class="progress-bar" style="width:75%;background:var(--royal)"></div></div></div>
-            <div class="mb-3"><div class="d-flex justify-content-between small fw-semibold"><span>Assiduité</span><span>96 %</span></div><div class="progress" style="height:8px"><div class="progress-bar" style="width:96%;background:var(--ok)"></div></div></div>
-            <div class="d-flex gap-2 align-items-center p-2 rounded-3 small" style="background:var(--cream)"><span style="color:var(--orange)"><svg class="ico"><use href="#i-award"/></svg></span>Votre affiche a été validée par le formateur.</div>
+            <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="mb-0">MY EVC · votre espace de formation</h5><img loading="lazy" decoding="async" src="/assets/site/img/logo.png" alt="EVC" style="height:30px"></div>
+            <ul class="list-unstyled small mb-4 d-grid gap-3">
+              <li><svg class="ico"><use href="#i-check"/></svg><span>Consulter vos projets et déposer vos réalisations.</span></li>
+              <li><svg class="ico"><use href="#i-check"/></svg><span>Accéder aux ressources de vos formations.</span></li>
+              <li><svg class="ico"><use href="#i-check"/></svg><span>Suivre les séances, les évaluations et les paiements.</span></li>
+              <li><svg class="ico"><use href="#i-check"/></svg><span>Échanger avec l’équipe dans la messagerie.</span></li>
+            </ul>
+@endverbatim
+            <a href="{{ route('login') }}" class="btn btn-evc w-100">Accéder à MY EVC</a>
+@verbatim
           </div>
         </div>
-        <p class="small text-muted-evc text-center mt-2 mb-0">Illustration de l'interface (données fictives)</p>
+        <p class="small text-muted-evc text-center mt-2 mb-0">Connectez-vous pour consulter vos informations personnelles.</p>
       </div>
     </div>
   </div></div>
@@ -95,7 +100,7 @@
           <div class="col-12 reveal"><div class="card-evc" style="background:var(--navy);border-color:var(--navy)"><span class="kicker light mb-2">Notre principe</span><h4 class="text-white mb-0">On ne certifie pas simplement un parcours. <span class="hl">On certifie des compétences.</span></h4></div></div>
           <div class="col-sm-6 reveal d1"><div class="card-evc"><span class="ic"><svg class="ico"><use href="#i-doc"/></svg></span><h5>Un examen individualisé</h5><p>Au terme du parcours, chaque dossier est examiné par l'algorithme de My EVC. Les éligibles sont informés par e-mail ou dans leur espace.</p></div></div>
           <div class="col-sm-6 reveal d2"><div class="card-evc"><span class="ic"><svg class="ico"><use href="#i-shield"/></svg></span><h5>Qualité et responsabilité</h5><p>Une reconnaissance crédible des compétences, et non une garantie d'emploi : maîtrise technique, réalisations, comportement responsable.</p></div></div>
-          <div class="col-12 reveal"><a href="/jury-certification#verifier" class="reg-link"><svg class="ico"><use href="#i-shield"/></svg><span><b>Registre officiel de vérification</b><small>Employeurs : vérifiez l'authenticité d'un certificat EVC en ligne</small></span><svg class="ico"><use href="#i-arrow"/></svg></a></div>
+          <div class="col-12 reveal"><a href="https://verification.ecolevirtuelledescreatifs.com/" class="reg-link"><svg class="ico"><use href="#i-shield"/></svg><span><b>Registre officiel de vérification</b><small>Employeurs : vérifiez l'authenticité d'un certificat EVC en ligne</small></span><svg class="ico"><use href="#i-arrow"/></svg></a></div>
         </div>
       </div>
     </div>

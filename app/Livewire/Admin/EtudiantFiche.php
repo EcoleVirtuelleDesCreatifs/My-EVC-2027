@@ -27,6 +27,79 @@ class EtudiantFiche extends Page
     #[Url(except: 'projets')]
     public string $onglet = 'projets';
 
+    /* Formations : ajout, remplacement, retrait avec recalcul de l'échéancier */
+    public bool $inscription = false;
+
+    public string $action = 'ajouter';
+
+    public ?int $ancienne = null;
+
+    public ?int $nouvelle = null;
+
+    public ?int $sessionId = null;
+
+    public string $modeInscription = 'En ligne';
+
+    public function gererFormations(string $action = 'ajouter', ?int $formationId = null): void
+    {
+        abort_unless(auth()->user()->can('admin.etudiants'), 403);
+        $this->resetErrorBag();
+        $this->action = in_array($action, ['ajouter', 'remplacer', 'retirer'], true) ? $action : 'ajouter';
+        $this->ancienne = $formationId ?? $this->student->formations->first()?->id;
+        $this->nouvelle = null;
+        $this->sessionId = $this->student->promotion_id;
+        $this->modeInscription = $this->student->formations->first()?->pivot->mode ?? 'En ligne';
+        $this->inscription = true;
+    }
+
+    public function confirmerInscription(\App\Services\EnrollmentService $svc): void
+    {
+        abort_unless(auth()->user()->can('admin.etudiants'), 403);
+        $this->validate([
+            'nouvelle' => $this->action === 'retirer' ? 'nullable' : 'required|exists:formations,id',
+            'ancienne' => $this->action === 'ajouter' ? 'nullable' : 'required|exists:formations,id',
+            'sessionId' => 'nullable|exists:promotions,id', 'modeInscription' => 'required|in:En ligne,Présentiel',
+        ], ['nouvelle.required' => 'Choisissez la nouvelle formation.', 'ancienne.required' => 'Choisissez la formation concernée.']);
+        try {
+            $r = $svc->change($this->student, $this->action === 'retirer' ? null : \App\Models\Formation::findOrFail($this->nouvelle),
+                $this->action === 'ajouter' ? null : \App\Models\Formation::findOrFail($this->ancienne),
+                $this->sessionId ? \App\Models\Promotion::find($this->sessionId) : null, $this->modeInscription);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            foreach ($e->errors() as $k => $m) {
+                $this->addError($k, $m[0]);
+            }
+
+            return;
+        }
+        $this->inscription = false;
+        $this->student->refresh();
+        $this->toast('Inscription mise à jour. Nouveau total : '.fcfa($r['newTotal']).' · reste à payer : '.fcfa($r['newBalance']).'. L’étudiant est prévenu.');
+    }
+
+    /* Rapport de fin de formation : retour de l'équipe */
+    public array $retour = [];
+
+    public function mount(): void
+    {
+        $this->accesJusquau = $this->student->access_until?->toDateString();
+    }
+
+    public function relireRapport(int $reportId, bool $valide, \App\Services\FinalReportService $svc): void
+    {
+        abort_unless(auth()->user()->can('admin.etudiants'), 403);
+        $report = $this->student->finalReports()->findOrFail($reportId);
+        $this->validate(["retour.$reportId" => 'nullable|string|max:2000']);
+        try {
+            $svc->review($report, $valide, trim((string) ($this->retour[$reportId] ?? '')) ?: null);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->addError("retour.$reportId", $e->getMessage());
+
+            return;
+        }
+        unset($this->retour[$reportId]);
+        $this->toast($valide ? 'Rapport validé. L’étudiant est prévenu par e-mail.' : 'Demande de compléments envoyée à l’étudiant.', $valide ? 'ok' : 'info');
+    }
+
     /* Versement */
     public bool $versement = false;
 
@@ -136,7 +209,7 @@ class EtudiantFiche extends Page
 
     public function closeModal(): void
     {
-        $this->versement = $this->attribution = $this->editionProfil = false;
+        $this->versement = $this->attribution = $this->editionProfil = $this->inscription = false;
         $this->reset('profil');
         $this->resetErrorBag();
         $this->corrige = null;
@@ -151,6 +224,19 @@ class EtudiantFiche extends Page
         $this->toast('Statut mis à jour : '.Student::STATUSES[$status].'.');
     }
 
+    /** Prolongation de l'accès complet (date), ou retour à la fin de session (vide). */
+    public ?string $accesJusquau = null;
+
+    public function enregistrerAcces(): void
+    {
+        abort_unless(auth()->user()->can('admin.etudiants'), 403);
+        $this->validate(['accesJusquau' => 'nullable|date'], [], ['accesJusquau' => 'date de fin d’accès']);
+        $this->student->update(['access_until' => $this->accesJusquau ?: null]);
+        $this->student = $this->student->fresh();
+        AuditLog::record('Accès étudiant modifié', $this->student->matricule.' — '.($this->accesJusquau ? 'accès complet jusqu’au '.\Illuminate\Support\Carbon::parse($this->accesJusquau)->format('d/m/Y') : 'fin de session'));
+        $this->toast($this->student->isReadOnly() ? 'Compte en lecture seule.' : 'Accès complet jusqu’au '.$this->student->accessEndsOn()?->translatedFormat('j F Y').'.');
+    }
+
     public function renvoyerActivation(): void
     {
         Password::broker('activations')->sendResetLink(['email' => $this->student->user->email]);
@@ -159,12 +245,26 @@ class EtudiantFiche extends Page
 
     public function render(AvailabilityService $dispo)
     {
-        $s = $this->student->load(['user', 'formations', 'promotion', 'assignments.project.formation', 'payments.recorder', 'schedules.formation', 'certificates']);
-        $presences = $s->presences()->with('seance.formation')->latest('created_at')->take(30)->get();
-        $projects = Project::whereIn('formation_id', $s->formations->pluck('id'))->where('published', true)
-            ->whereDoesntHave('assignments', fn ($q) => $q->where('student_id', $s->id))->orderBy('formation_id')->get();
+        $s = $this->student->load(['user', 'formations', 'promotion', 'assignments' => fn ($q) => $q->with('project.formation')->withCount('submissions'),
+            'payments.recorder', 'schedules.formation', 'certificates', 'finalReports.reviewer']);
+        /* Données chargées seulement quand elles sont affichées (la fiche s'actualise toutes les 15 s) */
+        $presences = $this->onglet === 'presences' ? $s->presences()->with('seance.formation')->latest('created_at')->take(30)->get() : collect();
+        $projects = $this->attribution ? Project::whereIn('formation_id', $s->formations->pluck('id'))->where('published', true)
+            ->whereDoesntHave('assignments', fn ($q) => $q->where('student_id', $s->id))->orderBy('formation_id')->orderBy('title')->get() : collect();
 
-        return $this->page('livewire.admin.etudiant', ['s' => $s, 'etat' => $dispo->row($s), 'presences' => $presences, 'projects' => $projects, 'schedules' => $s->scheduleRows()],
+        $simulation = null;
+        if ($this->inscription) {
+            $add = $this->action !== 'retirer' && $this->nouvelle ? \App\Models\Formation::find($this->nouvelle) : null;
+            $remove = $this->action !== 'ajouter' && $this->ancienne ? \App\Models\Formation::find($this->ancienne) : null;
+            $simulation = app(\App\Services\EnrollmentService::class)->preview($s, $add, $remove) + ['add' => $add, 'remove' => $remove];
+        }
+        $alloc = $s->allocation();
+        $parFormation = $s->formations->map(fn ($f) => ['f' => $f, 'due' => (int) $s->schedules->where('formation_id', $f->id)->sum('amount'),
+            'paid' => (int) $s->schedules->where('formation_id', $f->id)->sum(fn ($x) => $alloc[$x->id] ?? 0)]);
+
+        return $this->page('livewire.admin.etudiant', ['s' => $s, 'etat' => $dispo->row($s), 'presences' => $presences, 'projects' => $projects, 'schedules' => $s->scheduleRows(),
+            'simulation' => $simulation, 'parFormation' => $parFormation, 'catalogue' => $this->inscription ? \App\Models\Formation::active()->orderBy('position')->get() : collect(),
+            'sessions' => $this->inscription ? \App\Models\Promotion::orderByDesc('starts_on')->get() : collect()],
             $s->user->name, 'Administration <span class="sep">›</span> <a href="'.route('admin.etudiants').'" wire:navigate>Étudiants</a> <span class="sep">›</span> '.$s->matricule);
     }
 }

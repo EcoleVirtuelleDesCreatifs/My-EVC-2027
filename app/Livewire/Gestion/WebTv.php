@@ -31,6 +31,37 @@ class WebTv extends Page
 
     public bool $notifier = true;
 
+    public array $apercuYoutube = [];
+
+    public function verifierYoutube(): void
+    {
+        $this->reset('apercuYoutube');
+        $this->resetErrorBag('v.url');
+        $this->validate(['v.url' => 'required|string|url|max:2048']);
+        $video = new Video(['source' => $this->v['source'] ?? '', 'url' => trim($this->v['url'] ?? '')]);
+        if (! $video->youtubeId()) {
+            $this->addError('v.url', 'Indiquez le lien d’une vidéo YouTube : watch, youtu.be, Shorts ou direct. Un lien de chaîne ou de playlist seul ne suffit pas.');
+
+            return;
+        }
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(8)->acceptJson()->get('https://www.youtube.com/oembed', [
+                'url' => $video->externalUrl(), 'format' => 'json',
+            ]);
+        } catch (\Illuminate\Http\Client\ConnectionException $exception) {
+            $this->addError('v.url', 'YouTube ne répond pas pour le moment. Réessayez la vérification dans quelques instants.');
+
+            return;
+        }
+        if (! $response->successful() || ! is_string($response->json('title'))) {
+            $this->addError('v.url', 'YouTube ne permet pas de vérifier cette vidéo. Elle peut être privée, supprimée ou non intégrable. Vérifiez son lien et ses paramètres de partage.');
+
+            return;
+        }
+        $this->apercuYoutube = ['url' => $video->externalUrl(), 'title' => $response->json('title'),
+            'author' => (string) $response->json('author_name', '')];
+    }
+
     public function updatedFormation(): void
     {
         $this->resetPage();
@@ -47,7 +78,7 @@ class WebTv extends Page
         $se = $seanceId ? Seance::find($seanceId) : null;
         $this->v = ['formation_id' => $se?->formation_id ?? $this->listeFormations()->first()?->id, 'seance_id' => $se?->id ?? '', 'module' => $se ? 'Séances' : 'Tutoriels',
             'title' => $se ? 'Replay — '.$se->title : '', 'description' => '', 'source' => 'fichier', 'url' => '', 'duration_min' => '', 'published' => true];
-        $this->reset('fichier', 'editId');
+        $this->reset('fichier', 'editId', 'apercuYoutube');
         $this->notifier = true;
         $this->resetErrorBag();
         $this->form = true;
@@ -58,7 +89,7 @@ class WebTv extends Page
         $x = $this->query()->findOrFail($id);
         $this->v = array_map(fn ($val) => $val ?? '', $x->only(['formation_id', 'seance_id', 'module', 'title', 'description', 'source', 'url', 'duration_min', 'published']));
         $this->editId = $id;
-        $this->reset('fichier');
+        $this->reset('fichier', 'apercuYoutube');
         $this->resetErrorBag();
         $this->form = true;
     }
@@ -69,7 +100,7 @@ class WebTv extends Page
         $this->validate([
             'v.formation_id' => 'required|exists:formations,id', 'v.seance_id' => 'nullable|exists:seances,id', 'v.module' => 'required|string|max:60',
             'v.title' => 'required|string|max:180', 'v.description' => 'nullable|string|max:3000', 'v.source' => 'required|in:fichier,youtube,vimeo',
-            'v.url' => $fichier ? 'nullable' : ['required', 'url', $this->v['source'] === 'youtube' ? 'regex:~(youtube\.com|youtu\.be)~' : 'regex:~vimeo\.com~'],
+            'v.url' => $fichier ? 'nullable' : array_filter(['required', 'string', 'url', 'max:2048', $this->v['source'] === 'vimeo' ? 'regex:~vimeo\.com~' : null]),
             'v.duration_min' => 'nullable|integer|min:0|max:600',
             'fichier' => ($fichier && ! $this->editId ? 'required|' : 'nullable|').'file|mimetypes:video/mp4,video/webm,video/quicktime|max:512000',
         ], ['v.url.regex' => 'L\'adresse ne correspond pas à la plateforme choisie.'], ['v.title' => 'titre', 'v.url' => 'lien de la vidéo', 'fichier' => 'fichier vidéo']);
@@ -77,6 +108,12 @@ class WebTv extends Page
 
         $x = $this->editId ? $this->query()->findOrFail($this->editId) : new Video(['created_by' => auth()->id()]);
         $x->fill(collect($this->v)->map(fn ($val) => $val === '' ? null : $val)->all());
+        if ($x->source === 'youtube') {
+            if (! $x->youtubeId()) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['v.url' => 'Collez le lien d’une vidéo YouTube précise (watch, youtu.be, Shorts ou direct), et non une chaîne ou une playlist.']);
+            }
+            $x->url = $x->externalUrl();
+        }
         $x->duration_min = (int) ($this->v['duration_min'] ?: 0);
         $x->published = (bool) $this->v['published'];
         if ($fichier && $this->fichier) {

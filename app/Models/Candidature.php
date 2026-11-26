@@ -22,8 +22,16 @@ class Candidature extends Model
 
     protected function casts(): array
     {
-        return ['formations' => 'array', 'answers' => 'array', 'saop_answers' => 'array',
+        return ['formations' => 'array', 'answers' => 'array', 'attribution' => 'array', 'saop_answers' => 'array', 'first_payment' => 'array',
             'saop_started_at' => 'datetime', 'saop_submitted_at' => 'datetime'];
+    }
+
+    /** Provenance lisible : « facebook / cpc · rentree-2027 », « Accès direct » sinon. */
+    public function attributionLabel(): string
+    {
+        $a = $this->attribution ?? [];
+
+        return ! empty($a['source']) ? implode(' · ', array_filter([$a['source'].(! empty($a['medium']) ? ' / '.$a['medium'] : ''), $a['campaign'] ?? null])) : 'Accès direct ou non renseigné';
     }
 
     public function saopClosed(): bool
@@ -44,6 +52,11 @@ class Candidature extends Model
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
+    }
+
+    public function firstPayment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class, 'first_payment_id');
     }
 
     public function getFullNameAttribute(): string

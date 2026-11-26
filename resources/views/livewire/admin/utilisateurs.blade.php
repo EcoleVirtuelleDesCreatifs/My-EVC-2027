@@ -11,7 +11,8 @@
           <td class="small">{{ $m->getRoleNames()->first() === 'formateur' ? 'Formateur · '.$m->trainerProfiles->map(fn ($t) => $t->formation->code)->implode(', ') : $m->getRoleNames()->first() }}</td>
           <td class="small">{{ $m->last_login_at?->diffForHumans() ?? 'Jamais' }}</td>
           <td><x-pill :tone="$m->status === 'suspendu' ? 'bad' : 'ok'">{{ $m->status === 'suspendu' ? 'Suspendu' : 'Actif' }}</x-pill></td>
-          <td class="table-actions">@if ($m->id !== auth()->id())<button class="btn btn-ghost btn-sm" wire:click="basculer({{ $m->id }})" @if ($m->status !== 'suspendu') wire:confirm="Suspendre le compte de {{ $m->name }} ?" @endif>{{ $m->status === 'suspendu' ? 'Réactiver' : 'Suspendre' }}</button>@endif</td></tr>
+          <td class="table-actions">@if ($m->id !== auth()->id())<button class="btn btn-ghost btn-sm" wire:click="basculer({{ $m->id }})" @if ($m->status !== 'suspendu') wire:confirm="Suspendre le compte de {{ $m->name }} ?" @endif>{{ $m->status === 'suspendu' ? 'Réactiver' : 'Suspendre' }}</button>
+            <button class="btn btn-quiet btn-sm btn-icon text-danger" wire:click="supprimer({{ $m->id }})" wire:confirm="Supprimer définitivement le compte de {{ $m->name }} ? Il ne pourra plus se connecter. L’historique de ses actions (versements, corrections, journaux) est conservé." aria-label="Supprimer {{ $m->name }}" title="Supprimer"><i class="fa-solid fa-trash-can"></i></button>@endif</td></tr>
       @endforeach
     </tbody></table></div></div>
   @else

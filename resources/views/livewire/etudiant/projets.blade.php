@@ -1,4 +1,5 @@
 <div>
+  @include('livewire.etudiant._classes')
   @include('livewire.etudiant._fsel')
   <div class="seg seg-soft mb-3" role="tablist">
     @foreach (['afaire' => 'À faire', 'rendus' => 'Rendus', 'valides' => 'Validés', 'tous' => 'Tous'] as $k => $l)

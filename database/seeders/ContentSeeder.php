@@ -2,27 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\Formation;
 use App\Models\News;
 use App\Models\Promotion;
 use Illuminate\Database\Seeder;
 
-/** Contenus réels du site : formations, promotions, actualités. */
+/** Contenus de référence pour les tests et les essais locaux explicites. */
 class ContentSeeder extends Seeder
 {
     public function run(): void
     {
-        $short = ['DG' => 'Design graphique', 'CM' => 'Community management', 'GIA' => 'Bureautique'];
-        $balanceDays = ['DG' => 60, 'CM' => 30, 'GIA' => 30];
-        $colors = ['DG' => '#C2255C', 'CM' => '#2F6BD8', 'GIA' => '#1F8F5A'];
-        foreach (json_decode(file_get_contents(__DIR__.'/data/formations.json'), true) as $i => $f) {
-            Formation::updateOrCreate(['code' => $f['code']], [
-                'name' => $f['name'], 'short_name' => $short[$f['code']], 'pitch' => $f['pitch'], 'price' => $f['price'],
-                'deposit' => $f['deposit'], 'months' => $f['months'], 'pay_rule' => $f['pay_rule'], 'modules' => $f['modules'],
-                'balance_after_days' => $balanceDays[$f['code']], 'color' => $colors[$f['code']], 'position' => $i,
-                'has_reco' => in_array($f['code'], ['CM', 'GIA'], true),
-            ]);
+        if (app()->isProduction()) {
+            throw new \RuntimeException('Les contenus de test sont interdits en production. Utilisez db:seed sans classe.');
         }
+        $this->call(FormationSeeder::class);
 
         if (! Promotion::exists()) {
             $start = now()->startOfMonth()->subMonth()->addDays(4);

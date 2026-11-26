@@ -71,6 +71,7 @@ if(lb){const img=$('img',lb),cap=$('.lb-cap',lb);let list=[],idx=0;
 }
 
 /* Formulaires de contact et de partenariat : enregistrés sur le serveur, puis proposés sur WhatsApp */
+const track=(name,params)=>{if(window.evcTrack)window.evcTrack(name,params)};
 const CSRF=()=>(document.querySelector('meta[name=csrf-token]')||{}).content;
 const post=(url,fd)=>fetch(url,{method:'POST',body:fd,headers:{'X-CSRF-TOKEN':CSRF(),'Accept':'application/json'}}).then(r=>{if(!r.ok)throw r;return r.json()});
 $$('form[data-wa]').forEach(f=>f.addEventListener('submit',async e=>{e.preventDefault();
@@ -80,16 +81,17 @@ $$('form[data-wa]').forEach(f=>f.addEventListener('submit',async e=>{e.preventDe
   fd.append('source',/PARTENARIAT/i.test(f.dataset.wa)?'partenariat':'contact');
   if(b){b.disabled=true;b.textContent='Envoi…'}
   try{await post('/contact',fd)}catch(err){if(b){b.disabled=false;b.innerHTML=lbl}alert("L'envoi n'a pas abouti. Réessayez ou écrivez-nous sur WhatsApp.");return}
+  track('contact_form_submit',{form_type:fd.get('source'),page:page||''});
   const url=`https://wa.me/${WA}?text=`+encodeURIComponent(lines.join('\n'));
   const ok=$(f.dataset.success);if(ok){f.style.display='none';ok.style.display='block';const a=$('a[data-wa-link]',ok);if(a)a.href=url}
 }));
 $$('.newsletter').forEach(n=>n.addEventListener('submit',async e=>{e.preventDefault();const b=$('button',n),i=$('input',n);
   const fd=new FormData();fd.append('email',i.value);
-  try{await post('/newsletter',fd);i.value='';b.textContent='Merci !'}catch(err){b.textContent='E-mail invalide'}}));
+  try{await post('/newsletter',fd);i.value='';b.textContent='Merci !';track('newsletter_signup',{page:page||''})}catch(err){b.textContent='E-mail invalide'}}));
 
 /* Pré-sélection de formation via #hash sur la page admissions */
 const pre=location.hash.replace('#','');
-if(pre){const r=$(`input[name="Formation"][data-key="${pre}"]`);if(r) r.checked=true}
+if(['design','cm','gia'].includes(pre)){const r=$(`input[name="Formation"][data-key="${pre}"]`);if(r) r.checked=true}
 
 /* Accueil : étape active dans la frise du parcours */
 const jmap=$$('.j-map a');

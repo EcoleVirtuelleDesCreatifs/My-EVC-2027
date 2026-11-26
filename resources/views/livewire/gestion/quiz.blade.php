@@ -8,7 +8,7 @@
       <tr><td><x-fchip :code="$q->formation->code" /> <span class="fw-sb">{{ $q->title }}</span>@if ($q->required) <x-pill tone="info" nodot>Obligatoire</x-pill>@endif</td>
         <td class="text-end">{{ $q->questions_count }}</td><td class="small">{{ $q->duration_min }} min · {{ $q->attempts_allowed }} tentative(s) · {{ $q->pass_percent }} %</td>
         <td class="text-end">{{ $q->passages }}</td><td class="text-end">{{ $q->moyenne !== null ? round($q->moyenne).' %' : '—' }}</td>
-        <td>@if ($q->published)<x-pill :tone="$q->isOpen() ? 'ok' : 'mute'">{{ $q->isOpen() ? 'Ouvert' : 'Fermé' }}</x-pill>@else<x-pill>Brouillon</x-pill>@endif</td>
+        <td>@if ($q->published)<x-pill :tone="$q->isOpen() ? 'ok' : 'mute'">{{ $q->isOpen() ? 'Ouvert' : 'Fermé' }}</x-pill>@else<x-pill class="text-white">Brouillon</x-pill>@endif</td>
         <td class="table-actions"><a class="btn btn-ghost btn-sm" href="{{ gestion_route('quiz.editeur', $q) }}" wire:navigate>Ouvrir</a></td></tr>
     @empty
       <tr><td colspan="7"><x-empty title="Aucun quiz" text="Créez un quiz pour vérifier les acquis à la fin d'un module." /></td></tr>

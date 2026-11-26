@@ -7,18 +7,18 @@
 @section('content')
 <header class="art-head">
   <div class="container">
-    <nav class="crumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a><span>/</span><a href="{{ route('site.actualites') }}">Actualités</a><span>/</span><span>{{ $news->category }}</span></nav>
+    <nav class="crumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a><span>/</span><a href="{{ route('site.actualites') }}">Actualités</a><span>/</span><span aria-current="page">{{ $news->title }}</span></nav>
     <div class="nw-meta mb-3"><span class="nw-cat">{{ $news->category }}</span><span>{{ $news->label ?: $news->published_at->translatedFormat('j F Y') }}</span><span>· {{ $news->readingTime() }} min de lecture</span></div>
     <h1>{{ $news->title }}</h1>
     <p class="art-lead">{{ $news->excerpt }}</p>
-    <div class="art-by"><img loading="lazy" decoding="async" src="/assets/site/img/logo.png" alt=""><div><b>Rédaction EVC</b><small>Publié le {{ $news->published_at->translatedFormat('j F Y') }}</small></div></div>
+    <div class="art-by"><img loading="lazy" decoding="async" src="/assets/site/img/logo.png" alt=""><div><b>Rédaction EVC</b><small>Publié le <time datetime="{{ $news->published_at->toAtomString() }}">{{ $news->published_at->translatedFormat('j F Y') }}</time>@if ($news->updated_at?->gt($news->published_at)) · Mis à jour le <time datetime="{{ $news->updated_at->toAtomString() }}">{{ $news->updated_at->translatedFormat('j F Y') }}</time>@endif</small></div></div>
   </div>
 </header>
 <div class="container"><figure class="art-cover"><img decoding="async" src="{{ $news->cover }}" alt="{{ $news->title }}"></figure></div>
 <section class="pb-5">
   <div class="container"><div class="row g-5">
     <div class="col-lg-1 d-none d-lg-block"><div class="share-sticky">
-      <div class="share vertical" data-share data-title="{{ $news->title }}" data-url="{{ route('site.actualite', $news) }}">
+      <div class="share vertical" data-share data-title="{{ $news->title }}" data-url="{{ \App\Support\SiteSeo::absolute(route('site.actualite', $news, false)) }}">
   <span class="share-l">Partager</span>
   <a data-net="whatsapp" target="_blank" rel="noopener" aria-label="Partager sur WhatsApp" style="--c:#25D366"><svg class="ico"><use href="#i-wa"/></svg></a>
   <a data-net="facebook" target="_blank" rel="noopener" aria-label="Partager sur Facebook" style="--c:#1877F2"><svg class="ico" viewBox="0 0 24 24"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H8v4h2v8h4v-8h3l1-4h-4V8z" fill="currentColor" stroke="none"/></svg></a>
@@ -33,7 +33,7 @@
       @if ($others->isNotEmpty())
         <div class="nw-side"><h6>À lire aussi</h6>
           @foreach ($others as $o)
-            <a class="nw-side-item" href="{{ route('site.actualite', $o) }}"><img loading="lazy" decoding="async" src="{{ $o->cover }}" alt=""><span><small>{{ $o->category }}</small>{{ $o->title }}</span></a>
+            <a class="nw-side-item" href="{{ route('site.actualite', $o) }}"><img sizes="74px" loading="lazy" decoding="async" src="{{ $o->cover }}" alt=""><span><small>{{ $o->category }}</small>{{ $o->title }}</span></a>
           @endforeach
         </div>
       @endif

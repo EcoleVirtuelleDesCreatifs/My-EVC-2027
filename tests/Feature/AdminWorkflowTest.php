@@ -93,7 +93,7 @@ class AdminWorkflowTest extends TestCase
     public function test_preinscription_sans_modalite_ni_disponibilites(): void
     {
         $this->get('/preinscription')->assertOk()->assertDontSee('Modalité souhaitée')->assertDontSee('name="Disponibilités"', false);
-        $this->postJson('/preinscription', ['answers' => ['Nom' => ['Kouassi'], 'Prénoms' => ['Awa'], 'E-mail' => ['awa@example.test'], 'Téléphone' => ['0700000000'], 'Formations' => ['Infographie & design graphique']]])->assertOk();
+        $this->postJson('/preinscription', ['answers' => ['Nom' => ['Kouassi'], 'Prénoms' => ['Awa'], 'E-mail' => ['awa@example.test'], 'Téléphone' => ['0700000000'], 'Date souhaitée d’inscription et de paiement' => [now()->toDateString()], 'Formations' => ['Infographie & design graphique']]])->assertOk();
         $this->assertNull(Candidature::firstOrFail()->mode);
     }
 }

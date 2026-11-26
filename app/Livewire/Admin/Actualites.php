@@ -22,7 +22,7 @@ class Actualites extends Page
 
     public function creer(): void
     {
-        $this->n = ['title' => '', 'category' => 'Vie de l\'école', 'label' => '', 'excerpt' => '', 'body' => '', 'featured' => false, 'publie' => true, 'date' => now()->toDateString()];
+        $this->n = ['title' => '', 'category' => 'Vie de l\'école', 'label' => '', 'excerpt' => '', 'body' => '', 'featured' => false, 'publie' => true, 'newsletter' => true, 'date' => now()->toDateString()];
         $this->reset('couverture', 'editId');
         $this->form = true;
     }
@@ -30,7 +30,7 @@ class Actualites extends Page
     public function modifier(int $id): void
     {
         $x = News::findOrFail($id);
-        $this->n = $x->only(['title', 'category', 'label', 'excerpt', 'body', 'featured']) + ['publie' => (bool) $x->published_at, 'date' => ($x->published_at ?? now())->toDateString()];
+        $this->n = $x->only(['title', 'category', 'label', 'excerpt', 'body', 'featured']) + ['publie' => (bool) $x->published_at, 'newsletter' => false, 'date' => ($x->published_at ?? now())->toDateString()];
         $this->n['label'] ??= '';
         $this->n['body'] = $x->bodyHtml();
         $this->editId = $id;
@@ -59,8 +59,23 @@ class Actualites extends Page
         }
         $x->save();
         AuditLog::record($this->editId ? 'Actualité modifiée' : 'Actualité publiée', $x->title);
+        $envoyes = ($this->n['newsletter'] ?? false) && $x->published_at ? $this->diffuserNewsletter($x) : 0;
         $this->form = false;
-        $this->toast('Actualité enregistrée.');
+        $this->toast('Actualité enregistrée.'.($envoyes ? " Newsletter envoyée à $envoyes abonné".($envoyes > 1 ? 's' : '').'.' : ''));
+    }
+
+    /* Diffuse l'actualité par e-mail aux abonnés de la newsletter (désabonnés exclus). */
+    private function diffuserNewsletter(News $x): int
+    {
+        $abonnes = \App\Models\NewsletterSubscriber::actifs()->get();
+        foreach ($abonnes as $abonne) {
+            \Illuminate\Support\Facades\Notification::route('mail', $abonne->email)
+                ->notify(new \App\Notifications\ActualiteNewsletter($x, $abonne));
+        }
+        $x->update(['newsletter_sent_at' => now()]);
+        AuditLog::record('Newsletter envoyée', $x->title.' — '.$abonnes->count().' abonné(s)');
+
+        return $abonnes->count();
     }
 
     public function supprimer(int $id): void

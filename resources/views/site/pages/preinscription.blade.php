@@ -22,13 +22,28 @@
         <ol class="pi-stepper" id="piStepper"><li data-s="0"><i>1</i><span>Formations</span></li><li data-s="1"><i>2</i><span>Identité</span></li><li data-s="2"><i>3</i><span>Profil & niveau</span></li><li data-s="3"><i>4</i><span>Portfolio & documents</span></li><li data-s="4"><i>5</i><span>Personne à contacter</span></li><li data-s="5"><i>6</i><span>Validation</span></li></ol>
         <div class="pi-bar"><i id="piBar"></i></div>
         <p class="pi-mstep d-md-none" id="piMstep"></p>
-        <form id="piForm" class="form-evc form-panel" novalidate>
+@endverbatim
+        <form id="piForm" class="form-evc form-panel" novalidate data-max-file="{{ $uploadLimits['file'] }}" data-max-total="{{ $uploadLimits['total'] }}">
+@verbatim
 
           <!-- 1 FORMATIONS -->
           <fieldset class="pi-step" data-step="0">
             <legend>Quelle(s) formation(s) vous intéresse(nt) ?</legend>
             <p class="pi-help">Vous pouvez en cocher plusieurs.</p>
-            <div class="pick-grid" data-need-one="Formations"><label class="pick"><input type="checkbox" name="Formations" value="Infographie & design graphique" data-key="design" data-price="185 000"><span><i class="pk-l" style="background:var(--orange)">A</i><b>Infographie & design graphique</b><small>4 mois · 185 000 FCFA</small><em class="pk-c"><svg class="ico"><use href="#i-check"/></svg></em></span></label><label class="pick"><input type="checkbox" name="Formations" value="Community management & social media" data-key="cm" data-price="165 000"><span><i class="pk-l" style="background:var(--royal)">B</i><b>Community management & social media</b><small>2 mois · 165 000 FCFA</small><em class="pk-c"><svg class="ico"><use href="#i-check"/></svg></em></span></label><label class="pick"><input type="checkbox" name="Formations" value="Bureautique & informatique (GIA)" data-key="gia" data-price="265 000"><span><i class="pk-l" style="background:var(--blue)">C</i><b>Bureautique & informatique (GIA)</b><small>2 mois · 265 000 FCFA</small><em class="pk-c"><svg class="ico"><use href="#i-check"/></svg></em></span></label></div>
+@endverbatim
+            <div class="pick-grid" data-need-one="Formations">
+              @forelse ($registrationFormations as $formation)
+                @php
+                  $key = ['DG' => 'design', 'CM' => 'cm', 'GIA' => 'gia'][$formation->code] ?? strtolower($formation->code);
+                  $color = ['DG' => 'orange', 'CM' => 'royal', 'GIA' => 'blue'][$formation->code] ?? 'royal';
+                  $price = number_format($formation->price, 0, ',', ' ');
+                @endphp
+                <label class="pick"><input type="checkbox" name="Formations" value="{{ $formation->name }}" data-key="{{ $key }}" data-price="{{ $price }}"><span><i class="pk-l" style="background:var(--{{ $color }})">{{ $loop->iteration }}</i><b>{{ $formation->name }}</b><small>{{ $formation->months }} mois · {{ $price }} FCFA</small><em class="pk-c"><svg class="ico"><use href="#i-check"/></svg></em></span></label>
+              @empty
+                <p class="alert alert-info">Aucune formation n’est actuellement ouverte aux préinscriptions. <a href="/contact">Contactez l’école</a> pour connaître les prochaines ouvertures.</p>
+              @endforelse
+            </div>
+@verbatim
             <div class="pi-err" data-for="Formations">Choisissez au moins une formation.</div>
           </fieldset>
 
@@ -71,6 +86,9 @@
               <div class="col-md-6"><label class="form-label">Avez-vous un ordinateur ? *</label><div class="chips-in"><label class="cin"><input type="radio" name="Ordinateur" value="Oui, portable" required><span>Oui, portable</span></label><label class="cin"><input type="radio" name="Ordinateur" value="Oui, fixe"><span>Oui, fixe</span></label><label class="cin"><input type="radio" name="Ordinateur" value="Non"><span>Non</span></label></div></div>
               <div class="col-md-6"><label class="form-label">Connexion Internet *</label><div class="chips-in"><label class="cin"><input type="radio" name="Connexion" value="Bonne" required><span>Bonne</span></label><label class="cin"><input type="radio" name="Connexion" value="Moyenne"><span>Moyenne</span></label><label class="cin"><input type="radio" name="Connexion" value="Faible"><span>Faible</span></label></div></div>
               <div class="col-12"><label class="form-label" for="piMotiv">Pourquoi voulez-vous suivre cette formation ? *</label><textarea class="form-control" id="piMotiv" name="Motivation" rows="3" required minlength="20" placeholder="Votre projet, ce que vous voulez faire après…"></textarea><small class="pi-help">20 caractères minimum.</small></div>
+@endverbatim
+              <div class="col-12"><label class="form-label" for="piInscription">Date souhaitée d’inscription et de paiement *</label><input class="form-control" id="piInscription" name="Date souhaitée d’inscription et de paiement" type="date" required min="{{ now()->toDateString() }}"><small class="pi-help">Indiquez la date à laquelle vous prévoyez de finaliser votre inscription et d’effectuer votre premier paiement. Cette date est indicative : aucun paiement n’est demandé lors de la préinscription.</small></div>
+@verbatim
               <div class="col-md-6"><label class="form-label" for="piObj">Votre objectif principal</label><select class="form-select" id="piObj" name="Objectif"><option>Trouver un emploi</option><option>Obtenir un stage</option><option>Me lancer en freelance</option><option>Évoluer dans mon poste</option><option>Développer mon entreprise</option><option>Me reconvertir</option></select></div>
               <div class="col-md-6"><label class="form-label" for="piSrc">Comment avez-vous connu l'EVC ?</label><select class="form-select" id="piSrc" name="Source"><option>Réseaux sociaux</option><option>Bouche-à-oreille</option><option>Ancien apprenant</option><option>Recherche Google</option><option>Événement / Caravane Digitale</option><option>Autre</option></select></div>
             </div>
@@ -163,6 +181,6 @@
     </div>
   </div>
 </section>
-<script src="/assets/site/js/preinscription.js" defer></script>
 @endverbatim
+<script src="/assets/site/js/preinscription.js?v={{ filemtime(public_path('assets/site/js/preinscription.js')) }}" defer></script>
 @endsection

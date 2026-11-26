@@ -1,0 +1,426 @@
+{
+    "/assets/site/img/atelier.jpg": {
+        "width": 1295,
+        "height": 967,
+        "variants": {
+            "480": "/assets/site/img/opt/atelier-480.webp?v=1795376305",
+            "960": "/assets/site/img/opt/atelier-960.webp?v=1795376305",
+            "1295": "/assets/site/img/opt/atelier-1295.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/caravane.jpg": {
+        "width": 975,
+        "height": 631,
+        "variants": {
+            "480": "/assets/site/img/opt/caravane-480.webp?v=1795376306",
+            "975": "/assets/site/img/opt/caravane-975.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/ceremonie-2.jpg": {
+        "width": 1400,
+        "height": 428,
+        "variants": {
+            "480": "/assets/site/img/opt/ceremonie-2-480.webp?v=1795376304",
+            "960": "/assets/site/img/opt/ceremonie-2-960.webp?v=1795376305",
+            "1400": "/assets/site/img/opt/ceremonie-2-1400.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/ceremonie.jpg": {
+        "width": 1400,
+        "height": 711,
+        "variants": {
+            "480": "/assets/site/img/opt/ceremonie-480.webp?v=1795376305",
+            "960": "/assets/site/img/opt/ceremonie-960.webp?v=1795376305",
+            "1400": "/assets/site/img/opt/ceremonie-1400.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/certif-1.jpg": {
+        "width": 296,
+        "height": 403,
+        "variants": {
+            "296": "/assets/site/img/opt/certif-1-296.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/certif-10.jpg": {
+        "width": 296,
+        "height": 404,
+        "variants": {
+            "296": "/assets/site/img/opt/certif-10-296.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/certif-11.jpg": {
+        "width": 295,
+        "height": 404,
+        "variants": {
+            "295": "/assets/site/img/opt/certif-11-295.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/certif-12.jpg": {
+        "width": 296,
+        "height": 404,
+        "variants": {
+            "296": "/assets/site/img/opt/certif-12-296.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/certif-2.jpg": {
+        "width": 295,
+        "height": 403,
+        "variants": {
+            "295": "/assets/site/img/opt/certif-2-295.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/certif-3.jpg": {
+        "width": 296,
+        "height": 403,
+        "variants": {
+            "296": "/assets/site/img/opt/certif-3-296.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/certif-4.jpg": {
+        "width": 296,
+        "height": 403,
+        "variants": {
+            "296": "/assets/site/img/opt/certif-4-296.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/certif-5.jpg": {
+        "width": 295,
+        "height": 403,
+        "variants": {
+            "295": "/assets/site/img/opt/certif-5-295.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/certif-6.jpg": {
+        "width": 296,
+        "height": 403,
+        "variants": {
+            "296": "/assets/site/img/opt/certif-6-296.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/certif-7.jpg": {
+        "width": 296,
+        "height": 404,
+        "variants": {
+            "296": "/assets/site/img/opt/certif-7-296.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/certif-8.jpg": {
+        "width": 295,
+        "height": 404,
+        "variants": {
+            "295": "/assets/site/img/opt/certif-8-295.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/certif-9.jpg": {
+        "width": 296,
+        "height": 404,
+        "variants": {
+            "296": "/assets/site/img/opt/certif-9-296.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/classe-1.jpg": {
+        "width": 463,
+        "height": 304,
+        "variants": {
+            "463": "/assets/site/img/opt/classe-1-463.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/classe-2.jpg": {
+        "width": 472,
+        "height": 304,
+        "variants": {
+            "472": "/assets/site/img/opt/classe-2-472.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/classe-3.jpg": {
+        "width": 472,
+        "height": 304,
+        "variants": {
+            "472": "/assets/site/img/opt/classe-3-472.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/classe-4.jpg": {
+        "width": 471,
+        "height": 304,
+        "variants": {
+            "471": "/assets/site/img/opt/classe-4-471.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/classe-5.jpg": {
+        "width": 463,
+        "height": 303,
+        "variants": {
+            "463": "/assets/site/img/opt/classe-5-463.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/classe-6.jpg": {
+        "width": 472,
+        "height": 303,
+        "variants": {
+            "472": "/assets/site/img/opt/classe-6-472.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/classe-7.jpg": {
+        "width": 472,
+        "height": 303,
+        "variants": {
+            "472": "/assets/site/img/opt/classe-7-472.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/classe-8.jpg": {
+        "width": 471,
+        "height": 303,
+        "variants": {
+            "471": "/assets/site/img/opt/classe-8-471.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/classe-large.jpg": {
+        "width": 1400,
+        "height": 396,
+        "variants": {
+            "480": "/assets/site/img/opt/classe-large-480.webp?v=1795376305",
+            "960": "/assets/site/img/opt/classe-large-960.webp?v=1795376305",
+            "1400": "/assets/site/img/opt/classe-large-1400.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/conference.jpg": {
+        "width": 647,
+        "height": 295,
+        "variants": {
+            "480": "/assets/site/img/opt/conference-480.webp?v=1795376305",
+            "647": "/assets/site/img/opt/conference-647.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/diner.jpg": {
+        "width": 639,
+        "height": 399,
+        "variants": {
+            "480": "/assets/site/img/opt/diner-480.webp?v=1795376304",
+            "639": "/assets/site/img/opt/diner-639.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/direction.jpg": {
+        "width": 1400,
+        "height": 520,
+        "variants": {
+            "480": "/assets/site/img/opt/direction-480.webp?v=1795376304",
+            "960": "/assets/site/img/opt/direction-960.webp?v=1795376304",
+            "1400": "/assets/site/img/opt/direction-1400.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/equipe-1.jpg": {
+        "width": 983,
+        "height": 456,
+        "variants": {
+            "480": "/assets/site/img/opt/equipe-1-480.webp?v=1795376306",
+            "983": "/assets/site/img/opt/equipe-1-983.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/equipe-2.jpg": {
+        "width": 967,
+        "height": 456,
+        "variants": {
+            "480": "/assets/site/img/opt/equipe-2-480.webp?v=1795376306",
+            "967": "/assets/site/img/opt/equipe-2-967.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/fondateur.jpg": {
+        "width": 495,
+        "height": 719,
+        "variants": {
+            "495": "/assets/site/img/opt/fondateur-495.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/illus/carriere.svg": {
+        "width": 480,
+        "height": 370
+    },
+    "/assets/site/img/illus/certificat.svg": {
+        "width": 480,
+        "height": 370
+    },
+    "/assets/site/img/illus/choisir.svg": {
+        "width": 480,
+        "height": 380
+    },
+    "/assets/site/img/illus/confiance.svg": {
+        "width": 320,
+        "height": 300
+    },
+    "/assets/site/img/illus/contact.svg": {
+        "width": 400,
+        "height": 400
+    },
+    "/assets/site/img/illus/jury.svg": {
+        "width": 480,
+        "height": 370
+    },
+    "/assets/site/img/illus/pratiquer.svg": {
+        "width": 480,
+        "height": 380
+    },
+    "/assets/site/img/logo-white.png": {
+        "width": 640,
+        "height": 268,
+        "variants": {
+            "480": "/assets/site/img/opt/logo-white-480.webp?v=1795376305",
+            "640": "/assets/site/img/opt/logo-white-640.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/logo.png": {
+        "width": 640,
+        "height": 268,
+        "variants": {
+            "480": "/assets/site/img/opt/logo-480.webp?v=1795376305",
+            "640": "/assets/site/img/opt/logo-640.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/oeuvre-adoration.jpg": {
+        "width": 464,
+        "height": 448,
+        "variants": {
+            "464": "/assets/site/img/opt/oeuvre-adoration-464.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/oeuvre-anniversaire.jpg": {
+        "width": 455,
+        "height": 447,
+        "variants": {
+            "455": "/assets/site/img/opt/oeuvre-anniversaire-455.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/oeuvre-concert-guinee.jpg": {
+        "width": 463,
+        "height": 447,
+        "variants": {
+            "463": "/assets/site/img/opt/oeuvre-concert-guinee-463.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/oeuvre-concert-live.jpg": {
+        "width": 455,
+        "height": 448,
+        "variants": {
+            "455": "/assets/site/img/opt/oeuvre-concert-live-455.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/oeuvre-consommer-local.jpg": {
+        "width": 464,
+        "height": 448,
+        "variants": {
+            "464": "/assets/site/img/opt/oeuvre-consommer-local-464.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/oeuvre-dabali-chaud.jpg": {
+        "width": 599,
+        "height": 784,
+        "variants": {
+            "480": "/assets/site/img/opt/oeuvre-dabali-chaud-480.webp?v=1795376305",
+            "599": "/assets/site/img/opt/oeuvre-dabali-chaud-599.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/oeuvre-elephant-paix.jpg": {
+        "width": 615,
+        "height": 792,
+        "variants": {
+            "480": "/assets/site/img/opt/oeuvre-elephant-paix-480.webp?v=1795376304",
+            "615": "/assets/site/img/opt/oeuvre-elephant-paix-615.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/oeuvre-fete-independance.jpg": {
+        "width": 623,
+        "height": 800,
+        "variants": {
+            "480": "/assets/site/img/opt/oeuvre-fete-independance-480.webp?v=1795376305",
+            "623": "/assets/site/img/opt/oeuvre-fete-independance-623.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/oeuvre-force-priere.jpg": {
+        "width": 463,
+        "height": 448,
+        "variants": {
+            "463": "/assets/site/img/opt/oeuvre-force-priere-463.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/oeuvre-formez-vous.jpg": {
+        "width": 464,
+        "height": 448,
+        "variants": {
+            "464": "/assets/site/img/opt/oeuvre-formez-vous-464.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/oeuvre-jeune-priere.jpg": {
+        "width": 624,
+        "height": 792,
+        "variants": {
+            "480": "/assets/site/img/opt/oeuvre-jeune-priere-480.webp?v=1795376304",
+            "624": "/assets/site/img/opt/oeuvre-jeune-priere-624.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/oeuvre-merci-nation.jpg": {
+        "width": 464,
+        "height": 447,
+        "variants": {
+            "464": "/assets/site/img/opt/oeuvre-merci-nation-464.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/oeuvre-mood-vendredi.jpg": {
+        "width": 600,
+        "height": 848,
+        "variants": {
+            "480": "/assets/site/img/opt/oeuvre-mood-vendredi-480.webp?v=1795376304",
+            "600": "/assets/site/img/opt/oeuvre-mood-vendredi-600.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/oeuvre-paix-sociale.jpg": {
+        "width": 464,
+        "height": 447,
+        "variants": {
+            "464": "/assets/site/img/opt/oeuvre-paix-sociale-464.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/oeuvre-revenu-en-ligne.jpg": {
+        "width": 607,
+        "height": 848,
+        "variants": {
+            "480": "/assets/site/img/opt/oeuvre-revenu-en-ligne-480.webp?v=1795376304",
+            "607": "/assets/site/img/opt/oeuvre-revenu-en-ligne-607.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/oeuvre-zouglou.jpg": {
+        "width": 455,
+        "height": 448,
+        "variants": {
+            "455": "/assets/site/img/opt/oeuvre-zouglou-455.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/promo-cm.jpg": {
+        "width": 1400,
+        "height": 480,
+        "variants": {
+            "480": "/assets/site/img/opt/promo-cm-480.webp?v=1795376304",
+            "960": "/assets/site/img/opt/promo-cm-960.webp?v=1795376304",
+            "1400": "/assets/site/img/opt/promo-cm-1400.webp?v=1795376304"
+        }
+    },
+    "/assets/site/img/remise-1.jpg": {
+        "width": 296,
+        "height": 408,
+        "variants": {
+            "296": "/assets/site/img/opt/remise-1-296.webp?v=1795376305"
+        }
+    },
+    "/assets/site/img/remise-2.jpg": {
+        "width": 295,
+        "height": 408,
+        "variants": {
+            "295": "/assets/site/img/opt/remise-2-295.webp?v=1795376306"
+        }
+    },
+    "/assets/site/img/remise-3.jpg": {
+        "width": 296,
+        "height": 408,
+        "variants": {
+            "296": "/assets/site/img/opt/remise-3-296.webp?v=1795376306"
+        }
+    }
+}

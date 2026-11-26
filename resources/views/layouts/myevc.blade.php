@@ -2,7 +2,7 @@
   $u = auth()->user();
   $groups = \App\Support\Menu::groups($u);
   $current = request()->route()?->getName();
-  $parents = ['etudiant.projet' => 'etudiant.projets', 'admin.candidature' => 'admin.candidatures', 'admin.etudiant' => 'admin.etudiants', 'formateur.appel' => 'formateur.seances',
+  $parents = ['etudiant.projet' => 'etudiant.projets', 'admin.candidature' => 'admin.candidatures', 'admin.etudiant' => 'admin.etudiants', 'admin.portfolio' => 'admin.portfolios', 'formateur.appel' => 'formateur.seances',
     'etudiant.video' => 'etudiant.webtv', 'etudiant.quiz.passer' => 'etudiant.quiz', 'formateur.reco.fiche' => 'formateur.reco', 'admin.reco.fiche' => 'admin.reco',
     'formateur.quiz.editeur' => 'formateur.quiz', 'admin.quiz.editeur' => 'admin.quiz', 'admin.projet.nouveau' => 'admin.projets', 'admin.projet.modifier' => 'admin.projets',
     'admin.ressource.nouvelle' => 'admin.bibliotheque', 'admin.ressource.modifier' => 'admin.bibliotheque',
@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="/assets/vendor/bootstrap/bootstrap.min.css">
 <link rel="stylesheet" href="/assets/vendor/fontawesome/css/all.min.css">
 <link rel="stylesheet" href="/assets/app/css/tokens.css">
-<link rel="stylesheet" href="/assets/app/css/app.css">
+<link rel="stylesheet" href="/assets/app/css/app.css?v={{ filemtime(public_path('assets/app/css/app.css')) }}">
 <link rel="stylesheet" href="/assets/app/css/complements.css">
 <link rel="stylesheet" href="/assets/app/css/bibliotheque.css">
 <link rel="stylesheet" href="{{ asset('assets/app/css/myevc.css') }}?v={{ filemtime(public_path('assets/app/css/myevc.css')) }}">
@@ -78,6 +78,16 @@
     </header>
     <main class="content" id="view">
       @if (session('toast'))<div data-flash-toast="{{ session('toast') }}" hidden></div>@endif
+      @if (\App\Support\LectureSeule::applies($u))
+        <div class="ro-banner" role="status"><i class="fa-solid fa-lock"></i>
+          <div><b>Formation terminée le {{ $u->student->accessEndsOn()?->translatedFormat('j F Y') }} — compte en lecture seule</b>
+            <span>Vous consultez votre parcours, votre portfolio, vos paiements et votre certificat. Les projets, quiz, bibliothèque et outils de démarrage ne sont plus disponibles.@if (session('lecture_seule')) Cette rubrique est fermée.@endif</span></div>
+          <a class="btn btn-primary btn-sm" href="{{ route('myevc.messagerie') }}" wire:navigate><i class="fa-solid fa-message"></i>Écrire à l’équipe</a>
+        </div>
+      @endif
+      @if ($u->space() === 'etudiant' && $current !== 'myevc.notifications')
+        <livewire:etudiant.alertes />
+      @endif
       {{ $slot }}
     </main>
   </div>

@@ -14,10 +14,11 @@
     <div class="col-lg-6">
       <div class="reg-card">
         <div class="reg-head"><img decoding="async" src="/assets/site/img/logo-white.png" alt="EVC"><span>Registre officiel<br><small>Abidjan, Côte d'Ivoire</small></span></div>
-        <form class="reg-form" method="get" action="{{ route('certificat.verifier') }}">
-          <label for="regRef" class="form-label">Référence du document</label>
-          <div class="reg-input"><span><svg class="ico"><use href="#i-doc"/></svg></span><input id="regRef" name="reference" value="{{ request('reference') }}" placeholder="Ex. EVC-CERT-{{ now()->year }}-…" autocomplete="off" spellcheck="false" required><button class="btn btn-evc" type="submit">Vérifier</button></div>
-        </form>
+        <div class="reg-form">
+          <p class="form-label mb-2">Référence du document</p>
+          <p class="reg-hint mb-3">La vérification se fait sur le registre officiel de l'EVC : saisissez-y la référence imprimée en bas du document.</p>
+          <a class="btn btn-evc btn-lg w-100 d-inline-flex align-items-center justify-content-center gap-2" href="https://verification.ecolevirtuelledescreatifs.com/">Vérifier sur le registre officiel <svg class="ico"><use href="#i-arrow"/></svg></a>
+        </div>
         @if ($code)
           @if ($certificate)
             <div class="mt-4 p-3 rounded-3" style="background:#E8F6EE;color:#14532D">

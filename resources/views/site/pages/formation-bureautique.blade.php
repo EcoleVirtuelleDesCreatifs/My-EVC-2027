@@ -1,6 +1,6 @@
 @extends('layouts.site')
 @section('title', "Bureautique & informatique (GIA) · EVC — École Virtuelle des Créatifs")
-@section('description', "Bureautique & informatique (GIA) à l'EVC : 2 mois, 265 000 FCFA payables en 2 fois. Programme, outils, débouchés et inscription.")
+@section('description', "Formation bureautique à Abidjan : ".$publicCourse->months." mois, ".number_format($publicCourse->price, 0, ',', ' ')." FCFA. Word, Excel, PowerPoint, programme et inscription à l'EVC.")
 @section('og_image', '/assets/site/img/ceremonie.jpg')
 @section('page', 'formations')
 
@@ -10,9 +10,12 @@
   <div class="bg"><img decoding="async" src="/assets/site/img/classe-4.jpg" alt=""></div>
   <div class="container">
     <nav class="crumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a><span>/</span><a href="/formations">Formations</a><span>/</span><span>Bureautique GIA</span></nav>
-    <h1 class="mb-3 reveal">Bureautique &amp; informatique (GIA) <span>· 2 mois</span></h1>
+@endverbatim
+    <h1 class="mb-3 reveal">Bureautique &amp; informatique (GIA) <span>· {{ $publicCourse->months }} mois</span></h1>
     <p class="mb-0 reveal d1">Word, Excel, PowerPoint, Google : devenez la personne sur qui tout le bureau peut compter.</p>
-    <div class="d-flex flex-wrap gap-2 mt-4 reveal d2"><span class="pill"><b>2 MOIS</b>En ligne et en présentiel</span><span class="pill"><b>265 000 F</b>Paiement en 2 fois</span><span class="pill"><b>CERTIFIANT</b>Certificat + recommandation</span></div>
+    <div class="d-flex flex-wrap gap-2 mt-4 reveal d2"><span class="pill"><b>{{ $publicCourse->months }} MOIS</b>En ligne et en présentiel</span><span class="pill"><b>{{ number_format($publicCourse->price, 0, ',', ' ') }} F</b>Paiement en 2 fois</span><span class="pill"><b>CERTIFIANT</b>Certificat + recommandation</span></div>
+    @unless ($publicCourse->active)<p class="mt-3 mb-0">Les préinscriptions à cette formation sont actuellement fermées.</p>@endunless
+@verbatim
   </div>
 </header>
 <section class="section">
@@ -40,9 +43,11 @@
     </div>
     <div class="col-lg-4">
       <aside class="sticky-card reveal">
-        <div class="sc-head"><span class="kicker light mb-2">Tarif · 2 mois</span><div class="amount">265 000 <small style="font-size:1rem">FCFA</small></div><small style="color:#B5BEDD">Paiement en 2 fois : 140 000 FCFA à l'inscription, puis 125 000 FCFA en cours de formation</small></div>
+@endverbatim
+        <div class="sc-head"><span class="kicker light mb-2">Tarif · {{ $publicCourse->months }} mois</span><div class="amount">{{ number_format($publicCourse->price, 0, ',', ' ') }} <small style="font-size:1rem">FCFA</small></div><small style="color:#B5BEDD">Paiement en 2 fois : {{ number_format($publicCourse->deposit, 0, ',', ' ') }} FCFA à l'inscription, puis {{ number_format($publicCourse->balance(), 0, ',', ' ') }} FCFA en cours de formation</small></div>
         <div class="sc-body">
-          <div class="row-i"><span>Durée</span><b>2 mois</b></div>
+          <div class="row-i"><span>Durée</span><b>{{ $publicCourse->months }} mois</b></div>
+@verbatim
           <div class="row-i"><span>Rythme</span><b>En ligne et en présentiel</b></div>
           <div class="row-i"><span>Lieu</span><b>Abidjan (Palmeraie) & en ligne</b></div>
           <div class="row-i"><span>Prérequis</span><b>Aucun diplôme exigé</b></div>

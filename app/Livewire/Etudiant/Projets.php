@@ -21,6 +21,6 @@ class Projets extends Page
         $items = (clone $base)->when($groups[$this->etat] ?? null, fn ($q, $st) => $q->whereIn('status', $st))
             ->orderByRaw("case status when 'reprendre' then 0 when 'encours' then 1 when 'afaire' then 2 when 'soumis' then 3 else 4 end")->orderBy('due_on')->get();
 
-        return $this->page('livewire.etudiant.projets', compact('s', 'items', 'counts'), 'Mes projets', 'Espace étudiant <span class="sep">›</span> Mes projets');
+        return $this->page('livewire.etudiant.projets', compact('s', 'items', 'counts') + ['classes' => \App\Models\VirtualClass::visibleFor($s)->with('formation', 'promotion')->get()], 'Mes projets', 'Espace étudiant <span class="sep">›</span> Mes projets');
     }
 }

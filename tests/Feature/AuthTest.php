@@ -81,6 +81,7 @@ class AuthTest extends TestCase
 
     public function test_profil_affiche_un_avatar_cadre_et_les_informations_etudiant(): void
     {
+        \Illuminate\Support\Facades\Storage::fake('public')->put('avatars/portrait.jpg', 'x');
         $s = $this->makeStudent(['DG', 'CM']);
         $s->user->update(['avatar_path' => 'avatars/portrait.jpg']);
         $this->actingAs($s->user)->get(route('myevc.profil'))->assertOk()

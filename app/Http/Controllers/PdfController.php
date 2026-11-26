@@ -46,6 +46,18 @@ class PdfController extends Controller
         return $this->pdf('pdf.attestation', ['s' => $student], 'attestation-'.$student->matricule);
     }
 
+    public function portfolio(Request $request, Student $student)
+    {
+        $this->authorizeStudent($request, $student, 'admin.etudiants');
+        $student->load('user', 'formations', 'promotion');
+        $items = \App\Support\Portfolio::items($student);
+        $tiles = $items->flatMap(fn ($a) => $a->visuals)->take(4)->map(fn ($v) => \App\Support\Portfolio::fittedImage($v['file'], 236, 176))->filter()->values();
+        $items->each(fn ($a) => $a->setAttribute('pdfVisuals', $a->visuals->map(fn ($v) => \App\Support\Portfolio::fittedImage($v['file'], 495, $a->visuals->count() > 1 ? 320 : 410))->filter()->values()));
+
+        return $this->pdf('pdf.portfolio', ['s' => $student, 'items' => $items, 'stats' => \App\Support\Portfolio::stats($items), 'tiles' => $tiles],
+            'portfolio-'.$student->matricule);
+    }
+
     private function authorizeStudent(Request $request, Student $student, string $permission): void
     {
         $u = $request->user();

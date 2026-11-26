@@ -9,6 +9,7 @@
       <div class="row-item">
         <x-fchip :code="$a->project->formation->code" />
         <div class="ri-main"><div class="ri-t">{{ $a->project->title }}</div><div class="ri-s">{{ $a->student->user->name }} · {{ $a->status === 'soumis' ? 'rendu '.$a->submitted_at?->diffForHumans() : ($a->status === 'valide' ? $a->appreciation.' · '.$a->validated_at?->translatedFormat('j M') : 'à rendre le '.$a->due_on->translatedFormat('j M')) }}</div></div>
+        <a class="btn btn-ghost btn-sm" href="{{ route('projet.echanges', $a) }}" wire:navigate><i class="fa-solid fa-comments"></i>Échanges</a>
         @if ($a->status === 'soumis')<button class="btn btn-primary btn-sm" wire:click="ouvrirCorrection({{ $a->id }})"><i class="fa-solid fa-pen-to-square"></i>Corriger</button>
         @else<x-pill :tone="$a->tone()">{{ $a->label(true) }}</x-pill>@endif
       </div>

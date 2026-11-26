@@ -1,12 +1,22 @@
 @php($due = $s->totalDue())
 @php($paid = $s->totalPaid())
-<div>
+<div wire:poll.15s.visible>
   <div class="stat-grid mb-4">
     <x-kpi label="Montant de la formation" :value="fcfa($due)" icon="fa-graduation-cap" tone="lav" :sub="$s->formations->pluck('code')->implode(' + ')" />
     <x-kpi label="Déjà payé" :value="fcfa($paid)" icon="fa-circle-check" tone="ok" :sub="$due ? round($paid / $due * 100).' % réglé' : ''" />
     <x-kpi label="Reste à payer" :value="fcfa($s->balance())" icon="fa-hourglass-half" :tone="$s->balance() ? 'cor' : 'ok'" :sub="$s->nextSchedule() ? 'Prochaine échéance : '.$s->nextSchedule()->due_on->translatedFormat('j F') : 'Formation soldée'" />
     <x-kpi label="Versements" :value="$s->payments->count()" icon="fa-receipt" tone="info" sub="Reçus disponibles" />
   </div>
+
+  <x-panel title="Mon solde après versements">
+    <div class="lib-dl mb-3">
+      <div class="lib-dl-row"><span>Montant total des formations</span><b>{{ fcfa($due) }}</b></div>
+      <div class="lib-dl-row"><span>Versements déduits, premier versement inclus</span><b>− {{ fcfa($paid) }}</b></div>
+      <div class="lib-dl-row"><span>Reste à solder</span><b>{{ fcfa($s->balance()) }}</b></div>
+    </div>
+    <p class="small muted mb-0">Le premier versement est inclus dans le prix total, ce n’est pas un supplément. Chaque paiement enregistré par l’administration diminue le reste à solder.</p>
+    @if ($paid > $due)<p class="small mt-2 mb-0">Avoir : <b>{{ fcfa($paid - $due) }}</b></p>@endif
+  </x-panel>
 
   <div class="u-grid u-2-1 align-items-start">
     <div class="stack">

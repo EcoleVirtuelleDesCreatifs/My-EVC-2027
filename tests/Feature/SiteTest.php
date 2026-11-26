@@ -53,7 +53,7 @@ class SiteTest extends TestCase
         $other = User::factory()->create();
         $res = $this->postJson('/preinscription', [
             'answers' => ['Nom' => ['Diabaté'], 'Prénoms' => ['Salimata'], 'E-mail' => ['Salimata@Exemple.ci'], 'Téléphone' => ['+225 07 00 00 00 00'],
-                'Formations' => ['Infographie & design graphique', 'Bureautique & informatique (GIA)'], 'Modalité' => ['En ligne']],
+                'Formations' => ['Infographie & design graphique', 'Bureautique & informatique (GIA)'], 'Modalité' => ['En ligne'], 'Date souhaitée d’inscription et de paiement' => [now()->toDateString()]],
             'fichiers' => ['Photo' => [UploadedFile::fake()->image('photo.jpg')]],
         ])->assertOk()->assertJsonStructure(['reference', 'suivi']);
 
@@ -69,6 +69,30 @@ class SiteTest extends TestCase
             $notification->title === 'Nouvelle préinscription' && $channels === ['database', 'mail']
             && $notification->url === route('admin.candidature', $c));
         Notification::assertNothingSentTo($other);
+    }
+
+    public function test_la_date_souhaitee_d_inscription_est_validee_et_visible_en_administration(): void
+    {
+        Notification::fake();
+        $key = 'Date souhaitée d’inscription et de paiement';
+        $answers = ['Nom' => ['Koné'], 'Prénoms' => ['Awa'], 'E-mail' => ['awa@exemple.ci'],
+            'Téléphone' => ['0700000000'], 'Formations' => ['DG']];
+        $this->postJson('/preinscription', ['answers' => $answers])->assertUnprocessable()
+            ->assertJsonValidationErrors(['answers.'.$key.'.0']);
+        foreach (['', now()->subDay()->toDateString(), 'date-invalide'] as $date) {
+            $this->postJson('/preinscription', ['answers' => $answers + [$key => [$date]]])
+                ->assertUnprocessable()->assertJsonValidationErrors(['answers.'.$key.'.0']);
+        }
+        $this->assertSame(0, Candidature::count());
+        $date = now()->addDays(7)->toDateString();
+        $this->get('/preinscription')->assertOk()->assertSee('id="piInscription"', false)
+            ->assertSee('min="'.now()->toDateString().'"', false);
+        $this->postJson('/preinscription', ['answers' => $answers + [$key => [$date]]])->assertOk();
+        $c = Candidature::firstOrFail();
+        $this->assertSame([$date], $c->answers[$key]);
+        $this->actingAs($this->makeStaff('Super Administrateur'))
+            ->get(route('admin.candidature', $c))->assertOk()->assertSee('Inscription et paiement')
+            ->assertSee(now()->addDays(7)->format('d/m/Y'));
     }
 
     public function test_le_mail_de_preinscription_est_personnalise_et_en_francais(): void

@@ -29,7 +29,9 @@ class Menu
     public static function bottom(User $u): array
     {
         return match ($u->space()) {
-            'etudiant' => [['etudiant.accueil', 'Accueil', 'fa-house-chimney'], ['etudiant.cours', 'Cours', 'fa-calendar-days'], ['etudiant.projets', 'Projets', 'fa-pen-nib'], ['myevc.messagerie', 'Messages', 'fa-message'], ['etudiant.bibliotheque', 'Biblio', 'fa-book-bookmark']],
+            'etudiant' => LectureSeule::applies($u)
+                ? [['etudiant.accueil', 'Accueil', 'fa-house-chimney'], ['etudiant.portfolio', 'Portfolio', 'fa-swatchbook'], ['myevc.messagerie', 'Messages', 'fa-message'], ['etudiant.certificat', 'Certificat', 'fa-award']]
+                : [['etudiant.accueil', 'Accueil', 'fa-house-chimney'], ['etudiant.cours', 'Cours', 'fa-calendar-days'], ['etudiant.projets', 'Projets', 'fa-pen-nib'], ['myevc.messagerie', 'Messages', 'fa-message'], ['etudiant.bibliotheque', 'Biblio', 'fa-book-bookmark']],
             'formateur' => [['formateur.accueil', 'Accueil', 'fa-house-chimney'], ['formateur.seances', 'Séances', 'fa-calendar-days'], ['formateur.corrections', 'Corrections', 'fa-pen-to-square'], ['myevc.messagerie', 'Messages', 'fa-message']],
             default => collect([['admin.dashboard', 'Accueil', 'fa-chart-pie', 'admin.dashboard'], ['admin.candidatures', 'Candidats', 'fa-user-plus', 'admin.candidatures'], ['admin.etudiants', 'Étudiants', 'fa-user-graduate', 'admin.etudiants'], ['admin.finances', 'Finances', 'fa-wallet', 'admin.finances']])
                 ->filter(fn ($i) => $u->can($i[3]))->values()->all(),
@@ -45,12 +47,19 @@ class Menu
         $new = Resource::visibleFor($fids)->where('created_at', '>=', now()->subDays(Resource::NEW_DAYS))->whereNotIn('id', $got)->count();
         $quiz = $s ? Quiz::visibleFor($fids)->with(['attempts' => fn ($q) => $q->where('student_id', $s->id)])->get()->filter(fn ($q) => $q->stateFor($s)[2])->count() : 0;
         $reco = $s && $s->formations->contains('has_reco', true);
+        $rapport = $s ? max(0, $s->formations->count() - $s->finalReports()->whereIn('formation_id', $fids)->whereIn('status', ['depose', 'valide'])->count()) : 0;
 
-        return [
-            ['', array_values(array_filter([['etudiant.accueil', 'Accueil', 'fa-house-chimney'], ['etudiant.cours', 'Mes cours', 'fa-calendar-days'], ['etudiant.projets', 'Mes projets', 'fa-pen-nib', $open],
+        $items = array_values(array_filter([['etudiant.accueil', 'Accueil', 'fa-house-chimney'], ['etudiant.demarrage', 'Outils de démarrage', 'fa-toolbox'], ['etudiant.cours', 'Mes cours', 'fa-calendar-days'], ['etudiant.projets', 'Mes projets', 'fa-pen-nib', $open], ['etudiant.portfolio', 'Mon portfolio', 'fa-swatchbook'], ['etudiant.rapport', 'Rapport de fin', 'fa-file-signature', $rapport],
                 $reco ? ['etudiant.reco', 'RECO 60', 'fa-hourglass-half'] : null, ['etudiant.quiz', 'Quiz', 'fa-list-check', $quiz], ['etudiant.webtv', 'Vidéos des cours', 'fa-tv'],
                 ['etudiant.bibliotheque', 'Bibliothèque', 'fa-book-bookmark', $new], ['myevc.messagerie', 'Messages', 'fa-message', Conversation::unreadCount($u)],
-                ['etudiant.paiements', 'Paiements', 'fa-credit-card'], ['etudiant.certificat', 'Certificat', 'fa-award']])), false],
+                ['etudiant.paiements', 'Paiements', 'fa-credit-card'], ['etudiant.certificat', 'Certificat', 'fa-award']]));
+        if (LectureSeule::applies($u)) {
+            $items = array_values(array_filter($items, fn ($i) => ! in_array($i[0], LectureSeule::HIDDEN_ROUTES, true)));
+            $items = array_map(fn ($i) => $i[0] === 'etudiant.rapport' ? [$i[0], $i[1], $i[2]] : $i, $items);
+        }
+
+        return [
+            ['', $items, false],
             ['Plus', [['myevc.profil', 'Mon profil', 'fa-user']], true],
         ];
     }
@@ -64,6 +73,7 @@ class Menu
 
         return [
             ['', array_values(array_filter([['formateur.accueil', 'Accueil', 'fa-house-chimney'], ['formateur.seances', 'Séances et appel', 'fa-calendar-days'], ['formateur.corrections', 'Corrections', 'fa-pen-to-square', $pending],
+                ['projets.echanges', 'Échanges projets', 'fa-comments'],
                 $hasReco ? ['formateur.reco', 'RECO 60', 'fa-hourglass-half', $reco] : null, ['formateur.quiz', 'Quiz', 'fa-list-check'], ['formateur.webtv', 'Web TV', 'fa-tv'],
                 ['formateur.bibliotheque', 'Bibliothèque', 'fa-book-bookmark'], ['myevc.messagerie', 'Messages', 'fa-message', Conversation::unreadCount($u)]])), false],
             ['Plus', [['myevc.profil', 'Mon profil', 'fa-user']], true],
@@ -78,13 +88,15 @@ class Menu
                 ['admin.candidatures', 'Préinscriptions', 'fa-user-plus', fn () => Candidature::whereIn('stage', ['recue', 'paiement'])->count(), 'candidatures'],
                 ['admin.etudiants', 'Étudiants', 'fa-user-graduate', null, 'etudiants'],
                 ['admin.projets', 'Projets', 'fa-palette', fn () => Assignment::where('status', 'soumis')->count(), 'projets'],
+                ['projets.echanges', 'Échanges projets', 'fa-comments', null, 'projets'],
+                ['admin.portfolios', 'Portfolios', 'fa-swatchbook', null, 'etudiants'],
                 ['admin.disponibilite', 'Disponibilité', 'fa-user-clock', null, 'projets'],
                 ['admin.finances', 'Finances', 'fa-wallet', null, 'finances'],
                 ['myevc.messagerie', 'Messagerie', 'fa-message', fn () => Conversation::unreadCount($u), null],
             ], false],
             ['Programmes', [['admin.reco', 'RECO 60', 'fa-hourglass-half', fn () => RecoProject::where('status', 'rendu')->count(), 'reco'], ['admin.quiz', 'Quiz', 'fa-list-check', null, 'qcm'], ['admin.webtv', 'Web TV', 'fa-tv', null, 'webtv']], true],
             ['Scolarité', [['admin.formations', 'Formations et sessions', 'fa-book-open', null, 'formations'], ['admin.seances', 'Séances', 'fa-calendar-days', null, 'formations'], ['admin.certificats', 'Certificats', 'fa-award', null, 'certificats']], true],
-            ['Contenus', [['admin.bibliotheque', 'Bibliothèque', 'fa-book-bookmark', null, 'bibliotheque'], ['admin.actualites', 'Actualités', 'fa-newspaper', null, 'actualites'], ['admin.messages', 'Messages du site', 'fa-envelope', fn () => ContactMessage::whereNull('handled_at')->count(), 'messages']], true],
+            ['Contenus', [['admin.bibliotheque', 'Bibliothèque', 'fa-book-bookmark', null, 'bibliotheque'], ['admin.demarrage', 'Démarrage et classes', 'fa-toolbox', null, 'bibliotheque'], ['admin.actualites', 'Actualités', 'fa-newspaper', null, 'actualites'], ['admin.messages', 'Messages du site', 'fa-envelope', fn () => ContactMessage::whereNull('handled_at')->count(), 'messages']], true],
             ['Système', [['admin.utilisateurs', 'Utilisateurs et rôles', 'fa-shield-halved', null, 'utilisateurs'], ['admin.audit', 'Journal d\'audit', 'fa-fingerprint', null, 'audit'], ['admin.parametres', 'Paramètres', 'fa-gear', null, 'parametres']], true],
         ];
 

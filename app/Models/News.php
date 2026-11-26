@@ -10,7 +10,7 @@ class News extends Model
 
     protected function casts(): array
     {
-        return ['featured' => 'boolean', 'published_at' => 'datetime'];
+        return ['featured' => 'boolean', 'published_at' => 'datetime', 'newsletter_sent_at' => 'datetime'];
     }
 
     public function getRouteKeyName(): string

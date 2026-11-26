@@ -23,7 +23,7 @@
       <span class="ec-t">{{ $s0?->title ?? 'Aucun cours prévu' }}</span>
       <span class="ec-s">{{ $s0 ? jour($s0->starts_at).' · '.$s0->hours().' · '.($s0->mode === 'virtuel' ? 'en ligne' : 'en salle') : 'Le planning sera publié bientôt' }}</span></a>
     @php($p0 = $open->first())
-    <a class="e-card" href="{{ $p0 ? route('etudiant.projet', $p0) : route('etudiant.projets') }}" wire:navigate><span class="ec-i"><i class="fa-solid fa-pen-nib"></i></span><span class="ec-k">Mon projet</span>
+    <a class="e-card" href="{{ $readOnly ? route('etudiant.portfolio') : ($p0 ? route('etudiant.projet', $p0) : route('etudiant.projets')) }}" wire:navigate><span class="ec-i"><i class="fa-solid {{ $readOnly ? 'fa-swatchbook' : 'fa-pen-nib' }}"></i></span><span class="ec-k">{{ $readOnly ? 'Mon portfolio' : 'Mon projet' }}</span>
       <span class="ec-t">{{ $p0?->project->title ?? 'Aucun projet à rendre' }}</span>
       <span class="ec-s">{{ $p0 ? $p0->label().' · '.mb_strtolower($p0->dueText()) : $validated.' projet'.($validated > 1 ? 's' : '').' validé'.($validated > 1 ? 's' : '') }}</span>
       @if ($open->count() > 1)<span class="ec-more">+ {{ $open->count() - 1 }} autre{{ $open->count() > 2 ? 's' : '' }}</span>@endif</a>

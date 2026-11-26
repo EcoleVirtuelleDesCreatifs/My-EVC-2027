@@ -78,6 +78,8 @@ class SaopTest extends TestCase
         $answers = array_fill(1, 11, 'Ma réponse personnelle');
         $this->postJson($url, ['action' => 'submit', 'answers' => $answers])->assertOk()->assertJsonPath('closed', true);
         $this->assertNotNull($c->fresh()->saop_submitted_at);
+        $this->get($url)->assertOk()->assertSee('Questionnaire clôturé')->assertSee('Vous pouvez maintenant fermer cette page.')
+            ->assertDontSee('id="questionnaire"', false)->assertDontSee('<textarea', false);
         $this->postJson($url, ['action' => 'save', 'answers' => [1 => 'Modification']])->assertOk()->assertJsonPath('closed', true);
         $this->assertSame('Ma réponse personnelle', $c->fresh()->saop_answers[1]);
         $this->assertSame('eligible', $c->fresh()->stage);

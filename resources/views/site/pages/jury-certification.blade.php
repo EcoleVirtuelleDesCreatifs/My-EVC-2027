@@ -12,7 +12,7 @@
     <nav class="crumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a><span>/</span><span>Jury & certification</span></nav>
     <h1 class="mb-3 reveal">Évalués par des pros. <span>Certifiés sur preuves.</span></h1>
     <p class="mb-0 reveal d1">26 professionnels venus de 7 pays évaluent les projets de nos apprenants. Le certificat, lui, ne s'achète pas : il se mérite.</p>
-    <div class="d-flex flex-wrap gap-3 mt-4 reveal d2"><a href="#jury" class="btn btn-evc">Les membres du jury</a><a href="#certification" class="btn btn-outline-light">La certification</a><a href="#verifier" class="btn btn-outline-light">Registre de vérification</a></div>
+    <div class="d-flex flex-wrap gap-3 mt-4 reveal d2"><a href="#jury" class="btn btn-evc">Les membres du jury</a><a href="#certification" class="btn btn-outline-light">La certification</a><a href="https://verification.ecolevirtuelledescreatifs.com/" class="btn btn-outline-light">Registre de vérification</a></div>
   </div>
 </header>
 <section class="assure"><div class="container"><div class="assure-row">
@@ -105,13 +105,13 @@
     <div class="col-lg-6 reveal d1">
       <div class="reg-card">
         <div class="reg-head"><img loading="lazy" decoding="async" src="/assets/site/img/logo-white.png" alt="EVC"><span>Registre officiel<br><small>Abidjan, Côte d'Ivoire</small></span></div>
-        <form class="reg-form" id="regForm" action="/certificats/verifier" method="get">
-          <label for="regRef" class="form-label">Référence du document</label>
-          <div class="reg-input"><span><svg class="ico"><use href="#i-doc"/></svg></span><input id="regRef" name="reference" placeholder="Ex. EVC-2026-…" autocomplete="off" spellcheck="false"><button class="btn btn-evc" type="submit">Vérifier</button></div>
-          <p class="reg-hint" id="regHint">Le registre affiche le titulaire, la formation et la date de délivrance.</p>
-        </form>
+        <div class="reg-form">
+          <p class="form-label mb-2">Référence du document</p>
+          <p class="reg-hint mb-3">La vérification se fait sur le registre officiel de l'EVC : saisissez-y la référence imprimée en bas du document.</p>
+          <a class="btn btn-evc btn-lg w-100 d-inline-flex align-items-center justify-content-center gap-2" href="https://verification.ecolevirtuelledescreatifs.com/">Vérifier sur le registre officiel <svg class="ico"><use href="#i-arrow"/></svg></a>
+        </div>
         <div class="reg-or"><span>ou</span></div>
-        <a href="/certificats/verifier" class="reg-qr">
+        <a href="https://verification.ecolevirtuelledescreatifs.com/" class="reg-qr">
           <svg viewBox="0 0 48 48" aria-hidden="true"><g fill="#0E1A3C"><rect x="4" y="4" width="14" height="14" rx="2"/><rect x="30" y="4" width="14" height="14" rx="2"/><rect x="4" y="30" width="14" height="14" rx="2"/><rect x="22" y="22" width="5" height="5"/><rect x="30" y="30" width="5" height="5"/><rect x="38" y="38" width="6" height="6"/><rect x="22" y="36" width="5" height="8"/><rect x="36" y="22" width="8" height="5"/></g><g fill="#fff"><rect x="8" y="8" width="6" height="6"/><rect x="34" y="8" width="6" height="6"/><rect x="8" y="34" width="6" height="6"/></g></svg>
           <span><b>Scanner le QR code du document</b><small>avec l'appareil photo de votre téléphone</small></span><svg class="ico"><use href="#i-arrow"/></svg>
         </a>

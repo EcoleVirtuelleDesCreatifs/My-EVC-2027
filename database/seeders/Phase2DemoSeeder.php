@@ -22,6 +22,9 @@ class Phase2DemoSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            throw new \RuntimeException('Les données de démonstration sont interdites en production.');
+        }
         if (Video::exists() || ! User::where('email', 'admin@evc.test')->exists()) {
             return;
         }

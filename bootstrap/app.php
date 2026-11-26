@@ -16,7 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'active' => \App\Http\Middleware\EnsureAccountIsActive::class,
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
+            'formation.active' => \App\Http\Middleware\StudentWritable::class,
         ]);
+        $middleware->web(append: [\App\Http\Middleware\CaptureCampaign::class, \App\Http\Middleware\OptimiseSiteImages::class]);
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route(auth()->user()->homeRoute()));
     })

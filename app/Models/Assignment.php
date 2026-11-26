@@ -48,6 +48,11 @@ class Assignment extends Model
         return $this->hasMany(AssignmentComment::class)->oldest();
     }
 
+    public function canDiscuss(User $user): bool
+    {
+        return $user->can('admin.projets') || in_array($this->project->formation_id, $user->taughtFormationIds());
+    }
+
     public function isLate(): bool
     {
         return in_array($this->status, self::OPEN, true) && $this->due_on->endOfDay()->isPast();
@@ -76,8 +81,8 @@ class Assignment extends Model
         };
     }
 
-    public function log(string $kind, string $body, ?int $userId = null): void
+    public function log(string $kind, string $body, ?int $userId = null, bool $system = false): void
     {
-        $this->comments()->create(['kind' => $kind, 'body' => $body, 'user_id' => $userId ?? auth()->id()]);
+        $this->comments()->create(['kind' => $kind, 'body' => $body, 'user_id' => $system ? null : ($userId ?? auth()->id())]);
     }
 }

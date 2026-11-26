@@ -45,6 +45,10 @@ class ParcoursTest extends TestCase
                 $c->update(['saop_started_at' => now()->subMinutes(5), 'saop_submitted_at' => now()]);
             }
             $page->call('etape', $stage)->assertHasNoErrors();
+            if ($stage === 'paiement') {
+                $page->assertSet('validerVersement', true)->set('premier.amount', 95000)->set('premier.method', 'Wave')
+                    ->call('confirmerPremierVersement')->assertHasNoErrors();
+            }
             $this->assertSame($stage, $c->fresh()->stage);
         }
         Notification::assertSentOnDemandTimes(\App\Notifications\CandidatureMiseAJour::class, 4);
@@ -63,7 +67,8 @@ class ParcoursTest extends TestCase
     {
         Notification::fake();
         $admin = $this->makeStaff('Super Administrateur');
-        $c = Candidature::create(['reference' => 'PRE-2026-0001', 'first_name' => 'Rose', 'last_name' => 'Kacou', 'email' => 'rose@exemple.ci', 'phone' => '0700', 'formations' => ['DG', 'CM'], 'stage' => 'paiement']);
+        $c = Candidature::create(['reference' => 'PRE-2026-0001', 'first_name' => 'Rose', 'last_name' => 'Kacou', 'email' => 'rose@exemple.ci', 'phone' => '0700', 'formations' => ['DG', 'CM'], 'stage' => 'paiement',
+            'first_payment' => ['amount' => 180000, 'method' => 'Wave', 'paid_on' => now()->toDateString()]]);
 
         Livewire::actingAs($admin)->test(CandidatureFiche::class, ['candidature' => $c])
             ->set('promotion', Promotion::current()->id)->set('mode', 'En ligne')
@@ -84,6 +89,25 @@ class ParcoursTest extends TestCase
             $solde = $rows->first(fn ($x) => str_starts_with($x->label, 'Solde'));
             $this->assertTrue($solde->due_on->gt($acompte->due_on));
         }
+    }
+
+    public function test_candidature_activee_reste_consultable_apres_suppression_de_l_etudiant(): void
+    {
+        Notification::fake();
+        $admin = $this->makeStaff('Super Administrateur');
+        $student = $this->makeStudent(['DG']);
+        $c = Candidature::create(['reference' => 'PRE-2026-0099', 'first_name' => 'Rose', 'last_name' => 'Kacou', 'email' => 'rose@exemple.ci', 'phone' => '0700', 'formations' => ['DG'], 'stage' => 'activee', 'student_id' => $student->id]);
+        $this->actingAs($admin)->get(route('admin.candidature', $c))->assertOk()
+            ->assertSee(route('admin.etudiant', $student), false)->assertSee('Voir la fiche étudiant');
+
+        $student->delete();
+        $this->assertNull($c->fresh()->student_id);
+        $this->actingAs($admin)->get(route('admin.candidature', $c))->assertOk()
+            ->assertSee('Le dossier étudiant associé n’est plus disponible.')
+            ->assertDontSee('Voir la fiche étudiant');
+        $this->assertSame('activee', $c->fresh()->stage);
+        $this->assertDatabaseCount('students', 0);
+        Notification::assertNothingSent();
     }
 
     public function test_les_versements_sont_imputes_aux_echeances_les_plus_anciennes(): void

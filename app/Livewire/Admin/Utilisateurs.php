@@ -73,6 +73,35 @@ class Utilisateurs extends Page
         $this->toast($user->status === 'suspendu' ? 'Compte suspendu.' : 'Compte réactivé.');
     }
 
+    /** Suppression définitive d'un membre de l'équipe : l'historique (versements, corrections, journaux) est conservé sans auteur. */
+    public function supprimer(int $id): void
+    {
+        abort_unless(auth()->user()->can('admin.utilisateurs'), 403);
+        $user = User::with('roles')->findOrFail($id);
+        $error = match (true) {
+            $user->id === auth()->id() => 'Vous ne pouvez pas supprimer votre propre compte.',
+            $user->hasRole('etudiant') => 'Un étudiant se gère depuis sa fiche étudiant.',
+            $user->hasRole('Super Administrateur') && $user->status !== 'suspendu' && User::role('Super Administrateur')->where('status', '!=', 'suspendu')->count() <= 1 => 'Impossible de supprimer le dernier Super Administrateur actif.',
+            default => null,
+        };
+        if ($error) {
+            $this->toast($error, 'warn');
+
+            return;
+        }
+        $label = $user->name.' ('.$user->email.') — '.($user->roles->pluck('name')->implode(', ') ?: 'sans rôle');
+        \Illuminate\Support\Facades\DB::transaction(function () use ($user) {
+            $user->notifications()->delete();
+            $user->syncRoles([]);
+            $user->delete();
+        });
+        if ($user->avatar_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar_path);
+        }
+        AuditLog::record('Utilisateur supprimé', $label);
+        $this->toast('Compte supprimé. L’historique de ses actions est conservé.');
+    }
+
     public function enregistrerRoles(): void
     {
         foreach ($this->matrice as $r => $mods) {

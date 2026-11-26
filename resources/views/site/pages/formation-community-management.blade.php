@@ -1,6 +1,6 @@
 @extends('layouts.site')
 @section('title', "Community management & social media · EVC — École Virtuelle des Créatifs")
-@section('description', "Community management & social media à l'EVC : 2 mois, 165 000 FCFA payables en 2 fois. Programme, outils, débouchés et inscription.")
+@section('description', "Formation community management à Abidjan : ".$publicCourse->months." mois, ".number_format($publicCourse->price, 0, ',', ' ')." FCFA. Réseaux sociaux, programme et inscription à l'EVC.")
 @section('og_image', '/assets/site/img/ceremonie.jpg')
 @section('page', 'formations')
 
@@ -10,9 +10,12 @@
   <div class="bg"><img decoding="async" src="/assets/site/img/promo-cm.jpg" alt=""></div>
   <div class="container">
     <nav class="crumb" aria-label="Fil d'Ariane"><a href="/">Accueil</a><span>/</span><a href="/formations">Formations</a><span>/</span><span>Community management</span></nav>
-    <h1 class="mb-3 reveal">Community management &amp; social media <span>· 2 mois</span></h1>
+@endverbatim
+    <h1 class="mb-3 reveal">Community management &amp; social media <span>· {{ $publicCourse->months }} mois</span></h1>
     <p class="mb-0 reveal d1">Facebook, Instagram, TikTok : apprenez à animer une communauté, à créer des contenus qui marchent et à mesurer vos résultats.</p>
-    <div class="d-flex flex-wrap gap-2 mt-4 reveal d2"><span class="pill"><b>2 MOIS</b>En ligne et en présentiel</span><span class="pill"><b>165 000 F</b>Paiement en 2 fois</span><span class="pill"><b>CERTIFIANT</b>Certificat + recommandation</span></div>
+    <div class="d-flex flex-wrap gap-2 mt-4 reveal d2"><span class="pill"><b>{{ $publicCourse->months }} MOIS</b>En ligne et en présentiel</span><span class="pill"><b>{{ number_format($publicCourse->price, 0, ',', ' ') }} F</b>Paiement en 2 fois</span><span class="pill"><b>CERTIFIANT</b>Certificat + recommandation</span></div>
+    @unless ($publicCourse->active)<p class="mt-3 mb-0">Les préinscriptions à cette formation sont actuellement fermées.</p>@endunless
+@verbatim
   </div>
 </header>
 <section class="section">
@@ -40,9 +43,11 @@
     </div>
     <div class="col-lg-4">
       <aside class="sticky-card reveal">
-        <div class="sc-head"><span class="kicker light mb-2">Tarif · 2 mois</span><div class="amount">165 000 <small style="font-size:1rem">FCFA</small></div><small style="color:#B5BEDD">Paiement en 2 fois : 85 000 FCFA à l'inscription, puis 80 000 FCFA après 1 mois</small></div>
+@endverbatim
+        <div class="sc-head"><span class="kicker light mb-2">Tarif · {{ $publicCourse->months }} mois</span><div class="amount">{{ number_format($publicCourse->price, 0, ',', ' ') }} <small style="font-size:1rem">FCFA</small></div><small style="color:#B5BEDD">Paiement en 2 fois : {{ number_format($publicCourse->deposit, 0, ',', ' ') }} FCFA à l'inscription, puis {{ number_format($publicCourse->balance(), 0, ',', ' ') }} FCFA après 1 mois</small></div>
         <div class="sc-body">
-          <div class="row-i"><span>Durée</span><b>2 mois</b></div>
+          <div class="row-i"><span>Durée</span><b>{{ $publicCourse->months }} mois</b></div>
+@verbatim
           <div class="row-i"><span>Rythme</span><b>En ligne et en présentiel</b></div>
           <div class="row-i"><span>Lieu</span><b>Abidjan (Palmeraie) & en ligne</b></div>
           <div class="row-i"><span>Prérequis</span><b>Aucun diplôme exigé</b></div>

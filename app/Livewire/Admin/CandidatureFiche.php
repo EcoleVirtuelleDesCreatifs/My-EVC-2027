@@ -24,6 +24,47 @@ class CandidatureFiche extends Page
 
     public bool $activer = false;
 
+    public bool $validerVersement = false;
+
+    public array $premier = [];
+
+    public string $typeVersement = 'nouveau';
+
+    public ?int $paiementExistant = null;
+
+    public function ouvrirPremierVersement(): void
+    {
+        abort_unless(auth()->user()->can('admin.candidatures'), 403);
+        $c = $this->candidature->refresh();
+        $this->premier = ['amount' => (int) \App\Models\Formation::whereIn('code', $c->formations)->sum('deposit'),
+            'method' => '', 'paid_on' => now()->toDateString(), 'transaction_ref' => ''];
+        $this->typeVersement = $c->student?->payments()->exists() ? 'existant' : 'nouveau';
+        $this->paiementExistant = null;
+        $this->activer = false;
+        $this->resetErrorBag();
+        $this->validerVersement = true;
+    }
+
+    public function confirmerPremierVersement(\App\Services\AdmissionPaymentService $service): void
+    {
+        $this->validate(['typeVersement' => 'required|in:nouveau,existant']);
+        if ($this->typeVersement === 'existant') {
+            $this->validate(['paiementExistant' => 'required|integer|min:1']);
+        } else {
+            $this->validate(['premier.amount' => 'required|integer|min:1|max:1000000000',
+                'premier.method' => 'required|in:'.implode(',', \App\Models\Payment::METHODS),
+                'premier.paid_on' => 'required|date_format:Y-m-d|before_or_equal:today', 'premier.transaction_ref' => 'nullable|string|max:150'],
+                [], ['premier.amount' => 'montant reçu', 'premier.method' => 'moyen de paiement', 'premier.paid_on' => 'date du paiement']);
+        }
+        $stage = $this->candidature->fresh()->stage;
+        $service->confirm($this->candidature, $this->premier, $this->typeVersement === 'existant' ? $this->paiementExistant : null);
+        if (! in_array($stage, ['activee', 'paiement'], true)) {
+            Notification::route('mail', $this->candidature->email)->notify(new CandidatureMiseAJour($this->candidature, 'paiement'));
+        }
+        $this->validerVersement = false;
+        $this->toast($this->candidature->student_id ? 'Premier versement rattaché. Le solde étudiant est mis à jour.' : 'Premier versement validé. Il sera déduit du solde dès l’activation du compte.');
+    }
+
     public function mount(): void
     {
         $this->score = $this->candidature->test_score;
@@ -36,6 +77,11 @@ class CandidatureFiche extends Page
     {
         abort_unless(array_key_exists($stage, Candidature::STAGES) && $stage !== 'activee', 422);
         $this->candidature->refresh();
+        if ($stage === 'paiement') {
+            $this->ouvrirPremierVersement();
+
+            return;
+        }
         if ($this->candidature->stage === $stage) {
             return;
         }
@@ -67,6 +113,7 @@ class CandidatureFiche extends Page
     public function closeModal(): void
     {
         $this->activer = false;
+        $this->validerVersement = false;
     }
 
     public function confirmerActivation(AdmissionService $svc)
@@ -80,14 +127,16 @@ class CandidatureFiche extends Page
 
     public function render()
     {
-        $c = $this->candidature->load('files', 'student');
+        $c = $this->candidature->load('files', 'student', 'firstPayment');
+        $versementsExistants = $this->validerVersement && $c->student ? $c->student->payments()->get() : collect();
         $groups = [
             'Identité' => ['Genre', 'Date de naissance', 'Nationalité', 'Pays', 'Ville', 'Commune'],
             'Profil' => ['Situation', 'Niveau d\'études', 'Établissement', 'Poste', 'Niveau dans le domaine', 'Outils', 'Ordinateur', 'Connexion', 'Objectif', 'Source', 'Motivation', 'Disponibilités', 'Lien portfolio'],
+            'Inscription et paiement' => ['Date souhaitée d’inscription et de paiement'],
             'Personne à contacter' => ['Contact - Nom', 'Contact - Lien', 'Contact - Téléphone', 'Contact - E-mail', 'Contact - Fonction', 'Contact - Résidence', 'Contact - Prend en charge les frais'],
         ];
 
-        return $this->page('livewire.admin.candidature', ['c' => $c, 'groups' => $groups, 'promotions' => Promotion::orderByDesc('starts_on')->get()],
+        return $this->page('livewire.admin.candidature', ['c' => $c, 'groups' => $groups, 'versementsExistants' => $versementsExistants, 'promotions' => Promotion::orderByDesc('starts_on')->get()],
             $c->full_name, 'Administration <span class="sep">›</span> <a href="'.route('admin.candidatures').'" wire:navigate>Préinscriptions</a> <span class="sep">›</span> '.$c->reference);
     }
 }

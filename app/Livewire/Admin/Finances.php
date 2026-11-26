@@ -15,7 +15,7 @@ use Livewire\WithPagination;
 
 class Finances extends Page
 {
-    use WithPagination;
+    use WithPagination, \Livewire\WithFileUploads;
 
     #[Url(except: 'versements')]
     public string $vue = 'versements';
@@ -37,11 +37,95 @@ class Finances extends Page
 
     public string $date = '';
 
+    /** Période analysée (mois « AAAA-MM ») pour la caisse et les dépenses. */
+    #[Url(except: '')]
+    public string $periode = '';
+
+    #[Url(except: '')]
+    public string $categorie = '';
+
+    /* Dépense */
+    public bool $depenseForm = false;
+
+    public ?int $depenseId = null;
+
+    public array $d = [];
+
+    public $justificatif = null;
+
     public function updated($prop): void
     {
-        if (in_array($prop, ['vue', 'q'])) {
+        if (in_array($prop, ['vue', 'q', 'periode', 'categorie'])) {
             $this->resetPage();
         }
+    }
+
+    /** [début, fin] de la période choisie (mois courant par défaut). */
+    private function range(): array
+    {
+        $m = preg_match('/^\d{4}-\d{2}$/', $this->periode) ? Carbon::createFromFormat('Y-m-d', $this->periode.'-01') : now();
+
+        return [$m->copy()->startOfMonth(), $m->copy()->endOfMonth()];
+    }
+
+    public function nouvelleDepense(): void
+    {
+        abort_unless(auth()->user()->can('admin.finances'), 403);
+        $this->reset('depenseId', 'justificatif');
+        $this->resetErrorBag();
+        $this->d = ['spent_on' => now()->toDateString(), 'label' => '', 'category' => \App\Models\Expense::CATEGORIES[0], 'amount' => null,
+            'method' => 'Espèces', 'beneficiary' => '', 'reference' => '', 'note' => ''];
+        $this->depenseForm = true;
+    }
+
+    public function modifierDepense(int $id): void
+    {
+        abort_unless(auth()->user()->can('admin.finances'), 403);
+        $e = \App\Models\Expense::findOrFail($id);
+        $this->reset('justificatif');
+        $this->resetErrorBag();
+        $this->depenseId = $e->id;
+        $this->d = ['spent_on' => $e->spent_on->toDateString(), 'label' => $e->label, 'category' => $e->category, 'amount' => $e->amount,
+            'method' => $e->method, 'beneficiary' => (string) $e->beneficiary, 'reference' => (string) $e->reference, 'note' => (string) $e->note];
+        $this->depenseForm = true;
+    }
+
+    public function enregistrerDepense(): void
+    {
+        abort_unless(auth()->user()->can('admin.finances'), 403);
+        $data = $this->validate([
+            'd.spent_on' => 'required|date|before_or_equal:today', 'd.label' => 'required|string|max:160',
+            'd.category' => ['required', \Illuminate\Validation\Rule::in(\App\Models\Expense::CATEGORIES)], 'd.amount' => 'required|integer|min:1|max:100000000',
+            'd.method' => ['required', \Illuminate\Validation\Rule::in(Payment::METHODS)], 'd.beneficiary' => 'nullable|string|max:160',
+            'd.reference' => 'nullable|string|max:60', 'd.note' => 'nullable|string|max:2000',
+            'justificatif' => 'nullable|file|max:10240|mimes:pdf,jpg,jpeg,png,webp',
+        ], [], ['d.spent_on' => 'date', 'd.label' => 'libellé', 'd.category' => 'catégorie', 'd.amount' => 'montant', 'd.method' => 'caisse', 'justificatif' => 'justificatif'])['d'];
+        $data = array_map(fn ($v) => is_string($v) ? (trim($v) ?: null) : $v, $data);
+        $e = $this->depenseId ? \App\Models\Expense::findOrFail($this->depenseId) : new \App\Models\Expense(['recorded_by' => auth()->id()]);
+        if ($this->justificatif) {
+            if ($e->receipt_path) {
+                \Illuminate\Support\Facades\Storage::disk('local')->delete($e->receipt_path);
+            }
+            $data['receipt_path'] = $this->justificatif->store('depenses', 'local');
+            $data['receipt_name'] = $this->justificatif->getClientOriginalName();
+        }
+        $e->fill($data)->save();
+        AuditLog::record($this->depenseId ? 'Dépense modifiée' : 'Dépense enregistrée', $e->label.' — '.fcfa($e->amount).' ('.$e->method.')');
+        $this->depenseForm = false;
+        $this->toast($this->depenseId ? 'Dépense modifiée.' : 'Dépense enregistrée : la caisse est mise à jour.');
+        $this->reset('depenseId', 'justificatif');
+    }
+
+    public function supprimerDepense(int $id): void
+    {
+        abort_unless(auth()->user()->can('admin.finances'), 403);
+        $e = \App\Models\Expense::findOrFail($id);
+        if ($e->receipt_path) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($e->receipt_path);
+        }
+        AuditLog::record('Dépense supprimée', $e->label.' — '.fcfa($e->amount).' du '.$e->spent_on->format('d/m/Y'));
+        $e->delete();
+        $this->toast('Dépense supprimée.', 'info');
     }
 
     public function nouveau(?int $studentId = null): void
@@ -81,13 +165,21 @@ class Finances extends Page
 
     public function closeModal(): void
     {
-        $this->form = false;
+        $this->form = $this->depenseForm = false;
     }
 
     public function render()
     {
-        $kpi = ['total' => Payment::sum('amount'), 'mois' => Payment::whereBetween('paid_on', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount'),
-            'du' => PaymentSchedule::whereHas('student', fn ($q) => $q->where('status', '!=', 'abandon'))->sum('amount')];
+        [$from, $to] = $this->range();
+        $cash = app(\App\Services\CashService::class);
+        $kpi = $cash->summary($from, $to);
+        $caisse = $this->vue === 'caisse' ? ['methods' => $cash->byMethod($from, $to), 'months' => $cash->months(6), 'categories' => $cash->byCategory($from, $to)] : null;
+        $expenseQuery = \App\Models\Expense::whereBetween('spent_on', [$from->toDateString(), $to->toDateString()])
+            ->when($this->categorie, fn ($q) => $q->where('category', $this->categorie))
+            ->when($this->q, fn ($q) => $q->where(fn ($w) => $w->where('label', 'like', "%{$this->q}%")->orWhere('beneficiary', 'like', "%{$this->q}%")->orWhere('reference', 'like', "%{$this->q}%")));
+        $expenses = $this->vue === 'depenses' ? (clone $expenseQuery)->with('recorder')->latest('spent_on')->latest('id')->paginate(20) : null;
+        $expensesTotal = $this->vue === 'depenses' ? (int) $expenseQuery->sum('amount') : 0;
+        $months = collect(range(0, 11))->mapWithKeys(fn ($i) => [now()->startOfMonth()->subMonths($i)->format('Y-m') => ucfirst(now()->startOfMonth()->subMonths($i)->translatedFormat('F Y'))]);
         $payments = $this->vue === 'versements' ? Payment::with('student.user', 'recorder')
             ->when($this->q, fn ($q) => $q->where(fn ($w) => $w->where('receipt_number', 'like', "%{$this->q}%")->orWhere('transaction_ref', 'like', "%{$this->q}%")
                 ->orWhereHas('student', fn ($s) => $s->where('matricule', 'like', "%{$this->q}%")->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$this->q}%")))))
@@ -97,7 +189,7 @@ class Finances extends Page
         $found = $this->recherche ? Student::with('user')->where('matricule', 'like', "%{$this->recherche}%")->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$this->recherche}%"))->take(6)->get() : collect();
         $chosen = $this->etudiant ? Student::with('user', 'schedules', 'payments')->find($this->etudiant) : null;
 
-        return $this->page('livewire.admin.finances', compact('kpi', 'payments', 'retards', 'found', 'chosen'), 'Finances', 'Administration <span class="sep">›</span> Finances',
-            '<button class="btn btn-primary t-cta" wire:click="nouveau"><i class="fa-solid fa-plus"></i>Enregistrer un versement</button>');
+        return $this->page('livewire.admin.finances', compact('kpi', 'payments', 'retards', 'found', 'chosen', 'caisse', 'expenses', 'expensesTotal', 'months', 'from', 'to'), 'Finances', 'Administration <span class="sep">›</span> Finances',
+            '<button class="btn btn-ghost t-cta me-2" wire:click="nouvelleDepense"><i class="fa-solid fa-receipt"></i>Ajouter une dépense</button><button class="btn btn-primary t-cta" wire:click="nouveau"><i class="fa-solid fa-plus"></i>Enregistrer un versement</button>');
     }
 }

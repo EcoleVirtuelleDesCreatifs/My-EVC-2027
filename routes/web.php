@@ -32,10 +32,12 @@ Route::middleware('throttle:10,1')->group(function () {
     Route::post('/contact', [FormController::class, 'contact'])->name('contact.store');
     Route::post('/newsletter', [FormController::class, 'newsletter'])->name('newsletter.store');
 });
+Route::get('/newsletter/desinscription', [FormController::class, 'desinscriptionNewsletter'])->name('newsletter.desinscription');
 
-/* Anciennes adresses de la maquette (…/page.html) */
+/* Anciennes adresses de la maquette (…/page.html) et préfixe /fr hérité */
 Route::get('/actualite-{slug}.html', fn (string $slug) => redirect()->route('site.actualite', $slug, 301));
 Route::get('/{page}.html', fn (string $page) => redirect($page === 'index' ? '/' : '/'.$page, 301))->where('page', '[a-z0-9-]+');
+Route::get('/fr/{path?}', fn (?string $path = null) => redirect('/'.ltrim((string) $path, '/'), 301))->where('path', '.*');
 
 /* ==========================================================================
    MY EVC — connexion
@@ -54,8 +56,14 @@ Route::prefix('myevc')->group(function () {
     Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/', fn () => redirect()->route(auth()->user()->homeRoute()))->name('myevc');
         Route::get('/notifications', Shared\Notifications::class)->name('myevc.notifications');
+        Route::get('/echanges-projets', Shared\EchangesProjets::class)->name('projets.echanges');
+        Route::get('/projets/{assignment}/echanges', Shared\ProjetEchanges::class)->name('projet.echanges');
         Route::get('/profil', Shared\Profil::class)->name('myevc.profil');
         Route::get('/fichiers/depot/{file}', [FileController::class, 'submission'])->name('fichier.depot');
+        Route::get('/fichiers/outil/{tool}', [FileController::class, 'starterTool'])->name('fichier.outil');
+        Route::get('/fichiers/depense/{expense}', [FileController::class, 'expenseReceipt'])->name('fichier.depense');
+        Route::get('/fichiers/rapport/{report}', [FileController::class, 'finalReport'])->name('fichier.rapport');
+        Route::get('/fichiers/depot/{file}/apercu', [FileController::class, 'submissionPreview'])->name('fichier.depot.apercu');
         Route::get('/messagerie', Shared\Messagerie::class)->name('myevc.messagerie');
         Route::get('/messagerie/fichier/{message}', [FileController::class, 'message'])->name('fichier.message');
         Route::get('/videos/{video}/fichier', [FileController::class, 'video'])->name('fichier.video');
@@ -66,17 +74,20 @@ Route::prefix('myevc')->group(function () {
         Route::prefix('etudiant')->name('etudiant.')->middleware('role:etudiant')->group(function () {
             Route::get('/', Etudiant\Accueil::class)->name('accueil');
             Route::get('/cours', Etudiant\Cours::class)->name('cours');
-            Route::get('/projets', Etudiant\Projets::class)->name('projets');
-            Route::get('/projets/{assignment}', Etudiant\ProjetDetail::class)->name('projet');
-            Route::get('/bibliotheque', Etudiant\Bibliotheque::class)->name('bibliotheque');
-            Route::get('/bibliotheque/{resource}/telecharger', [FileController::class, 'resource'])->name('ressource');
+            Route::get('/projets', Etudiant\Projets::class)->middleware('formation.active')->name('projets');
+            Route::get('/projets/{assignment}', Etudiant\ProjetDetail::class)->middleware('formation.active')->name('projet');
+            Route::get('/portfolio', Etudiant\Portfolio::class)->name('portfolio');
+            Route::get('/rapport-fin-formation', Etudiant\Rapport::class)->name('rapport');
+            Route::get('/outils-de-demarrage', Etudiant\Demarrage::class)->middleware('formation.active')->name('demarrage');
+            Route::get('/bibliotheque', Etudiant\Bibliotheque::class)->middleware('formation.active')->name('bibliotheque');
+            Route::get('/bibliotheque/{resource}/telecharger', [FileController::class, 'resource'])->middleware('formation.active')->name('ressource');
             Route::get('/paiements', Etudiant\Paiements::class)->name('paiements');
             Route::get('/certificat', Etudiant\Certificat::class)->name('certificat');
             Route::get('/videos', Etudiant\WebTv::class)->name('webtv');
             Route::get('/videos/{video}', Etudiant\Video::class)->name('video');
             Route::get('/reco-60', Etudiant\Reco::class)->name('reco');
-            Route::get('/quiz', Etudiant\Quiz::class)->name('quiz');
-            Route::get('/quiz/{quiz}', Etudiant\QuizPassage::class)->name('quiz.passer');
+            Route::get('/quiz', Etudiant\Quiz::class)->middleware('formation.active')->name('quiz');
+            Route::get('/quiz/{quiz}', Etudiant\QuizPassage::class)->middleware('formation.active')->name('quiz.passer');
         });
 
         /* ---------- Espace formateur ---------- */
@@ -108,9 +119,12 @@ Route::prefix('myevc')->group(function () {
             Route::get('/projets', Admin\Projets::class)->middleware('can:admin.projets')->name('projets');
             Route::get('/projets/nouveau', Admin\ProjetEditeur::class)->middleware('can:admin.projets')->name('projet.nouveau');
             Route::get('/projets/{project}/modifier', Admin\ProjetEditeur::class)->middleware('can:admin.projets')->name('projet.modifier');
+            Route::get('/portfolios', Admin\Portfolios::class)->middleware('can:admin.etudiants')->name('portfolios');
+            Route::get('/portfolios/{student}', Admin\PortfolioEtudiant::class)->middleware('can:admin.etudiants')->name('portfolio');
             Route::get('/disponibilite', Admin\Disponibilite::class)->middleware('can:admin.projets')->name('disponibilite');
             Route::get('/finances', Admin\Finances::class)->middleware('can:admin.finances')->name('finances');
             Route::get('/bibliotheque', Admin\Bibliotheque::class)->middleware('can:admin.bibliotheque')->name('bibliotheque');
+            Route::get('/demarrage', Admin\Demarrage::class)->middleware('can:admin.bibliotheque')->name('demarrage');
             Route::get('/bibliotheque/nouvelle', Admin\RessourceEditeur::class)->middleware('can:admin.bibliotheque')->name('ressource.nouvelle');
             Route::get('/bibliotheque/{resource}/modifier', Admin\RessourceEditeur::class)->middleware('can:admin.bibliotheque')->name('ressource.modifier');
             Route::get('/actualites', Admin\Actualites::class)->middleware('can:admin.actualites')->name('actualites');
@@ -130,6 +144,7 @@ Route::prefix('myevc')->group(function () {
         Route::get('/recus/{payment}.pdf', [PdfController::class, 'receipt'])->name('pdf.recu');
         Route::get('/certificats/{certificate}.pdf', [PdfController::class, 'certificate'])->name('pdf.certificat');
         Route::get('/attestation/{student}.pdf', [PdfController::class, 'attestation'])->name('pdf.attestation');
+        Route::get('/portfolio/{student}.pdf', [PdfController::class, 'portfolio'])->name('pdf.portfolio');
     });
 });
 
